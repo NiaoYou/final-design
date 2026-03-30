@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useBenchmarkStore } from '@/stores/benchmark'
 import KpiCard from '@/components/KpiCard.vue'
@@ -8,18 +8,21 @@ import MethodStatusCard from '@/components/MethodStatusCard.vue'
 import DownloadFileCard from '@/components/DownloadFileCard.vue'
 import PcaImagePanel from '@/components/PcaImagePanel.vue'
 import EvRatioChart from '@/components/EvRatioChart.vue'
-import { pcaBeforeAfterImageUrl } from '@/api/benchmark'
+import { evaluationDownloadUrl, evaluationPcaImageUrl, pcaBeforeAfterImageUrl } from '@/api/benchmark'
 import { formatNumber, formatRatio } from '@/utils/format'
 import type { BatchCorrectionMetrics } from '@/types/benchmark'
 
 const store = useBenchmarkStore()
-const { summary, report, metrics, files, pcaAfter, loading, error } = storeToRefs(store)
+const { summary, report, metrics, files, pcaAfter, evaluationSummary, evaluationTable, evaluationPcas, loading, error } =
+  storeToRefs(store)
+const { evaluationFiles } = storeToRefs(store)
 
 onMounted(() => {
   void store.loadAll()
 })
 
 const pcaUrl = computed(() => pcaBeforeAfterImageUrl(String(store.loadedAt || Date.now())))
+const evalPcaUrl = computed(() => evaluationPcaImageUrl(String(store.loadedAt || Date.now())))
 
 const heuristicRows = computed(() => {
   const m = metrics.value as BatchCorrectionMetrics | null
@@ -58,6 +61,39 @@ const interpretation = computed(() => {
   }
   return parts
 })
+
+const selectedEvalMethod = ref<string>('baseline')
+
+const evalMethodOptions = computed(() => {
+  const es = evaluationSummary.value
+  if (!es?.methods_order?.length) return []
+  return es.methods_order.map((internal) => ({
+    internal,
+    display: es.methods_display_names?.[internal] ?? internal,
+  }))
+})
+
+watch(
+  evalMethodOptions,
+  (opts) => {
+    if (!opts.length) return
+    if (!opts.find((o) => o.internal === selectedEvalMethod.value)) {
+      selectedEvalMethod.value = opts[0].internal
+    }
+    void store.loadEvaluationPca(selectedEvalMethod.value)
+  },
+  { immediate: true },
+)
+
+watch(
+  selectedEvalMethod,
+  (m) => {
+    void store.loadEvaluationPca(m)
+  },
+  { immediate: false },
+)
+
+const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.value] ?? null)
 </script>
 
 <template>
@@ -157,6 +193,85 @@ const interpretation = computed(() => {
         />
       </template>
       <el-empty v-else description="暂无可下载文件列表" />
+
+      <div v-if="evaluationFiles?.files?.length" class="dl-split">
+        <div class="subhead">Evaluation 产物下载（方法对比实验）</div>
+        <p class="interp muted">
+          其中 <strong>combat-like</strong> 为简化对齐方法（用于对比），不代表 strict ComBat 已实现。
+        </p>
+        <DownloadFileCard
+          v-for="f in evaluationFiles.files"
+          :key="`eval-${f.name}`"
+          :name="f.name"
+          :purpose="f.purpose"
+          :size-bytes="f.size_bytes"
+          :href="evaluationDownloadUrl(f.name)"
+        />
+      </div>
+    </section>
+
+    <section class="card-panel">
+      <h3 class="block-title">方法对比实验（evaluation）</h3>
+      <p class="interp muted">
+        本区块读取 <code>benchmark_merged/_pipeline/evaluation</code> 下的评估产物。
+        其中 <strong>combat-like</strong> 为简化对齐方法（用于对比），不代表 strict ComBat 已实现。
+      </p>
+
+      <el-alert
+        v-if="evaluationSummary?.note"
+        type="info"
+        :closable="false"
+        show-icon
+        class="mb"
+        :title="evaluationSummary.note"
+      />
+
+      <div class="grid-2">
+        <div class="card-panel card-panel--flat">
+          <div class="subhead">对比表（evaluation_table.csv）</div>
+          <el-table
+            v-if="evaluationTable?.rows?.length"
+            :data="evaluationTable.rows"
+            size="small"
+            stripe
+            border
+            height="320"
+          >
+            <el-table-column prop="method" label="方法（对外）" min-width="140" />
+            <el-table-column prop="method_internal" label="内部 key" width="120" />
+            <el-table-column prop="silhouette_batch_id_pc12" label="silhouette(batch_id)" min-width="160" />
+            <el-table-column prop="silhouette_group_label_pc12" label="silhouette(group_label)" min-width="170" />
+            <el-table-column prop="batch_centroid_separation_pc12" label="batch centroid distance" min-width="190" />
+          </el-table>
+          <el-empty v-else description="暂无 evaluation_table.csv（请先运行 merged pipeline）" />
+        </div>
+
+        <div class="card-panel card-panel--flat">
+          <div class="subhead">PCA 对比图（evaluation/pca_before_vs_after.png）</div>
+          <div class="img-frame">
+            <img :src="evalPcaUrl" alt="evaluation pca before vs after" class="img" loading="lazy" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card-panel card-panel--flat">
+        <div class="subhead">单方法 PCA 数据（pca_{method}.json）</div>
+        <div class="row">
+          <el-select v-model="selectedEvalMethod" style="width: 240px" placeholder="选择方法">
+            <el-option
+              v-for="o in evalMethodOptions"
+              :key="o.internal"
+              :label="`${o.display}（${o.internal}）`"
+              :value="o.internal"
+            />
+          </el-select>
+          <el-tag type="warning" effect="plain" v-if="evalMethodOptions.find(o => o.internal===selectedEvalMethod)?.display==='combat-like'">
+            combat-like（非 strict ComBat）
+          </el-tag>
+        </div>
+        <pre class="jsondump jsondump--light" v-if="selectedEvalPca">{{ JSON.stringify(selectedEvalPca, null, 2).slice(0, 1800) }}{{ (JSON.stringify(selectedEvalPca).length > 1800) ? '\n…' : '' }}</pre>
+        <el-empty v-else description="暂无该方法 PCA JSON（请确认 evaluation 产物存在）" />
+      </div>
     </section>
 
     <section v-if="summary?.raw_merge_report" class="card-panel card-panel--flat">
@@ -252,5 +367,49 @@ const interpretation = computed(() => {
   border-radius: 8px;
   overflow: auto;
   max-height: 320px;
+}
+
+.jsondump--light {
+  background: #0b1220;
+  max-height: 360px;
+}
+
+.mb {
+  margin-bottom: 0.75rem;
+}
+
+.subhead {
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: var(--app-text);
+}
+
+.img-frame {
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  background: #fafafa;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.dl-split {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--app-border);
 }
 </style>

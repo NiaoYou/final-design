@@ -567,7 +567,12 @@ def run_preprocess_method_comparison_evaluation(
     per_method: Dict[str, Any] = {}
     table_rows: list[dict[str, Any]] = []
 
+    def _display_name(method_internal: str) -> str:
+        # 对外命名收紧：避免误解为标准 ComBat 已实现
+        return "combat-like" if method_internal.lower() == "combat" else method_internal
+
     for name, mat in aligned_mats.items():
+        display = _display_name(name)
         pca = _pca_2d_payload(mat, n_components=n_components)
         coords_2d = np.asarray(pca["coords"], dtype=float)
 
@@ -576,7 +581,9 @@ def run_preprocess_method_comparison_evaluation(
         centroid_dist = _mean_pairwise_centroid_distance(coords_2d, batch_labels)
 
         per_method[name] = {
-            "method": name,
+            "method": display,
+            "method_internal": name,
+            "display_name": display,
             "n_samples": int(mat.shape[0]),
             "n_features": int(mat.shape[1]),
             "pca": pca,
@@ -606,7 +613,8 @@ def run_preprocess_method_comparison_evaluation(
 
         table_rows.append(
             {
-                "method": name,
+                "method": display,
+                "method_internal": name,
                 "n_samples": int(mat.shape[0]),
                 "n_features": int(mat.shape[1]),
                 "silhouette_batch_id_pc12": sil_batch,
@@ -636,12 +644,17 @@ def run_preprocess_method_comparison_evaluation(
     report = {
         "schema_version": "evaluation_report_v1",
         "n_methods": int(len(per_method)),
+        # methods_order 为“内部 key 顺序”（便于程序稳定引用）；对外展示请用 methods_display_order / display_name
         "methods_order": sorted(per_method.keys()),
+        "methods_display_order": [_display_name(k) for k in sorted(per_method.keys())],
         "inputs": {
             "methods": sorted(per_method.keys()),
+            "methods_display_names": {k: _display_name(k) for k in sorted(per_method.keys())},
             "n_components": int(n_components),
             "before_method_for_plot": m_before,
             "after_method_for_plot": m_after,
+            "before_method_for_plot_display": _display_name(m_before),
+            "after_method_for_plot_display": _display_name(m_after),
         },
         "outputs": {
             "evaluation_report_json": "evaluation_report.json",
@@ -653,6 +666,7 @@ def run_preprocess_method_comparison_evaluation(
             "指标计算在 PC1–PC2 上完成（用于统一可视化与对比）。",
             "silhouette 会过滤样本数不足的类别（count<2）并在不满足条件时返回 null。",
             "batch_centroid_separation_pc12 为不同 batch 在 PC1–PC2 上的中心点平均两两距离（越大表示 batch 分离越明显）。",
+            "命名约定：对外展示中 'combat-like' 表示简化的按 batch 位置-尺度对齐方法，并非标准 strict ComBat（经验 Bayes）实现。",
         ],
     }
     report_path = output_dir / "evaluation_report.json"

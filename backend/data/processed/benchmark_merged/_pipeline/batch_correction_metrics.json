@@ -6,24 +6,24 @@
   },
   "pca_components": 2,
   "explained_variance_ratio_before_pc": [
-    0.22049970908978264,
-    0.04877495180900228
+    0.2204997090898069,
+    0.04877080172069085
   ],
   "explained_variance_ratio_after_pc": [
     0.5094559904034544,
-    0.05306087511030014
+    0.053060875365190045
   ],
-  "silhouette_batch_id_pc12_before": -0.14518157295073342,
-  "silhouette_batch_id_pc12_after": -0.03433598813834715,
-  "delta_silhouette_batch_id": 0.11084558481238627,
+  "silhouette_batch_id_pc12_before": -0.14606663281021315,
+  "silhouette_batch_id_pc12_after": -0.03433502607579657,
+  "delta_silhouette_batch_id": 0.11173160673441658,
   "interpretation_batch_silhouette": "在 PC1–PC2 上，batch_id 的 silhouette 越低通常表示 batch 间重叠越多（混合越好）。若校正后该值下降，通常表示 batch 分离减弱。",
-  "silhouette_group_label_pc12_before": -0.48113116479369417,
-  "silhouette_group_label_pc12_after": -0.4464639397941341,
-  "delta_silhouette_group_label": 0.03466722499956004,
+  "silhouette_group_label_pc12_before": -0.48130165224930477,
+  "silhouette_group_label_pc12_after": -0.4464635745466581,
+  "delta_silhouette_group_label": 0.034838077702646686,
   "interpretation_group_silhouette": "group_label 的 silhouette 大幅下降可能意味着生物学结构被削弱；轻微变化较常见。",
-  "batch_centroid_separation_pc12_before": 5.432442508540577,
-  "batch_centroid_separation_pc12_after": 1.813927710506574e-14,
-  "delta_batch_centroid_separation": -5.432442508540559,
+  "batch_centroid_separation_pc12_before": 5.379598555237724,
+  "batch_centroid_separation_pc12_after": 1.9001843353856166e-14,
+  "delta_batch_centroid_separation": -5.379598555237705,
   "heuristic_mixing_improved_by_centroid": true,
   "heuristic_mixing_improved_by_silhouette": false,
   "heuristic_mixing_improved": true,

@@ -2,10 +2,11 @@
 import { mergedDownloadUrl } from '@/api/benchmark'
 import { formatBytes } from '@/utils/format'
 
-defineProps<{
+const props = defineProps<{
   name: string
   purpose: string
   sizeBytes: number
+  href?: string
 }>()
 </script>
 
@@ -19,7 +20,7 @@ defineProps<{
     <el-button
       type="primary"
       tag="a"
-      :href="mergedDownloadUrl(name)"
+      :href="props.href ?? mergedDownloadUrl(name)"
       rel="noopener"
       download
     >

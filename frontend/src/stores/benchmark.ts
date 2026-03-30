@@ -4,6 +4,10 @@ import * as api from '@/api/benchmark'
 import type {
   BatchCorrectionMetrics,
   BatchCorrectionReport,
+  EvaluationFilesResponse,
+  EvaluationPcaPayload,
+  EvaluationSummary,
+  EvaluationTableResponse,
   MergedFilesResponse,
   MergedSummaryPayload,
   PcaAfterPayload,
@@ -15,6 +19,10 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
   const metrics = ref<BatchCorrectionMetrics | null>(null)
   const files = ref<MergedFilesResponse | null>(null)
   const pcaAfter = ref<PcaAfterPayload | null>(null)
+  const evaluationSummary = ref<EvaluationSummary | null>(null)
+  const evaluationTable = ref<EvaluationTableResponse | null>(null)
+  const evaluationPcas = ref<Record<string, EvaluationPcaPayload | null>>({})
+  const evaluationFiles = ref<EvaluationFilesResponse | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
   const loadedAt = ref(0)
@@ -24,21 +32,37 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
     error.value = null
     try {
       summary.value = await api.fetchMergedSummary()
-      const [rep, met, fil, pca] = await Promise.all([
+      const [rep, met, fil, pca, es, et, ef] = await Promise.all([
         api.fetchBatchCorrectionReport().catch(() => null),
         api.fetchBatchCorrectionMetrics().catch(() => null),
         api.fetchMergedFiles().catch(() => null),
         api.fetchPcaAfterJson().catch(() => null),
+        api.fetchEvaluationSummary().catch(() => null),
+        api.fetchEvaluationTable().catch(() => null),
+        api.fetchEvaluationFiles().catch(() => null),
       ])
       report.value = rep
       metrics.value = met
       files.value = fil
       pcaAfter.value = pca
+      evaluationSummary.value = es
+      evaluationTable.value = et
+      evaluationFiles.value = ef
       loadedAt.value = Date.now()
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
     } finally {
       loading.value = false
+    }
+  }
+
+  async function loadEvaluationPca(method: string) {
+    // method 可为 internal（combat）或 display（combat-like）；后端会做兼容映射
+    if (!method) return
+    try {
+      evaluationPcas.value[method] = await api.fetchEvaluationMethodPca(method)
+    } catch {
+      evaluationPcas.value[method] = null
     }
   }
 
@@ -48,9 +72,14 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
     metrics,
     files,
     pcaAfter,
+    evaluationSummary,
+    evaluationTable,
+    evaluationPcas,
+    evaluationFiles,
     loading,
     error,
     loadedAt,
     loadAll,
+    loadEvaluationPca,
   }
 })

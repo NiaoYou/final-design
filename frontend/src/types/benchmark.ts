@@ -57,3 +57,39 @@ export type PcaAfterPayload = {
   components?: unknown
   [key: string]: unknown
 }
+
+export type EvaluationSummary = {
+  available: boolean
+  schema_version?: string
+  methods_order: string[]
+  methods_display_order: string[]
+  methods_display_names: Record<string, string>
+  before_method_for_plot?: string
+  after_method_for_plot?: string
+  before_method_for_plot_display?: string
+  after_method_for_plot_display?: string
+  note?: string
+}
+
+export type EvaluationTableResponse = {
+  rows: Array<Record<string, string | null | undefined>>
+}
+
+export type EvaluationPcaPayload = {
+  method?: string
+  n_components?: number
+  explained_variance_ratio?: number[]
+  coords?: number[][]
+  sample_index?: string[]
+  [key: string]: unknown
+}
+
+export type EvaluationFilesResponse = {
+  files: Array<{
+    name: string
+    size_bytes: number
+    download_path: string
+    purpose: string
+  }>
+  download_base: string
+}

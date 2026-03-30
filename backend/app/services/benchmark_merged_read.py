@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import re
+import csv
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -248,3 +250,142 @@ def safe_resolve_download(name: str) -> Optional[Path]:
 def pca_plot_path() -> Optional[Path]:
     p = pipeline_dir() / "pca_before_vs_after_batch_correction.png"
     return p if p.is_file() else None
+
+
+# ==============================
+# evaluation（方法对比实验）只读
+# ==============================
+
+
+def evaluation_dir() -> Path:
+    return pipeline_dir() / "evaluation"
+
+
+def load_evaluation_report() -> Optional[Dict[str, Any]]:
+    return read_json(evaluation_dir() / "evaluation_report.json")
+
+
+def load_evaluation_table_rows() -> Optional[List[Dict[str, Any]]]:
+    """
+    读取 evaluation_table.csv 为行列表（字段均为字符串/可空）。
+    注意：这是“展示用只读接口”，不在后端做复杂类型推断。
+    """
+    p = evaluation_dir() / "evaluation_table.csv"
+    if not p.is_file():
+        return None
+    try:
+        with p.open("r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            return [dict(r) for r in reader]
+    except Exception:
+        return None
+
+
+def evaluation_pca_image_path() -> Optional[Path]:
+    p = evaluation_dir() / "pca_before_vs_after.png"
+    return p if p.is_file() else None
+
+
+_METHOD_SAFE_RE = re.compile(r"^[a-zA-Z0-9_\-]+$")
+
+
+# evaluation 下载清单（不影响 baseline DOWNLOAD_ALLOWLIST）
+EVALUATION_DOWNLOAD_ALLOWLIST = frozenset(
+    {
+        "evaluation_report.json",
+        "evaluation_table.csv",
+        "pca_before_vs_after.png",
+        "pca_mean.json",
+        "pca_median.json",
+        "pca_knn.json",
+        "pca_baseline.json",
+        "pca_combat.json",
+    }
+)
+
+EVALUATION_FILE_PURPOSE_ZH: Dict[str, str] = {
+    "evaluation_report.json": "方法对比实验总报告：包含各方法指标与 display_name（combat-like 为简化对齐方法，并非 strict ComBat）。",
+    "evaluation_table.csv": "方法对比表（每种方法一行）：silhouette 与 batch centroid distance 等。",
+    "pca_before_vs_after.png": "方法对比实验：before/after PCA 四宫格对比图。",
+    "pca_mean.json": "mean 填充后的 PCA 坐标与解释方差比（展示用）。",
+    "pca_median.json": "median 填充后的 PCA 坐标与解释方差比（展示用）。",
+    "pca_knn.json": "knn 填充后的 PCA 坐标与解释方差比（展示用）。",
+    "pca_baseline.json": "baseline 校正后的 PCA 坐标与解释方差比（展示用）。",
+    "pca_combat.json": "combat-like（简化对齐方法）PCA 坐标与解释方差比；不代表 strict ComBat 已实现。",
+}
+
+
+def list_evaluation_downloadable_files() -> List[Dict[str, Any]]:
+    edir = evaluation_dir()
+    items: List[Dict[str, Any]] = []
+    for name in sorted(EVALUATION_DOWNLOAD_ALLOWLIST):
+        path = edir / name
+        if path.is_file():
+            items.append(
+                {
+                    "name": name,
+                    "size_bytes": path.stat().st_size,
+                    "download_path": name,
+                    "purpose": EVALUATION_FILE_PURPOSE_ZH.get(name, "evaluation 产物文件。"),
+                }
+            )
+    return items
+
+
+def safe_resolve_evaluation_download(name: str) -> Optional[Path]:
+    if name not in EVALUATION_DOWNLOAD_ALLOWLIST:
+        return None
+    path = evaluation_dir() / name
+    try:
+        rp = path.resolve()
+    except OSError:
+        return None
+    if not rp.is_file():
+        return None
+    allowed_parent = evaluation_dir().resolve()
+    if rp.parent.resolve() != allowed_parent:
+        return None
+    return path
+
+
+def _normalize_eval_method(method: str, report: Optional[Dict[str, Any]]) -> Optional[str]:
+    """
+    兼容前端传入 display_name，例如 combat-like → combat（内部文件名）。
+    同时做最小安全过滤，避免路径穿越。
+    """
+    m = (method or "").strip()
+    if m == "combat-like":
+        m = "combat"
+    if not m or not _METHOD_SAFE_RE.match(m):
+        return None
+    if report:
+        methods = set((report.get("methods_order") or []) + list((report.get("methods") or {}).keys()))
+        if methods and m not in methods:
+            return None
+    return m
+
+
+def load_evaluation_method_pca(method: str) -> Optional[Dict[str, Any]]:
+    rep = load_evaluation_report()
+    m = _normalize_eval_method(method, rep)
+    if m is None:
+        return None
+    return read_json(evaluation_dir() / f"pca_{m}.json")
+
+
+def build_evaluation_summary_payload() -> Optional[Dict[str, Any]]:
+    rep = load_evaluation_report()
+    if not rep:
+        return None
+    return {
+        "available": True,
+        "schema_version": rep.get("schema_version"),
+        "methods_order": rep.get("methods_order") or [],
+        "methods_display_order": rep.get("methods_display_order") or [],
+        "methods_display_names": (rep.get("inputs") or {}).get("methods_display_names") or {},
+        "before_method_for_plot": (rep.get("inputs") or {}).get("before_method_for_plot"),
+        "after_method_for_plot": (rep.get("inputs") or {}).get("after_method_for_plot"),
+        "before_method_for_plot_display": (rep.get("inputs") or {}).get("before_method_for_plot_display"),
+        "after_method_for_plot_display": (rep.get("inputs") or {}).get("after_method_for_plot_display"),
+        "note": "方法对比实验为展示用评估产物；其中 combat-like 为简化对齐方法，并非 strict ComBat（经验 Bayes）实现。",
+    }

@@ -1,7 +1,7 @@
 {
   "explained_variance_ratio_pc12": [
-    0.22049970908980848,
-    0.04877553342541298
+    0.22049970908980873,
+    0.04877475505740851
   ],
   "plot_path": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\pca_pre_correction_batch_vs_group.png",
   "coords_path": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\pca_pre_correction_coords.json"

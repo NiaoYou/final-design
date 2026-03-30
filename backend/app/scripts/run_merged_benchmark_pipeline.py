@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
+import numpy as np
 import pandas as pd
 
 from app.core.config import Settings
@@ -86,6 +87,36 @@ def main() -> None:
     imputed = pd.read_csv(Path(imputation_out["imputed_matrix_path"]), index_col=0)
     imputed.index = imputed.index.astype(str)
 
+    # 仅用于“方法对比评估”的 combat-like 校正（不影响 baseline 逻辑，也不改主链路产物）
+    # 说明：这里是“按 batch 做 per-feature 位置-尺度对齐到全局”的简化实现，用于对比评估；
+    # 严格 ComBat（经验 Bayes 语义）仍未在本仓库实现。
+    def _combat_like_sample_by_feature(X_df: pd.DataFrame, sm: pd.DataFrame) -> pd.DataFrame:
+        if "merged_sample_id" not in sm.columns or "batch_id" not in sm.columns:
+            raise ValueError("combat-like: sample_meta 需要 merged_sample_id 与 batch_id")
+        meta = sm.set_index("merged_sample_id").loc[X_df.index.astype(str)]
+        batch = meta["batch_id"].astype(str).to_numpy()
+
+        X = X_df.apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
+        X = np.nan_to_num(X, nan=0.0)
+
+        overall_mean = np.mean(X, axis=0, keepdims=True)
+        overall_std = np.std(X, axis=0, keepdims=True, ddof=0)
+        overall_std = np.where(overall_std == 0, 1.0, overall_std)
+
+        corrected = X.copy()
+        for b in np.unique(batch):
+            idx = batch == b
+            if idx.sum() == 0:
+                continue
+            bm = np.mean(X[idx, :], axis=0, keepdims=True)
+            bs = np.std(X[idx, :], axis=0, keepdims=True, ddof=0)
+            bs = np.where(bs == 0, 1.0, bs)
+            corrected[idx, :] = (X[idx, :] - bm) / bs * overall_std + overall_mean
+
+        return pd.DataFrame(corrected, index=X_df.index, columns=X_df.columns)
+
+    combat_df = _combat_like_sample_by_feature(imputed, sample_meta)
+
     # 评估模块需要 mean/median/knn/baseline 四种方法统一对比：
     # - mean/median/knn：对同一 preprocessed 矩阵分别填充（写入各自子目录，避免覆盖主链路产物）
     # - baseline：使用 merged baseline 批次校正产物 batch_corrected_sample_by_feature.csv（由下方 baseline pipeline 生成）
@@ -140,6 +171,7 @@ def main() -> None:
         "mean": imputed_by_method["mean"],
         "median": imputed_by_method["median"],
         "knn": imputed_by_method["knn"],
+        "combat": combat_df,
         "baseline": baseline_df,
     }
     evaluation_compare_out = run_preprocess_method_comparison_evaluation(
