@@ -1,0 +1,798 @@
+{
+  "scan_results": [
+    {
+      "file_name": "Batch1_0108 DATA.xlsx",
+      "detected_sheets": [
+        "annotation",
+        "injections",
+        "intensities",
+        "ions"
+      ],
+      "has_intensities": true,
+      "has_injections": true,
+      "is_valid": true
+    },
+    {
+      "file_name": "Batch2_0110 DATA.xlsx",
+      "detected_sheets": [
+        "annotation",
+        "injections",
+        "intensities",
+        "ions"
+      ],
+      "has_intensities": true,
+      "has_injections": true,
+      "is_valid": true
+    },
+    {
+      "file_name": "Batch3_0124 DATA.xlsx",
+      "detected_sheets": [
+        "annotation",
+        "injections",
+        "intensities",
+        "ions"
+      ],
+      "has_intensities": true,
+      "has_injections": true,
+      "is_valid": true
+    },
+    {
+      "file_name": "Batch4_0219 DATA.xlsx",
+      "detected_sheets": [
+        "annotation",
+        "injections",
+        "intensities",
+        "ions"
+      ],
+      "has_intensities": true,
+      "has_injections": true,
+      "is_valid": true
+    },
+    {
+      "file_name": "Batch5_0221 DATA.xlsx",
+      "detected_sheets": [
+        "annotation",
+        "injections",
+        "intensities",
+        "ions"
+      ],
+      "has_intensities": true,
+      "has_injections": true,
+      "is_valid": true
+    },
+    {
+      "file_name": "Batch6_0304 DATA.xlsx",
+      "detected_sheets": [
+        "annotation",
+        "injections",
+        "intensities",
+        "ions"
+      ],
+      "has_intensities": true,
+      "has_injections": true,
+      "is_valid": true
+    },
+    {
+      "file_name": "Batch7_0306 DATA.xlsx",
+      "detected_sheets": [
+        "annotation",
+        "injections",
+        "intensities",
+        "ions"
+      ],
+      "has_intensities": true,
+      "has_injections": true,
+      "is_valid": true
+    }
+  ],
+  "processed_files": [
+    {
+      "file_name": "Batch1_0108 DATA.xlsx",
+      "dataset_name": "Batch1_0108 DATA",
+      "processed_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\Batch1_0108 DATA",
+      "data_check": {
+        "file_name": "Batch1_0108 DATA.xlsx",
+        "detected_sheets": [
+          "annotation",
+          "injections",
+          "intensities",
+          "ions"
+        ],
+        "intensities_shape": [
+          1235,
+          247
+        ],
+        "injections_shape": [
+          726,
+          6
+        ],
+        "ions_shape": [
+          1235,
+          5
+        ],
+        "annotation_shape": [
+          1639,
+          10
+        ],
+        "feature_count": 1235,
+        "sample_count": 245,
+        "matched_sample_count": 245,
+        "unmatched_sample_columns": [],
+        "label_unique_values": [
+          "P1_AA_0001",
+          "P1_AA_0002",
+          "P1_AA_0004",
+          "P1_AA_0008",
+          "P1_AA_0016",
+          "P1_AA_0032",
+          "P1_AA_0064",
+          "P1_AA_0128",
+          "P1_AA_0256",
+          "P1_AA_1024",
+          "P1_AA_2048",
+          "P1_Bio_0002",
+          "P1_Bio_0008",
+          "P1_Bio_0016",
+          "P1_Bio_0064",
+          "P1_Bio_0128",
+          "P1_Bio_0256",
+          "P1_Bio_0512",
+          "P1_FA_0001",
+          "P1_FA_0002",
+          "P1_FA_0004",
+          "P1_FA_0008",
+          "P1_FA_0064",
+          "P1_FA_0256",
+          "P1_FA_0512",
+          "P1_FA_1024",
+          "P1_Full_0001",
+          "P1_Full_0004",
+          "P1_Full_0008",
+          "P1_Full_0016",
+          "P1_Full_0032",
+          "P1_Full_0512",
+          "P1_Full_1024",
+          "P1_Full_2048",
+          "P1_PP_0001",
+          "P1_PP_0004",
+          "P1_PP_0032",
+          "P1_PP_0256",
+          "P1_PP_0512",
+          "P1_PP_2048",
+          "P1_SRM_0002",
+          "P1_SRM_0004",
+          "P1_SRM_0008",
+          "P1_SRM_0032",
+          "P1_SRM_0064",
+          "P1_SRM_0128",
+          "P1_SRM_1024",
+          "P1_SRM_2048",
+          "burnin",
+          "water"
+        ],
+        "sample_type_counts": {
+          "formal_or_unknown": 120,
+          "water": 96,
+          "srm": 24,
+          "burnin": 5
+        },
+        "missing_value_ratio": 0.0,
+        "can_run_preprocess": true,
+        "can_run_imputation": true,
+        "can_run_batch_correction": false,
+        "can_run_downstream_analysis": true,
+        "notes": [
+          "batch_id 目前仅用文件名（每个 xlsx 一个 batch），因此单 batch 内无法完成真实批次效应校正。"
+        ]
+      }
+    },
+    {
+      "file_name": "Batch2_0110 DATA.xlsx",
+      "dataset_name": "Batch2_0110 DATA",
+      "processed_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\Batch2_0110 DATA",
+      "data_check": {
+        "file_name": "Batch2_0110 DATA.xlsx",
+        "detected_sheets": [
+          "annotation",
+          "injections",
+          "intensities",
+          "ions"
+        ],
+        "intensities_shape": [
+          1186,
+          247
+        ],
+        "injections_shape": [
+          695,
+          6
+        ],
+        "ions_shape": [
+          1186,
+          5
+        ],
+        "annotation_shape": [
+          1579,
+          10
+        ],
+        "feature_count": 1186,
+        "sample_count": 245,
+        "matched_sample_count": 245,
+        "unmatched_sample_columns": [],
+        "label_unique_values": [
+          "P1_AA_0001",
+          "P1_AA_0002",
+          "P1_AA_0008",
+          "P1_AA_0032",
+          "P1_AA_0064",
+          "P1_AA_0128",
+          "P1_AA_0512",
+          "P1_Bio_0001",
+          "P1_Bio_0002",
+          "P1_Bio_0004",
+          "P1_Bio_0008",
+          "P1_Bio_0032",
+          "P1_Bio_0064",
+          "P1_Bio_0128",
+          "P1_Bio_1024",
+          "P1_Bio_2048",
+          "P1_FA_0001",
+          "P1_FA_0002",
+          "P1_FA_0004",
+          "P1_FA_0008",
+          "P1_FA_0016",
+          "P1_FA_0032",
+          "P1_FA_0256",
+          "P1_FA_0512",
+          "P1_FA_2048",
+          "P1_Full_0001",
+          "P1_Full_0004",
+          "P1_Full_0008",
+          "P1_Full_0032",
+          "P1_Full_0064",
+          "P1_Full_0128",
+          "P1_Full_0256",
+          "P1_Full_0512",
+          "P1_PP_0001",
+          "P1_PP_0008",
+          "P1_PP_0016",
+          "P1_PP_0032",
+          "P1_PP_0064",
+          "P1_PP_0128",
+          "P1_PP_0256",
+          "P1_PP_0512",
+          "P1_PP_2048",
+          "P1_SRM_0001",
+          "P1_SRM_0002",
+          "P1_SRM_0004",
+          "P1_SRM_0008",
+          "P1_SRM_0016",
+          "P1_SRM_0032",
+          "P1_SRM_0064",
+          "P1_SRM_0128",
+          "P1_SRM_1024",
+          "P1_SRM_2048",
+          "burnin",
+          "water"
+        ],
+        "sample_type_counts": {
+          "formal_or_unknown": 126,
+          "water": 84,
+          "srm": 30,
+          "burnin": 5
+        },
+        "missing_value_ratio": 0.0,
+        "can_run_preprocess": true,
+        "can_run_imputation": true,
+        "can_run_batch_correction": false,
+        "can_run_downstream_analysis": true,
+        "notes": [
+          "batch_id 目前仅用文件名（每个 xlsx 一个 batch），因此单 batch 内无法完成真实批次效应校正。"
+        ]
+      }
+    },
+    {
+      "file_name": "Batch3_0124 DATA.xlsx",
+      "dataset_name": "Batch3_0124 DATA",
+      "processed_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\Batch3_0124 DATA",
+      "data_check": {
+        "file_name": "Batch3_0124 DATA.xlsx",
+        "detected_sheets": [
+          "annotation",
+          "injections",
+          "intensities",
+          "ions"
+        ],
+        "intensities_shape": [
+          1183,
+          247
+        ],
+        "injections_shape": [
+          689,
+          6
+        ],
+        "ions_shape": [
+          1183,
+          5
+        ],
+        "annotation_shape": [
+          1583,
+          10
+        ],
+        "feature_count": 1183,
+        "sample_count": 245,
+        "matched_sample_count": 245,
+        "unmatched_sample_columns": [],
+        "label_unique_values": [
+          "P1_AA_0001",
+          "P1_AA_0002",
+          "P1_AA_0004",
+          "P1_AA_0032",
+          "P1_AA_0064",
+          "P1_AA_0512",
+          "P1_AA_1024",
+          "P1_Bio_0001",
+          "P1_Bio_0002",
+          "P1_Bio_0008",
+          "P1_Bio_0016",
+          "P1_Bio_0032",
+          "P1_Bio_0064",
+          "P1_Bio_0128",
+          "P1_Bio_0512",
+          "P1_Bio_1024",
+          "P1_Bio_2048",
+          "P1_FA_0001",
+          "P1_FA_0002",
+          "P1_FA_0008",
+          "P1_FA_0016",
+          "P1_FA_0128",
+          "P1_FA_2048",
+          "P1_Full_0004",
+          "P1_Full_0008",
+          "P1_Full_0032",
+          "P1_Full_0064",
+          "P1_Full_0128",
+          "P1_Full_0512",
+          "P1_Full_1024",
+          "P1_Full_2048",
+          "P1_PP_0002",
+          "P1_PP_0004",
+          "P1_PP_0008",
+          "P1_PP_0032",
+          "P1_PP_0256",
+          "P1_PP_0512",
+          "P1_PP_1024",
+          "P1_PP_2048",
+          "P1_SRM_0001",
+          "P1_SRM_0002",
+          "P1_SRM_0004",
+          "P1_SRM_0008",
+          "P1_SRM_0016",
+          "P1_SRM_0032",
+          "P1_SRM_0064",
+          "P1_SRM_0512",
+          "P1_SRM_2048",
+          "burnin",
+          "water"
+        ],
+        "sample_type_counts": {
+          "formal_or_unknown": 117,
+          "water": 96,
+          "srm": 27,
+          "burnin": 5
+        },
+        "missing_value_ratio": 0.0,
+        "can_run_preprocess": true,
+        "can_run_imputation": true,
+        "can_run_batch_correction": false,
+        "can_run_downstream_analysis": true,
+        "notes": [
+          "batch_id 目前仅用文件名（每个 xlsx 一个 batch），因此单 batch 内无法完成真实批次效应校正。"
+        ]
+      }
+    },
+    {
+      "file_name": "Batch4_0219 DATA.xlsx",
+      "dataset_name": "Batch4_0219 DATA",
+      "processed_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\Batch4_0219 DATA",
+      "data_check": {
+        "file_name": "Batch4_0219 DATA.xlsx",
+        "detected_sheets": [
+          "annotation",
+          "injections",
+          "intensities",
+          "ions"
+        ],
+        "intensities_shape": [
+          1194,
+          247
+        ],
+        "injections_shape": [
+          688,
+          6
+        ],
+        "ions_shape": [
+          1194,
+          5
+        ],
+        "annotation_shape": [
+          1594,
+          10
+        ],
+        "feature_count": 1194,
+        "sample_count": 245,
+        "matched_sample_count": 245,
+        "unmatched_sample_columns": [],
+        "label_unique_values": [
+          "P1_AA_0002",
+          "P1_AA_0004",
+          "P1_AA_0008",
+          "P1_AA_0016",
+          "P1_AA_0064",
+          "P1_AA_0128",
+          "P1_AA_0256",
+          "P1_AA_0512",
+          "P1_AA_1024",
+          "P1_Bio_0001",
+          "P1_Bio_0002",
+          "P1_Bio_0004",
+          "P1_Bio_0008",
+          "P1_Bio_0016",
+          "P1_Bio_0032",
+          "P1_Bio_0064",
+          "P1_Bio_0128",
+          "P1_Bio_0512",
+          "P1_Bio_1024",
+          "P1_FA_0001",
+          "P1_FA_0002",
+          "P1_FA_0004",
+          "P1_FA_0008",
+          "P1_FA_0016",
+          "P1_FA_0032",
+          "P1_FA_0128",
+          "P1_FA_0256",
+          "P1_FA_0512",
+          "P1_FA_1024",
+          "P1_Full_0002",
+          "P1_Full_0004",
+          "P1_Full_0032",
+          "P1_Full_0064",
+          "P1_Full_0256",
+          "P1_Full_1024",
+          "P1_Full_2048",
+          "P1_PP_0002",
+          "P1_PP_0008",
+          "P1_PP_0016",
+          "P1_PP_0032",
+          "P1_PP_0064",
+          "P1_PP_0128",
+          "P1_PP_0512",
+          "P1_PP_2048",
+          "P1_SRM_0004",
+          "P1_SRM_0016",
+          "P1_SRM_0032",
+          "P1_SRM_0064",
+          "P1_SRM_0512",
+          "P1_SRM_2048",
+          "burnin",
+          "water"
+        ],
+        "sample_type_counts": {
+          "formal_or_unknown": 131,
+          "water": 91,
+          "srm": 18,
+          "burnin": 5
+        },
+        "missing_value_ratio": 0.0,
+        "can_run_preprocess": true,
+        "can_run_imputation": true,
+        "can_run_batch_correction": false,
+        "can_run_downstream_analysis": true,
+        "notes": [
+          "batch_id 目前仅用文件名（每个 xlsx 一个 batch），因此单 batch 内无法完成真实批次效应校正。"
+        ]
+      }
+    },
+    {
+      "file_name": "Batch5_0221 DATA.xlsx",
+      "dataset_name": "Batch5_0221 DATA",
+      "processed_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\Batch5_0221 DATA",
+      "data_check": {
+        "file_name": "Batch5_0221 DATA.xlsx",
+        "detected_sheets": [
+          "annotation",
+          "injections",
+          "intensities",
+          "ions"
+        ],
+        "intensities_shape": [
+          1224,
+          247
+        ],
+        "injections_shape": [
+          695,
+          6
+        ],
+        "ions_shape": [
+          1224,
+          5
+        ],
+        "annotation_shape": [
+          1638,
+          9
+        ],
+        "feature_count": 1224,
+        "sample_count": 245,
+        "matched_sample_count": 245,
+        "unmatched_sample_columns": [],
+        "label_unique_values": [
+          "P1_AA_0001",
+          "P1_AA_0004",
+          "P1_AA_0064",
+          "P1_AA_0256",
+          "P1_AA_0512",
+          "P1_AA_1024",
+          "P1_Bio_0001",
+          "P1_Bio_0002",
+          "P1_Bio_0004",
+          "P1_Bio_0008",
+          "P1_Bio_0016",
+          "P1_Bio_0128",
+          "P1_Bio_0256",
+          "P1_Bio_0512",
+          "P1_Bio_1024",
+          "P1_Bio_2048",
+          "P1_FA_0001",
+          "P1_FA_0002",
+          "P1_FA_0008",
+          "P1_FA_0016",
+          "P1_FA_0032",
+          "P1_FA_0064",
+          "P1_FA_0128",
+          "P1_FA_0512",
+          "P1_FA_1024",
+          "P1_Full_0001",
+          "P1_Full_0002",
+          "P1_Full_0016",
+          "P1_Full_0032",
+          "P1_Full_0064",
+          "P1_Full_0256",
+          "P1_Full_0512",
+          "P1_Full_1024",
+          "P1_PP_0002",
+          "P1_PP_0016",
+          "P1_PP_0032",
+          "P1_PP_0064",
+          "P1_PP_0128",
+          "P1_PP_0256",
+          "P1_PP_1024",
+          "P1_SRM_0001",
+          "P1_SRM_0004",
+          "P1_SRM_0016",
+          "P1_SRM_0064",
+          "P1_SRM_0128",
+          "P1_SRM_0256",
+          "P1_SRM_0512",
+          "P1_SRM_1024",
+          "burnin",
+          "water"
+        ],
+        "sample_type_counts": {
+          "formal_or_unknown": 119,
+          "water": 97,
+          "srm": 24,
+          "burnin": 5
+        },
+        "missing_value_ratio": 0.0,
+        "can_run_preprocess": true,
+        "can_run_imputation": true,
+        "can_run_batch_correction": false,
+        "can_run_downstream_analysis": true,
+        "notes": [
+          "batch_id 目前仅用文件名（每个 xlsx 一个 batch），因此单 batch 内无法完成真实批次效应校正。"
+        ]
+      }
+    },
+    {
+      "file_name": "Batch6_0304 DATA.xlsx",
+      "dataset_name": "Batch6_0304 DATA",
+      "processed_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\Batch6_0304 DATA",
+      "data_check": {
+        "file_name": "Batch6_0304 DATA.xlsx",
+        "detected_sheets": [
+          "annotation",
+          "injections",
+          "intensities",
+          "ions"
+        ],
+        "intensities_shape": [
+          1180,
+          247
+        ],
+        "injections_shape": [
+          723,
+          6
+        ],
+        "ions_shape": [
+          1180,
+          5
+        ],
+        "annotation_shape": [
+          1547,
+          9
+        ],
+        "feature_count": 1180,
+        "sample_count": 245,
+        "matched_sample_count": 245,
+        "unmatched_sample_columns": [],
+        "label_unique_values": [
+          "P1_AA_0001",
+          "P1_AA_0004",
+          "P1_AA_0008",
+          "P1_AA_0032",
+          "P1_AA_0128",
+          "P1_AA_1024",
+          "P1_AA_2048",
+          "P1_Bio_0004",
+          "P1_Bio_0016",
+          "P1_Bio_0064",
+          "P1_Bio_0128",
+          "P1_Bio_0256",
+          "P1_Bio_0512",
+          "P1_Bio_1024",
+          "P1_FA_0001",
+          "P1_FA_0008",
+          "P1_FA_0064",
+          "P1_FA_0128",
+          "P1_FA_0256",
+          "P1_FA_0512",
+          "P1_FA_1024",
+          "P1_FA_2048",
+          "P1_Full_0001",
+          "P1_Full_0002",
+          "P1_Full_0004",
+          "P1_Full_0016",
+          "P1_Full_0032",
+          "P1_Full_0064",
+          "P1_Full_0256",
+          "P1_Full_0512",
+          "P1_Full_1024",
+          "P1_PP_0001",
+          "P1_PP_0002",
+          "P1_PP_0004",
+          "P1_PP_0032",
+          "P1_PP_0256",
+          "P1_PP_1024",
+          "P1_SRM_0001",
+          "P1_SRM_0002",
+          "P1_SRM_0004",
+          "P1_SRM_0008",
+          "P1_SRM_0016",
+          "P1_SRM_0032",
+          "P1_SRM_0128",
+          "P1_SRM_2048",
+          "burnin",
+          "water"
+        ],
+        "sample_type_counts": {
+          "formal_or_unknown": 111,
+          "water": 105,
+          "srm": 24,
+          "burnin": 5
+        },
+        "missing_value_ratio": 0.0,
+        "can_run_preprocess": true,
+        "can_run_imputation": true,
+        "can_run_batch_correction": false,
+        "can_run_downstream_analysis": true,
+        "notes": [
+          "batch_id 目前仅用文件名（每个 xlsx 一个 batch），因此单 batch 内无法完成真实批次效应校正。"
+        ]
+      }
+    },
+    {
+      "file_name": "Batch7_0306 DATA.xlsx",
+      "dataset_name": "Batch7_0306 DATA",
+      "processed_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\Batch7_0306 DATA",
+      "data_check": {
+        "file_name": "Batch7_0306 DATA.xlsx",
+        "detected_sheets": [
+          "annotation",
+          "injections",
+          "intensities",
+          "ions"
+        ],
+        "intensities_shape": [
+          1184,
+          247
+        ],
+        "injections_shape": [
+          653,
+          6
+        ],
+        "ions_shape": [
+          1184,
+          5
+        ],
+        "annotation_shape": [
+          1555,
+          10
+        ],
+        "feature_count": 1184,
+        "sample_count": 245,
+        "matched_sample_count": 245,
+        "unmatched_sample_columns": [],
+        "label_unique_values": [
+          "P1_AA_0001",
+          "P1_AA_0008",
+          "P1_AA_0016",
+          "P1_AA_0064",
+          "P1_AA_0128",
+          "P1_AA_0256",
+          "P1_AA_1024",
+          "P1_Bio_0001",
+          "P1_Bio_0002",
+          "P1_Bio_0008",
+          "P1_Bio_0016",
+          "P1_Bio_0032",
+          "P1_Bio_0064",
+          "P1_Bio_0128",
+          "P1_Bio_0256",
+          "P1_Bio_0512",
+          "P1_Bio_1024",
+          "P1_Bio_2048",
+          "P1_FA_0001",
+          "P1_FA_0002",
+          "P1_FA_0004",
+          "P1_FA_0032",
+          "P1_FA_0064",
+          "P1_FA_0128",
+          "P1_FA_0256",
+          "P1_FA_1024",
+          "P1_Full_0001",
+          "P1_Full_0002",
+          "P1_Full_0008",
+          "P1_Full_0064",
+          "P1_Full_0256",
+          "P1_Full_0512",
+          "P1_Full_1024",
+          "P1_PP_0001",
+          "P1_PP_0002",
+          "P1_PP_0004",
+          "P1_PP_0008",
+          "P1_PP_0016",
+          "P1_PP_0032",
+          "P1_PP_0064",
+          "P1_PP_0128",
+          "P1_PP_0512",
+          "P1_SRM_0001",
+          "P1_SRM_0002",
+          "P1_SRM_0008",
+          "P1_SRM_0016",
+          "P1_SRM_0032",
+          "P1_SRM_0128",
+          "P1_SRM_0256",
+          "P1_SRM_0512",
+          "P1_SRM_1024",
+          "P1_SRM_2048",
+          "burnin",
+          "water"
+        ],
+        "sample_type_counts": {
+          "formal_or_unknown": 126,
+          "water": 84,
+          "srm": 30,
+          "burnin": 5
+        },
+        "missing_value_ratio": 0.0,
+        "can_run_preprocess": true,
+        "can_run_imputation": true,
+        "can_run_batch_correction": false,
+        "can_run_downstream_analysis": true,
+        "notes": [
+          "batch_id 目前仅用文件名（每个 xlsx 一个 batch），因此单 batch 内无法完成真实批次效应校正。"
+        ]
+      }
+    }
+  ],
+  "failed_files": []
+}

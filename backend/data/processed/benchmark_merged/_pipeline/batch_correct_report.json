@@ -1,0 +1,41 @@
+{
+  "status": "not_implemented",
+  "reason": "已检测到多个 batch_id，具备跨批次校正的数据结构；但本仓库尚未实现严格 ComBat（及协变量/设计矩阵等完整流程），因此不会生成已 ComBat 校正的输出矩阵。",
+  "batch_id_count": 7,
+  "batch_ids": [
+    "Batch1_0108 DATA",
+    "Batch2_0110 DATA",
+    "Batch3_0124 DATA",
+    "Batch4_0219 DATA",
+    "Batch5_0221 DATA",
+    "Batch6_0304 DATA",
+    "Batch7_0306 DATA"
+  ],
+  "method_requested": "combat",
+  "batch_correction_readiness": {
+    "n_batches": 7,
+    "batch_ids": [
+      "Batch1_0108 DATA",
+      "Batch2_0110 DATA",
+      "Batch3_0124 DATA",
+      "Batch4_0219 DATA",
+      "Batch5_0221 DATA",
+      "Batch6_0304 DATA",
+      "Batch7_0306 DATA"
+    ],
+    "samples_per_batch": {
+      "Batch1_0108 DATA": 245,
+      "Batch2_0110 DATA": 245,
+      "Batch3_0124 DATA": 245,
+      "Batch4_0219 DATA": 245,
+      "Batch5_0221 DATA": 245,
+      "Batch6_0304 DATA": 245,
+      "Batch7_0306 DATA": 245
+    },
+    "min_samples_per_batch": 245,
+    "strict_combat_implemented_in_repo": false,
+    "can_run_real_combat_from_data_alone": true,
+    "blockers": []
+  },
+  "strict_combat_implemented": false
+}

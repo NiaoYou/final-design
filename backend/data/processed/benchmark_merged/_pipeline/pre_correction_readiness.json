@@ -1,0 +1,28 @@
+{
+  "strict_combat_implemented_in_repo": false,
+  "n_batches": 7,
+  "batch_ids": [
+    "Batch1_0108 DATA",
+    "Batch2_0110 DATA",
+    "Batch3_0124 DATA",
+    "Batch4_0219 DATA",
+    "Batch5_0221 DATA",
+    "Batch6_0304 DATA",
+    "Batch7_0306 DATA"
+  ],
+  "samples_per_batch": {
+    "Batch1_0108 DATA": 245,
+    "Batch2_0110 DATA": 245,
+    "Batch3_0124 DATA": 245,
+    "Batch4_0219 DATA": 245,
+    "Batch5_0221 DATA": 245,
+    "Batch6_0304 DATA": 245,
+    "Batch7_0306 DATA": 245
+  },
+  "min_samples_per_batch": 245,
+  "can_run_real_combat_from_data_alone": true,
+  "notes": [
+    "本评估图为校正前（pre-correction）PCA，用于观察 batch 与生物学分组在 PC 空间中的分布。",
+    "严格 ComBat 仍未实现：即使 readiness 为真，也需要后续接入算法与实验设计矩阵。"
+  ]
+}

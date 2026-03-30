@@ -1,0 +1,50 @@
+{
+  "inputs": {
+    "benchmark_merged_dir": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged",
+    "merged_sample_meta_csv": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\merged_sample_meta.csv",
+    "merged_feature_meta_csv": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\merged_feature_meta.csv",
+    "pipeline_matrix_csv": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\imputed_sample_by_feature.csv"
+  },
+  "strict_combat": {
+    "status": "not_implemented",
+    "missing_for_strict_combat": [
+      "empirical Bayes shrinkage（ComBat 核心）",
+      "显式生物学设计矩阵 / 协变量（如疾病、性别等）建模",
+      "与 sva::ComBat 或 neuroCombat 等参考实现一致的参数与数值对齐验证",
+      "可选：对已知 QC / 非生物学样本的显式处理策略"
+    ]
+  },
+  "baseline_batch_correction": {
+    "status": "implemented",
+    "method_id": "per_feature_batch_location_scale_baseline",
+    "method_display_name_en": "Per-Feature Batch Location–Scale Alignment to Global (Baseline)",
+    "method_display_name_zh": "逐特征-逐批次位置尺度对齐到全局分布（基线批次校正）",
+    "what_it_is": "对每个代谢特征（列），在每个 batch 内估计均值与标准差，将该 batch 内样本映射到“全局均值/全局标准差”尺度上，从而使各 batch 在该特征上的边缘分布更接近。",
+    "what_it_is_not": [
+      "不是 strict ComBat / empirical Bayes ComBat",
+      "不是 removeBatchEffect(limma) 的完整等价物",
+      "不是基于线性混合模型或深度学习的批次校正"
+    ],
+    "assumptions": [
+      "batch 效应主要体现为逐特征的 location / scale 差异",
+      "各 batch 内样本量足以稳定估计 batch 内方差（本数据每 batch 245）"
+    ],
+    "limitations": [
+      "忽略生物学协变量：若分组与批次相关，可能削弱真实生物学信号",
+      "独立逐特征处理，不考虑特征间相关结构",
+      "对非高斯、重尾或强非线性 batch 效应可能不足"
+    ],
+    "implementation": {
+      "module": "app.algorithms.batch_correction.baseline_location_scale_sample",
+      "function": "per_feature_batch_location_scale_baseline",
+      "input_matrix_file": "imputed_sample_by_feature.csv",
+      "eps_std_floor": 1e-08
+    }
+  },
+  "outputs": {
+    "batch_corrected_sample_by_feature_csv": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\batch_corrected_sample_by_feature.csv",
+    "batch_correction_metrics_json": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\batch_correction_metrics.json",
+    "pca_before_vs_after_png": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\pca_before_vs_after_batch_correction.png",
+    "pca_after_correction_json": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\pca_after_correction.json"
+  }
+}

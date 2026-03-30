@@ -1,0 +1,8 @@
+{
+  "status": "skipped",
+  "reason": "batch_id 只有 1 个（Batch5_0221 DATA），不足以进行批次效应校正。",
+  "batch_id_count": 1,
+  "batch_ids": [
+    "Batch5_0221 DATA"
+  ]
+}

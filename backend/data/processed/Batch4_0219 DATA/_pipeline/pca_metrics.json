@@ -1,0 +1,15 @@
+{
+  "n_components": 2,
+  "explained_variance_ratio_before": [
+    0.5975717860616604,
+    0.13329626560728486
+  ],
+  "explained_variance_ratio_after": [
+    0.5975717860616604,
+    0.13329626560728486
+  ],
+  "explained_variance_total_before": 0.7308680516689452,
+  "explained_variance_total_after": 0.7308680516689452,
+  "color_by": "group_label",
+  "placeholder_after_used": true
+}

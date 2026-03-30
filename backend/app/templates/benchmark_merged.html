@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>代谢组学数据处理 · Merged 分析仪表盘</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --text: #1c2333;
+      --muted: #5c6578;
+      --accent: #1565c0;
+      --accent-soft: #e3f2fd;
+      --accent-dark: #0d47a1;
+      --border: #e2e8f0;
+      --shadow: 0 4px 24px rgba(28, 35, 51, 0.07);
+      --shadow-sm: 0 2px 8px rgba(28, 35, 51, 0.06);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font: "Segoe UI", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* —— 顶栏导航 —— */
+    .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0.65rem 1.5rem;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .topnav .brand {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .topnav .brand span { color: var(--accent); font-weight: 600; }
+    .topnav nav { display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; }
+    .topnav nav a {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .topnav nav a:hover { color: var(--accent); }
+    .topnav .nav-active { color: var(--accent); font-weight: 600; }
+
+    /* —— 页面容器 —— */
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.25rem 3rem;
+    }
+
+    /* —— Hero —— */
+    .hero {
+      margin-top: 1.25rem;
+      padding: 2rem 2rem 2.25rem;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #1565c0 0%, #0d47a1 55%, #0a3d82 100%);
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+    .hero h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+    }
+    .hero .sub {
+      margin: 0 0 1rem;
+      font-size: 0.98rem;
+      opacity: 0.92;
+      max-width: 52rem;
+    }
+    .hero .positioning {
+      margin: 0 0 1.25rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,.12);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.2);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .hero .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .tag-ok { background: rgba(46, 204, 113, .25); border: 1px solid rgba(255,255,255,.35); }
+    .tag-warn { background: rgba(255, 193, 7, .22); border: 1px solid rgba(255,255,255,.35); }
+    .tag-info { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); }
+    .hero code { background: rgba(0,0,0,.2); padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.82em; }
+
+    /* —— 分区通用 —— */
+    .section {
+      margin-top: 1.75rem;
+    }
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .section-head .hint { font-size: 0.8rem; color: var(--muted); }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.35rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* —— 流程示意 —— */
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 0.5rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .flow-item {
+      background: var(--bg);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 500;
+    }
+    .flow-arrow { color: var(--muted); user-select: none; }
+
+    /* —— KPI —— */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+    .kpi .num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-dark);
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+    .kpi .lbl {
+      margin-top: 0.35rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+    .kpi-sub {
+      margin-top: 0.75rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .chip {
+      display: inline-block;
+      margin-top: 0.35rem;
+      padding: 0.2rem 0.55rem;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* —— 方法卡片组 —— */
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .method-card h3 {
+      margin: 0 0 0.6rem;
+      font-size: 0.88rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .method-card p { margin: 0; font-size: 0.92rem; color: var(--text); }
+    .method-card ul { margin: 0.4rem 0 0; padding-left: 1.1rem; font-size: 0.88rem; color: var(--muted); }
+    .method-card ul li { margin: 0.25rem 0; }
+    .alert-strip {
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(90deg, #e3f2fd, #fff);
+      border: 1px solid #90caf9;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .alert-strip strong { color: var(--accent-dark); }
+
+    /* —— PCA —— */
+    .pca-wrap {
+      background: #fafbfc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: center;
+    }
+    .pca-wrap img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+    }
+    .interp-card {
+      margin-top: 1rem;
+      padding: 1.1rem 1.2rem;
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      box-shadow: var(--shadow-sm);
+    }
+    .interp-card h3 { margin: 0 0 0.6rem; font-size: 0.95rem; color: var(--accent-dark); }
+    .interp-card p { margin: 0.45rem 0; font-size: 0.9rem; color: var(--text); }
+    .interp-card ul { margin: 0.35rem 0 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.88rem; }
+
+    /* —— 指标 dashboard —— */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .dash-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .dash-card .dt-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.65rem;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .dash-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0;
+      font-size: 0.88rem;
+      border-bottom: 1px dashed var(--border);
+    }
+    .dash-row:last-child { border-bottom: none; }
+    .dash-row .k { color: var(--muted); font-size: 0.78rem; }
+    .dash-row .v { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
+    .dash-row.before .v { color: #6c757d; }
+    .dash-row.after .v { color: var(--accent-dark); }
+    .delta-line {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .delta-line .dval { font-weight: 700; color: var(--accent-dark); font-variant-numeric: tabular-nums; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.28rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .badge-yes { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .badge-no { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .badge-na { background: #f5f5f5; color: #757575; border: 1px solid #e0e0e0; }
+
+    .detail-table-wrap {
+      margin-top: 1rem;
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    table.detail {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    table.detail th, table.detail td {
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    table.detail th { background: #f8fafc; color: var(--muted); font-weight: 600; width: 42%; }
+    table.detail tr:last-child td { border-bottom: none; }
+
+    /* —— 下载卡片 —— */
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .dl-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .dl-card .fn {
+      font-weight: 700;
+      font-size: 0.88rem;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      color: var(--text);
+    }
+    .dl-card .purpose {
+      flex: 1;
+      margin: 0.5rem 0 0.85rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .dl-card .meta { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.65rem; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      color: #fff !important;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none !important;
+      border: none;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn:hover { background: var(--accent-dark); }
+
+    .warn-box {
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius);
+      background: #fff8e1;
+      border: 1px solid #ffcc80;
+      color: #6d4c41;
+      font-size: 0.9rem;
+    }
+
+    footer.api-foot {
+      margin-top: 2.5rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.65;
+      word-break: break-word;
+    }
+    footer.api-foot code { font-size: 0.78em; background: #eef2f7; padding: 0.1rem 0.35rem; border-radius: 4px; }
+  </style>
+</head>
+<body id="top">
+  <div class="topnav">
+    <div class="brand">代谢组学数据处理 <span>· 分析仪表盘</span></div>
+    <nav>
+      <a href="/">首页</a>
+      <a class="nav-active" href="/benchmark/merged">Merged 结果</a>
+      <a href="/docs" target="_blank" rel="noopener">API 文档</a>
+    </nav>
+  </div>
+
+  <div class="shell">
+    <!-- Hero -->
+    <header class="hero">
+      <h1>跨 Batch 合并 · Baseline 批次校正 · 结果展示</h1>
+      <p class="sub">答辩演示用页：集中展示 <code>benchmark_merged</code> 合并数据及 baseline 批次校正后的评估结果；指标与说明均来自已生成的 JSON 报告文件。</p>
+      <div class="positioning">
+        <strong>系统定位：</strong> 代谢组学多 sheet Excel → 跨批次对齐合并 → 预处理与插补 → 可复现 baseline 批次校正 → PCA 评估与结果下载。
+      </div>
+      <div class="hero-badges">
+        {% if report and report.baseline_batch_correction %}
+        <span class="tag tag-ok">Baseline 批次校正：{{ report.baseline_batch_correction.status }}</span>
+        <span class="tag tag-warn">Strict ComBat：{{ report.strict_combat.status }}（本项目未实现）</span>
+        <span class="tag tag-info">方法 ID：<code>{{ report.baseline_batch_correction.method_id }}</code></span>
+        {% else %}
+        <span class="tag tag-info">加载 <code>batch_correction_method_report.json</code> 后可显示方法状态</span>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- 系统流程 -->
+    <section class="section">
+      <div class="section-head">
+        <h2>系统流程</h2>
+      </div>
+      <div class="panel">
+        <div class="flow">
+          <span class="flow-item">原始多 sheet Excel</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">跨 batch 合并</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">预处理</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">插补</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">baseline 批次校正</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">PCA 评估</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">结果展示与下载</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 能力 -->
+    <section class="section">
+      <div class="section-head">
+        <h2>系统能力</h2>
+      </div>
+      <div class="panel">
+        <ul style="margin:0;padding-left:1.2rem;color:var(--muted);font-size:0.92rem;">
+          {% for line in system_capabilities %}
+          <li style="margin:0.35rem 0;">{{ line }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+
+    <!-- 声明 -->
+    <section class="section">
+      <div class="alert-strip">
+        <strong>方法声明：</strong> 本页展示的批次校正是 <strong>baseline</strong>（<code>per_feature_batch_location_scale_baseline</code>），
+        <strong>不是</strong> strict ComBat。<strong>strict ComBat 在本项目中尚未实现。</strong>
+      </div>
+    </section>
+
+    <!-- KPI 概览 -->
+    <section class="section">
+      <div class="section-head">
+        <h2>数据概览</h2>
+        <span class="hint">来自 <code>merge_report.json</code></span>
+      </div>
+      {% if summary and summary.available %}
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="num">{{ summary.merged_sample_count }}</div>
+          <div class="lbl">Merged 样本数</div>
+        </div>
+        <div class="kpi">
+          <div class="num">{{ summary.merged_feature_count }}</div>
+          <div class="lbl">Merged 特征数</div>
+        </div>
+        <div class="kpi">
+          <div class="num">{{ summary.batch_count }}</div>
+          <div class="lbl">Batch 数量</div>
+        </div>
+        <div class="kpi">
+          <div class="num">{{ summary.missing_ratio_after_merge }}</div>
+          <div class="lbl">合并后缺失率</div>
+        </div>
+      </div>
+      <p class="kpi-sub">合并策略：<span class="chip">{{ summary.merge_strategy }}</span></p>
+      {% else %}
+      <div class="warn-box">未找到 <code>merge_report.json</code>。请先运行合并与 pipeline。</div>
+      {% endif %}
+    </section>
+
+    <!-- 方法说明 -->
+    <section class="section">
+      <div class="section-head">
+        <h2>批次校正方法</h2>
+        <span class="hint">来自 <code>batch_correction_method_report.json</code></span>
+      </div>
+      {% if report and report.baseline_batch_correction %}
+      <div class="panel">
+        <div class="method-grid">
+          <div class="method-card">
+            <h3>标识与状态</h3>
+            <p><strong>名称（EN）</strong><br />{{ report.baseline_batch_correction.method_display_name_en }}</p>
+            <p style="margin-top:0.65rem;"><strong>方法 ID</strong><br /><code>{{ report.baseline_batch_correction.method_id }}</code></p>
+            <p style="margin-top:0.65rem;"><strong>实现状态</strong>：{{ report.baseline_batch_correction.status }}</p>
+            <p style="margin-top:0.65rem;"><strong>Strict ComBat</strong>：<code>{{ report.strict_combat.status }}</code>（本项目未实现）</p>
+          </div>
+          <div class="method-card">
+            <h3>本方法是什么</h3>
+            <p>{{ report.baseline_batch_correction.what_it_is }}</p>
+          </div>
+          <div class="method-card">
+            <h3>本方法不是什么</h3>
+            <ul>{% for x in report.baseline_batch_correction.what_it_is_not %}<li>{{ x }}</li>{% endfor %}</ul>
+          </div>
+          <div class="method-card">
+            <h3>假设</h3>
+            <ul>{% for x in report.baseline_batch_correction.assumptions %}<li>{{ x }}</li>{% endfor %}</ul>
+          </div>
+          <div class="method-card">
+            <h3>局限</h3>
+            <ul>{% for x in report.baseline_batch_correction.limitations %}<li>{{ x }}</li>{% endfor %}</ul>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="warn-box">未找到 <code>batch_correction_method_report.json</code>。</div>
+      {% endif %}
+    </section>
+
+    <!-- PCA -->
+    <section class="section">
+      <div class="section-head">
+        <h2>PCA 可视化</h2>
+        <span class="hint"><code>pca_before_vs_after_batch_correction.png</code></span>
+      </div>
+      <div class="panel">
+        <p class="muted" style="margin:0 0 0.75rem;font-size:0.88rem;">校正前 / 校正后 × batch_id / group_label 四宫格（图像由 pipeline 生成）。</p>
+        <div class="pca-wrap">
+          <img src="{{ pca_url }}" alt="Baseline 批次校正前后 PCA 对比（batch / group 着色）" loading="lazy" decoding="async" />
+        </div>
+        {% if interpretation and interpretation.available %}
+        <div class="interp-card">
+          <h3>结果解读（由 metrics / report JSON 自动生成）</h3>
+          <p><strong>Batch 混合</strong> — {{ interpretation.mixing_paragraph }}</p>
+          <p><strong>Group 结构</strong> — {{ interpretation.group_paragraph }}</p>
+          <p><strong>方法定位</strong> — {{ interpretation.method_paragraph }}</p>
+          {% if interpretation.notes_from_metrics %}
+          <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--muted);"><strong>附注（heuristic_mixing_notes）</strong></p>
+          <ul>{% for n in interpretation.notes_from_metrics %}<li>{{ n }}</li>{% endfor %}</ul>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- 指标 -->
+    <section class="section">
+      <div class="section-head">
+        <h2>指标摘要</h2>
+        <span class="hint">来自 <code>batch_correction_metrics.json</code></span>
+      </div>
+      {% if metrics and key_metric_cards %}
+      <div class="dash-grid">
+        {% for c in key_metric_cards %}
+        <div class="dash-card">
+          <div class="dt-title">{{ c.title }}</div>
+          {% if c.kind == 'scalar' %}
+          <div style="margin-top:0.5rem;">
+            {% if c.value == true %}
+            <span class="badge badge-yes">True</span>
+            {% elif c.value == false %}
+            <span class="badge badge-no">False</span>
+            {% else %}
+            <span class="badge badge-na">{{ c.value }}</span>
+            {% endif %}
+          </div>
+          {% else %}
+          <div class="dash-row before"><span class="k">Before</span><span class="v">{{ c.before }}</span></div>
+          <div class="dash-row after"><span class="k">After</span><span class="v">{{ c.after }}</span></div>
+          {% if c.delta is not none %}
+          <div class="delta-line">Δ <span class="dval">{{ c.delta }}</span></div>
+          {% endif %}
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="detail-table-wrap" style="margin-top:1rem;">
+        <table class="detail">
+          <tr><th>batch_centroid_separation_pc12（前）</th><td>{{ metrics.batch_centroid_separation_pc12_before }}</td></tr>
+          <tr><th>batch_centroid_separation_pc12（后）</th><td>{{ metrics.batch_centroid_separation_pc12_after }}</td></tr>
+          <tr><th>silhouette(batch_id)（前）</th><td>{{ metrics.silhouette_batch_id_pc12_before }}</td></tr>
+          <tr><th>silhouette(batch_id)（后）</th><td>{{ metrics.silhouette_batch_id_pc12_after }}</td></tr>
+          <tr><th>silhouette(group_label)（前）</th><td>{{ metrics.silhouette_group_label_pc12_before }}</td></tr>
+          <tr><th>silhouette(group_label)（后）</th><td>{{ metrics.silhouette_group_label_pc12_after }}</td></tr>
+          <tr><th>heuristic_mixing_improved_by_centroid</th><td>{{ metrics.heuristic_mixing_improved_by_centroid }}</td></tr>
+          <tr><th>heuristic_group_overdistorted</th><td>{{ metrics.heuristic_group_overdistorted }}</td></tr>
+        </table>
+      </div>
+      {% if metrics.heuristic_mixing_notes %}
+      <p class="muted" style="margin-top:0.75rem;font-size:0.88rem;">说明：</p>
+      <ul class="muted" style="font-size:0.88rem;">{% for n in metrics.heuristic_mixing_notes %}<li>{{ n }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% else %}
+      <div class="warn-box">未找到 <code>batch_correction_metrics.json</code>。</div>
+      {% endif %}
+    </section>
+
+    <!-- 下载 -->
+    <section class="section">
+      <div class="section-head">
+        <h2>报告与数据下载</h2>
+        <span class="hint">只读下载接口</span>
+      </div>
+      <div class="dl-grid">
+        {% for f in files %}
+        <div class="dl-card">
+          <div class="fn">{{ f.name }}</div>
+          <div class="meta">{{ f.size_bytes }} bytes</div>
+          <div class="purpose">{{ f.purpose }}</div>
+          <a class="btn" href="/api/benchmark/merged/download/{{ f.name }}">下载文件</a>
+        </div>
+        {% else %}
+        <div class="warn-box">暂无可下载文件。</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <footer class="api-foot">
+      <strong>只读 API：</strong>
+      <code>GET /api/benchmark/merged/summary</code> ·
+      <code>GET /api/benchmark/merged/batch-correction/report</code> ·
+      <code>GET /api/benchmark/merged/batch-correction/metrics</code> ·
+      <code>GET /api/benchmark/merged/files</code> ·
+      <code>GET /api/benchmark/merged/download/{filename}</code>
+    </footer>
+  </div>
+</body>
+</html>

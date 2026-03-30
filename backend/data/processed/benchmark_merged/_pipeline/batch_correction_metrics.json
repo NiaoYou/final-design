@@ -1,0 +1,35 @@
+{
+  "baseline_method_id": "per_feature_batch_location_scale_baseline",
+  "strict_combat": {
+    "status": "not_implemented",
+    "note": "严格 ComBat（empirical Bayes + 设计矩阵等）尚未实现。"
+  },
+  "pca_components": 2,
+  "explained_variance_ratio_before_pc": [
+    0.22049970908978264,
+    0.04877495180900228
+  ],
+  "explained_variance_ratio_after_pc": [
+    0.5094559904034544,
+    0.05306087511030014
+  ],
+  "silhouette_batch_id_pc12_before": -0.14518157295073342,
+  "silhouette_batch_id_pc12_after": -0.03433598813834715,
+  "delta_silhouette_batch_id": 0.11084558481238627,
+  "interpretation_batch_silhouette": "在 PC1–PC2 上，batch_id 的 silhouette 越低通常表示 batch 间重叠越多（混合越好）。若校正后该值下降，通常表示 batch 分离减弱。",
+  "silhouette_group_label_pc12_before": -0.48113116479369417,
+  "silhouette_group_label_pc12_after": -0.4464639397941341,
+  "delta_silhouette_group_label": 0.03466722499956004,
+  "interpretation_group_silhouette": "group_label 的 silhouette 大幅下降可能意味着生物学结构被削弱；轻微变化较常见。",
+  "batch_centroid_separation_pc12_before": 5.432442508540577,
+  "batch_centroid_separation_pc12_after": 1.813927710506574e-14,
+  "delta_batch_centroid_separation": -5.432442508540559,
+  "heuristic_mixing_improved_by_centroid": true,
+  "heuristic_mixing_improved_by_silhouette": false,
+  "heuristic_mixing_improved": true,
+  "heuristic_mixing_notes": [
+    "batch_id 的 silhouette 在‘校正前后各自 PCA’下可能上升，但 batch 质心距离已显著下降；建议以质心距离 + 可视化为主判据。"
+  ],
+  "heuristic_group_overdistorted": false,
+  "baseline_suitability_summary": "本基线适合作为可复现的 **非 ComBat** 对照：实现简单、假设清晰。若 batch 效应近似为逐特征位置/尺度差异，可能有效；若生物学与批次混杂，可能过校正。"
+}
