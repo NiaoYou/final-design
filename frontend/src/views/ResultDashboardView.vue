@@ -98,7 +98,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
 <template>
   <div class="page-container dash">
     <p class="page-title">结果展示 · Benchmark Merged</p>
-    <p class="page-sub">
+    <p class="page-sub" style="margin-bottom:1.25rem">
       数据来自后端 <code>/api/benchmark/merged/*</code> 与产物目录 JSON；不做手填指标。
       <strong>当前实现的是 baseline 批次校正；strict ComBat 尚未实现。</strong>
       请勿将 baseline 称为 ComBat。
@@ -122,15 +122,18 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
         label="样本数"
         :value="summary?.merged_sample_count ?? '—'"
         hint="merge_report.json"
+        color="#3b82f6"
       />
       <KpiCard
         label="特征数"
         :value="summary?.merged_feature_count ?? '—'"
+        color="#06b6d4"
       />
-      <KpiCard label="batch 数" :value="summary?.batch_count ?? '—'" />
+      <KpiCard label="batch 数" :value="summary?.batch_count ?? '—'" color="#8b5cf6" />
       <KpiCard
         label="合并后缺失率"
         :value="formatRatio(summary?.missing_ratio_after_merge, 2)"
+        color="#f59e0b"
       />
     </section>
 
@@ -142,7 +145,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     </div>
 
     <section class="card-panel">
-      <h3 class="block-title">指标摘要（batch_correction_metrics.json）</h3>
+      <h3 class="section-heading">指标摘要（batch_correction_metrics.json）</h3>
       <div class="metric-grid" v-if="metrics">
         <MetricCompareCard
           title="batch_centroid_separation_pc12"
@@ -175,13 +178,13 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     </section>
 
     <section class="card-panel">
-      <h3 class="block-title">结果解释（数值与状态均引用自 JSON）</h3>
+      <h3 class="section-heading">结果解释（数值与状态均引用自 JSON）</h3>
       <p v-for="(p, i) in interpretation" :key="i" class="interp">{{ p }}</p>
       <p v-if="!interpretation.length" class="interp muted">加载报告与 metrics 后可自动生成解释句段。</p>
     </section>
 
     <section class="card-panel">
-      <h3 class="block-title">文件下载</h3>
+      <h3 class="section-heading">文件下载</h3>
       <template v-if="files?.files?.length">
         <DownloadFileCard
           v-for="f in files.files"
@@ -210,7 +213,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     </section>
 
     <section class="card-panel">
-      <h3 class="block-title">方法对比实验（evaluation）</h3>
+      <h3 class="section-heading">方法对比实验（evaluation）</h3>
       <p class="interp muted">
         本区块读取 <code>benchmark_merged/_pipeline/evaluation</code> 下的评估产物。
         其中 <strong>combat-like</strong> 为简化对齐方法（用于对比），不代表 strict ComBat 已实现。
@@ -274,7 +277,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     </section>
 
     <section v-if="summary?.raw_merge_report" class="card-panel card-panel--flat">
-      <h3 class="block-title">合并报告摘要（raw_merge_report 节选）</h3>
+      <h3 class="section-heading">合并报告摘要（raw_merge_report 节选）</h3>
       <pre class="jsondump">{{ JSON.stringify(summary.raw_merge_report, null, 2).slice(0, 2500) }}{{ (JSON.stringify(summary.raw_merge_report).length > 2500) ? '\n…' : '' }}</pre>
     </section>
   </div>
@@ -312,11 +315,6 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
   @media (max-width: 960px) {
     grid-template-columns: 1fr;
   }
-}
-
-.block-title {
-  margin: 0 0 1rem;
-  font-size: 1.05rem;
 }
 
 .metric-grid {

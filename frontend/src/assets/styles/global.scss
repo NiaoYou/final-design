@@ -1,30 +1,66 @@
+/* ===========================
+   Design Tokens
+   =========================== */
 :root {
-  --app-bg: #f3f5f9;
-  --app-card: #ffffff;
-  --app-primary: #2563eb;
-  --app-primary-soft: #eff6ff;
-  --app-text: #1e293b;
-  --app-muted: #64748b;
-  --app-border: #e2e8f0;
-  --app-radius: 12px;
-  --app-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  /* Brand palette */
+  --app-bg:          #f0f4f8;
+  --app-bg-2:        #e8eef5;
+  --app-card:        #ffffff;
+  --app-primary:     #2563eb;
+  --app-primary-rgb: 37, 99, 235;
+  --app-primary-soft:#eff6ff;
+  --app-primary-dark:#1d4ed8;
+  --app-accent:      #06b6d4;           /* cyan accent */
+  --app-success:     #10b981;
+  --app-warning:     #f59e0b;
+  --app-danger:      #ef4444;
+
+  /* Text */
+  --app-text:        #0f172a;
+  --app-text-2:      #334155;
+  --app-muted:       #64748b;
+  --app-muted-light: #94a3b8;
+
+  /* Surface */
+  --app-border:      #e2e8f0;
+  --app-border-light:#f1f5f9;
+  --app-radius:      14px;
+  --app-radius-sm:   8px;
+  --app-radius-lg:   20px;
+
+  /* Shadow layers */
+  --app-shadow:      0 1px 4px rgba(15,23,42,.06), 0 2px 8px rgba(15,23,42,.04);
+  --app-shadow-md:   0 4px 16px rgba(15,23,42,.09), 0 2px 6px rgba(15,23,42,.05);
+  --app-shadow-lg:   0 8px 32px rgba(15,23,42,.12), 0 2px 8px rgba(15,23,42,.06);
+  --app-shadow-glow: 0 0 0 3px rgba(37,99,235,.18);
+
+  /* Sidebar */
+  --side-bg:         #0b1120;
+  --side-bg-2:       #131d30;
+  --side-active:     rgba(37,99,235,.28);
+  --side-active-bar: #3b82f6;
+  --side-text:       #94a3b8;
+  --side-text-hover: #e2e8f0;
+  --side-text-active:#ffffff;
 }
 
+/* ===========================
+   Reset / Base
+   =========================== */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-html,
-body,
-#app {
+html, body, #app {
   margin: 0;
   min-height: 100%;
 }
 
 body {
   font-family:
+    'Inter',
     'Segoe UI',
     system-ui,
     -apple-system,
@@ -33,7 +69,9 @@ body {
     sans-serif;
   background: var(--app-bg);
   color: var(--app-text);
-  line-height: 1.5;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -41,33 +79,90 @@ a {
   text-decoration: none;
 }
 
+/* ===========================
+   Scrollbar
+   =========================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  &:hover { background: #94a3b8; }
+}
+
+/* ===========================
+   Layout helpers
+   =========================== */
 .page-container {
-  max-width: 1280px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
 .page-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 0.25rem;
-  letter-spacing: -0.02em;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  letter-spacing: -0.03em;
+  color: var(--app-text);
+  background: linear-gradient(120deg, var(--app-text) 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .page-sub {
   color: var(--app-muted);
-  margin: 0 0 1.25rem;
-  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
+  font-size: 0.93rem;
+  line-height: 1.7;
 }
 
+/* ===========================
+   Card Panel
+   =========================== */
 .card-panel {
   background: var(--app-card);
   border-radius: var(--app-radius);
   box-shadow: var(--app-shadow);
   border: 1px solid var(--app-border);
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 1.25rem;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: var(--app-shadow-md);
+  }
 }
 
 .card-panel--flat {
   box-shadow: none;
+  background: var(--app-bg);
+  border-color: var(--app-border-light);
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+/* ===========================
+   Section Heading accent bar
+   =========================== */
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--app-text);
+
+  &::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 1.15em;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--app-primary) 0%, var(--app-accent) 100%);
+    flex-shrink: 0;
+  }
 }

@@ -107,7 +107,7 @@ function goResult() {
     </p>
 
     <div class="card-panel">
-      <h3 class="h3">上传数据文件</h3>
+      <h3 class="section-heading">上传数据文件</h3>
       <el-form label-width="120px" class="form">
         <el-form-item label="任务名称">
           <el-input v-model="form.task_name" placeholder="可选" clearable />
@@ -148,7 +148,7 @@ function goResult() {
     </div>
 
     <div v-if="lastResult" class="card-panel">
-      <h3 class="h3">上传结果</h3>
+      <h3 class="section-heading">上传结果</h3>
       <el-descriptions :column="2" border>
         <el-descriptions-item label="task_id">{{ lastResult.task_id }}</el-descriptions-item>
         <el-descriptions-item label="dataset_id">{{ lastResult.dataset_id }}</el-descriptions-item>
@@ -160,7 +160,7 @@ function goResult() {
     </div>
 
     <div v-if="preview" class="card-panel">
-      <h3 class="h3">数据预览（前 20 行）</h3>
+      <h3 class="section-heading">数据预览（前 20 行）</h3>
       <el-table :data="preview.preview" height="280" stripe border size="small">
         <el-table-column
           v-for="col in preview.preview.length ? Object.keys(preview.preview[0]) : []"
@@ -174,7 +174,7 @@ function goResult() {
     </div>
 
     <div class="card-panel">
-      <h3 class="h3">Benchmark / 已有数据集（占位）</h3>
+      <h3 class="section-heading">Benchmark / 已有数据集（占位）</h3>
       <el-alert
         type="info"
         :closable="false"
@@ -193,7 +193,7 @@ function goResult() {
     </div>
 
     <div class="card-panel">
-      <h3 class="h3">Sheet 与可用性检查（预留）</h3>
+      <h3 class="section-heading">Sheet 与可用性检查（预留）</h3>
       <template v-if="sheetProbe">
         <p class="muted">检测到的 sheets（占位 / 待接真实接口）：</p>
         <el-tag v-for="s in sheetProbe.sheets" :key="s" class="tag">{{ s }}</el-tag>
@@ -211,11 +211,6 @@ function goResult() {
 </template>
 
 <style scoped lang="scss">
-.h3 {
-  margin: 0 0 1rem;
-  font-size: 1.05rem;
-}
-
 .form {
   max-width: 640px;
 }

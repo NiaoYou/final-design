@@ -33,7 +33,7 @@ function run() {
     </p>
 
     <div class="card-panel">
-      <h3 class="h3">任务与状态</h3>
+      <h3 class="section-heading">任务与状态</h3>
       <el-form label-width="140px" class="form-narrow">
         <el-form-item label="task_id">
           <el-input-number
@@ -53,7 +53,7 @@ function run() {
     </div>
 
     <div class="card-panel">
-      <h3 class="h3">预处理</h3>
+      <h3 class="section-heading">预处理</h3>
       <el-form label-width="160px" class="form-max">
         <el-form-item label="标准化方式">
           <el-select v-model="preprocess.normalization" style="width: 220px">
@@ -70,7 +70,7 @@ function run() {
     </div>
 
     <div class="card-panel">
-      <h3 class="h3">缺失值填充</h3>
+      <h3 class="section-heading">缺失值填充</h3>
       <el-form label-width="160px">
         <el-form-item label="方法">
           <el-radio-group v-model="imputation.method">
@@ -86,7 +86,7 @@ function run() {
     </div>
 
     <div class="card-panel">
-      <h3 class="h3">批次校正</h3>
+      <h3 class="section-heading">批次校正</h3>
       <el-alert
         class="mb"
         type="warning"
@@ -122,11 +122,6 @@ function run() {
 </template>
 
 <style scoped lang="scss">
-.h3 {
-  margin: 0 0 1rem;
-  font-size: 1.05rem;
-}
-
 .form-narrow {
   max-width: 480px;
 }

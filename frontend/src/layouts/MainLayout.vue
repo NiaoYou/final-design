@@ -27,9 +27,13 @@ import SidebarMenu from '@/components/SidebarMenu.vue'
 .layout__side {
   width: 240px;
   flex-shrink: 0;
-  background: #0f172a;
-  color: #e2e8f0;
   min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 200;
+  box-shadow: 2px 0 16px rgba(11,17,32,.18);
 }
 
 .layout__main {
@@ -37,10 +41,12 @@ import SidebarMenu from '@/components/SidebarMenu.vue'
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden;
 }
 
 .layout__content {
   flex: 1;
-  padding: 1.5rem 1.75rem 2.5rem;
+  padding: 1.75rem 2rem 3rem;
+  overflow-y: auto;
 }
 </style>

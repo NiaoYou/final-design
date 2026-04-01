@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <div class="method card-panel card-panel--flat">
-    <h3 class="method__h">方法说明</h3>
+    <h3 class="section-heading">方法说明</h3>
     <el-skeleton v-if="loading" :rows="6" animated />
     <template v-else-if="report">
       <el-alert
@@ -53,6 +53,7 @@ defineProps<{
 .method__h {
   margin: 0 0 1rem;
   font-size: 1.05rem;
+  // use section-heading style via global class — no local override needed
 }
 
 .method__banner {

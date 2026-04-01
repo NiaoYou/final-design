@@ -1,83 +1,150 @@
 <script setup lang="ts">
-import { CircleCheck, CircleClose, Loading, Minus } from '@element-plus/icons-vue'
 import type { PipelineStepState } from '@/stores/task'
 
 defineProps<{
   steps: { key: string; label: string; state: PipelineStepState }[]
 }>()
 
-function cmp(s: PipelineStepState) {
-  if (s === 'success') return CircleCheck
-  if (s === 'error') return CircleClose
-  if (s === 'process') return Loading
-  return Minus
-}
-
-function cls(s: PipelineStepState) {
+function stateClass(s: PipelineStepState) {
   return {
-    'pipe__dot--ok': s === 'success',
-    'pipe__dot--err': s === 'error',
-    'pipe__dot--run': s === 'process',
-    'pipe__dot--wait': s === 'wait',
+    'step--ok':   s === 'success',
+    'step--err':  s === 'error',
+    'step--run':  s === 'process',
+    'step--wait': s === 'wait',
   }
 }
 </script>
 
 <template>
-  <div class="pipe">
-    <div v-for="st in steps" :key="st.key" class="pipe__step">
-      <el-icon class="pipe__dot" :class="cls(st.state)" :size="22">
-        <component :is="cmp(st.state)" />
-      </el-icon>
-      <span class="pipe__label">{{ st.label }}</span>
-    </div>
+  <div class="pipeline">
+    <template v-for="(st, idx) in steps" :key="st.key">
+      <div class="step" :class="stateClass(st.state)">
+        <div class="step__circle">
+          <!-- Success -->
+          <svg v-if="st.state === 'success'" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8l4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <!-- Error -->
+          <svg v-else-if="st.state === 'error'" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <!-- Running spinner -->
+          <svg v-else-if="st.state === 'process'" class="spin" width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="25 13" stroke-linecap="round"/>
+          </svg>
+          <!-- Wait: step number -->
+          <span v-else class="step__num">{{ idx + 1 }}</span>
+        </div>
+        <span class="step__label">{{ st.label }}</span>
+      </div>
+
+      <!-- Connector line -->
+      <div v-if="idx < steps.length - 1" class="pipeline__connector"
+           :class="{ 'pipeline__connector--done': st.state === 'success' }" />
+    </template>
   </div>
 </template>
 
 <style scoped lang="scss">
-.pipe {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.25rem;
-  padding: 0.75rem 1rem;
-  background: #f8fafc;
-  border-radius: var(--app-radius);
-  border: 1px solid var(--app-border);
-}
-
-.pipe__step {
+.pipeline {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0;
+  padding: 1.1rem 1.25rem;
+  background: var(--app-bg);
+  border-radius: var(--app-radius);
+  border: 1px solid var(--app-border);
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
-.pipe__label {
-  font-size: 0.88rem;
-  color: var(--app-text);
+/* ---- Connector ---- */
+.pipeline__connector {
+  flex: 1;
+  min-width: 24px;
+  height: 2px;
+  background: var(--app-border);
+  border-radius: 1px;
+  transition: background 0.3s ease;
+
+  &--done {
+    background: linear-gradient(90deg, #10b981, #06b6d4);
+  }
 }
 
-.pipe__dot {
-  &--ok {
-    color: #16a34a;
+/* ---- Step ---- */
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  min-width: 56px;
+}
+
+.step__circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+
+  .step--wait & {
+    background: #fff;
+    border: 2px solid var(--app-border);
+    color: var(--app-muted-light);
   }
-  &--err {
-    color: #dc2626;
+
+  .step--ok & {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 10px rgba(16,185,129,.3);
   }
-  &--run {
-    color: var(--app-primary);
-    animation: spin 1s linear infinite;
+
+  .step--err & {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 10px rgba(239,68,68,.3);
   }
-  &--wait {
-    color: #cbd5e1;
+
+  .step--run & {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 14px rgba(37,99,235,.35);
   }
+}
+
+.step__num {
+  font-variant-numeric: tabular-nums;
+}
+
+.step__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--app-muted);
+  transition: color 0.2s;
+
+  .step--ok &  { color: #059669; }
+  .step--err & { color: #dc2626; }
+  .step--run & { color: var(--app-primary); }
+}
+
+/* ---- Spin animation ---- */
+.spin {
+  animation: spin 0.9s linear infinite;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 </style>
