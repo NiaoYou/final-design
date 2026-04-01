@@ -108,7 +108,6 @@ def run_evaluation(
         task_id,
         pca_before_plot_path=str(plot_path),
         pca_after_plot_path=str(plot_path),
-        pca_plot_path=str(plot_path),
     )
     update_metrics_json(
         db,
@@ -121,6 +120,7 @@ def run_evaluation(
 
     update_task_status(db, task_id, status="evaluation_done")
     return {
+        "task_id": task_id,
         "pca_before": pca_before,
         "pca_after": pca_after,
         "pca_plot_path": str(plot_path),
@@ -205,7 +205,7 @@ def run_evaluation_matrix(
     unique_bucketed = list(dict.fromkeys(bucketed_groups))
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 5), dpi=120)
-    color_map = plt.cm.get_cmap("tab20", max(len(unique_bucketed), 1))
+    color_map = matplotlib.colormaps.get_cmap("tab20").resampled(max(len(unique_bucketed), 1))
     for ax_i, ax in enumerate(axes):
         x = pc1_before if ax_i == 0 else pc1_after
         y = pc2_before if ax_i == 0 else pc2_after
@@ -304,7 +304,7 @@ def run_cross_batch_pre_correction_evaluation(
 
     def _scatter_category(ax, labels: np.ndarray, title: str) -> None:
         uniq = list(dict.fromkeys(labels.tolist()))
-        cmap = plt.cm.get_cmap("tab20", max(len(uniq), 1))
+        cmap = matplotlib.colormaps.get_cmap("tab20").resampled(max(len(uniq), 1))
         for i, g in enumerate(uniq[:25]):
             mask = labels == g
             ax.scatter(pc1[mask], pc2[mask], s=14, alpha=0.85, label=str(g)[:40], color=cmap(i))
@@ -485,7 +485,7 @@ def _plot_before_after_four_panel(
 
     def _draw(ax, coords: np.ndarray, labels: np.ndarray, title: str, max_legend: int = 12) -> None:
         uniq = list(dict.fromkeys(labels.tolist()))
-        cmap = plt.cm.get_cmap("tab20", max(len(uniq), 1))
+        cmap = matplotlib.colormaps.get_cmap("tab20").resampled(max(len(uniq), 1))
         shown = uniq[:max_legend]
         x, y = _xy(coords)
         for i, g in enumerate(shown):

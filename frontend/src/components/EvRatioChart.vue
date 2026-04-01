@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as echarts from 'echarts'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const props = defineProps<{
   ratios: number[] | undefined
@@ -52,7 +52,11 @@ function resize() {
 
 watch(
   () => props.ratios,
-  () => render(),
+  async () => {
+    // 等待 DOM 更新（v-if 切换后 host 才挂载），再执行渲染
+    await nextTick()
+    render()
+  },
   { deep: true },
 )
 </script>

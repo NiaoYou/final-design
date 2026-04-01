@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +17,16 @@ from app.core.database import init_db
 from app.core.logger import setup_logging
 
 
+@asynccontextmanager
+async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    # startup：确保目录存在并初始化数据库
+    for p in [Settings.UPLOAD_DIR, Settings.PROCESSED_DIR, Settings.RESULTS_DIR, Settings.TEMP_DIR]:
+        os.makedirs(p, exist_ok=True)
+    init_db()
+    yield
+    # shutdown：此处可添加清理逻辑
+
+
 def create_app() -> FastAPI:
     setup_logging()
 
@@ -22,6 +34,7 @@ def create_app() -> FastAPI:
         title="Metabolomics Data Processing System",
         description="FastAPI backend MVP generated from SYSTEM_ARCHITECTURE.md",
         version="0.1.0",
+        lifespan=_lifespan,
     )
 
     # Vue 独立前端（Vite）联调：仅放开跨域，不改动业务逻辑
@@ -35,14 +48,6 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    # 确保数据目录存在
-    for p in [Settings.UPLOAD_DIR, Settings.PROCESSED_DIR, Settings.RESULTS_DIR, Settings.TEMP_DIR]:
-        os.makedirs(p, exist_ok=True)
-
-    @app.on_event("startup")
-    def _startup() -> None:
-        init_db()
 
     @app.get("/")
     def root_redirect() -> RedirectResponse:

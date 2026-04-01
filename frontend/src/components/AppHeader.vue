@@ -2,8 +2,9 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-const route = computed(() => useRoute())
-const title = computed(() => (route.value.meta.title as string) || '代谢组学数据处理平台')
+// useRoute() 必须在 setup 顶层调用，不能包裹在 computed 内
+const route = useRoute()
+const title = computed(() => (route.meta.title as string) || '代谢组学数据处理平台')
 
 const apiOk = computed(() => {
   // 轻量状态：结果 store 可在子页刷新；此处仅展示静态提示

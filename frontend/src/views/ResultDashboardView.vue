@@ -13,9 +13,8 @@ import { formatNumber, formatRatio } from '@/utils/format'
 import type { BatchCorrectionMetrics } from '@/types/benchmark'
 
 const store = useBenchmarkStore()
-const { summary, report, metrics, files, pcaAfter, evaluationSummary, evaluationTable, evaluationPcas, loading, error } =
+const { summary, report, metrics, files, pcaAfter, evaluationSummary, evaluationTable, evaluationPcas, evaluationFiles, loading, error } =
   storeToRefs(store)
-const { evaluationFiles } = storeToRefs(store)
 
 onMounted(() => {
   void store.loadAll()

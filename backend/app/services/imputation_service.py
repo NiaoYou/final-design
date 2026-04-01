@@ -30,18 +30,17 @@ def run_imputation(
 
     method = str(imputation_config.get("method", "mean")).lower()
     if method in {"mean", "median"}:
-        fn = np.nanmean if method == "mean" else np.nanmedian
         # 每个特征（行）用自身在样本维度上的统计量填充
-        fill_values = fn(matrix.to_numpy(), axis=1)
-        # 避免全缺失导致 nan
-        fill_values = np.nan_to_num(fill_values, nan=0.0)
         matrix = matrix.apply(
             lambda row: row.fillna(row.mean() if method == "mean" else row.median()),
             axis=1,
         )
     elif method == "knn":
         k = int(imputation_config.get("knn_k", 5))
-        # sklearn 以“行=样本、列=特征”的方式工作，因此需要转置
+        # sklearn 以"行=样本、列=特征"的方式工作，因此需要转置
+        # matrix 格式为 feature×sample，转置后 n_rows=样本数，需保证 k < n_samples
+        n_samples = matrix.shape[1]
+        k = min(k, max(1, n_samples - 1))
         X = matrix.to_numpy().T
         imputer = KNNImputer(n_neighbors=k)
         X_filled = imputer.fit_transform(X)

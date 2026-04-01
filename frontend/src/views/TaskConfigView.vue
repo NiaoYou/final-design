@@ -74,9 +74,9 @@ function run() {
       <el-form label-width="160px">
         <el-form-item label="方法">
           <el-radio-group v-model="imputation.method">
-            <el-radio-button label="mean" />
-            <el-radio-button label="median" />
-            <el-radio-button label="knn" />
+            <el-radio-button value="mean" label="mean" />
+            <el-radio-button value="median" label="median" />
+            <el-radio-button value="knn" label="knn" />
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="imputation.method === 'knn'" label="KNN k">
@@ -98,9 +98,9 @@ function run() {
       <el-form label-width="200px">
         <el-form-item label="方法">
           <el-radio-group v-model="batchUi.method">
-            <el-radio label="none">none（跳过批次 HTTP 步骤）</el-radio>
-            <el-radio label="baseline_location_scale">baseline_location_scale（merged 管线，此处不直接调 HTTP）</el-radio>
-            <el-radio label="combat">简化 combat（通用任务链当前可跑的后端实现）</el-radio>
+            <el-radio value="none">none（跳过批次 HTTP 步骤）</el-radio>
+            <el-radio value="baseline_location_scale">baseline_location_scale（merged 管线，此处不直接调 HTTP）</el-radio>
+            <el-radio value="combat">简化 combat（通用任务链当前可跑的后端实现）</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="strict ComBat">

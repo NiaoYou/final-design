@@ -96,7 +96,7 @@ def _plot_four_panel(
 
     def _draw(ax, coords, labels, title: str, max_legend: int = 12) -> None:
         uniq = list(dict.fromkeys(labels.tolist()))
-        cmap = plt.cm.get_cmap("tab20", max(len(uniq), 1))
+        cmap = matplotlib.colormaps.get_cmap("tab20").resampled(max(len(uniq), 1))
         shown = uniq[:max_legend]
         x, y = _xy(coords)
         for i, g in enumerate(shown):

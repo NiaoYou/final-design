@@ -49,7 +49,7 @@ def run_preprocess(
     normalization = str(preprocess_config.get("normalization", "standardize"))
     if normalization == "standardize":
         means = matrix.mean(axis=1)
-        stds = matrix.std(axis=1, ddof=0).replace(0, np.nan)
+        stds = matrix.std(axis=1, ddof=0).replace(0, 1.0)  # 标准差为 0 时用 1.0 避免除以 NaN
         matrix = (matrix.sub(means, axis=0)).div(stds, axis=0)
 
     temp_dir = task_temp_dir(task_id)

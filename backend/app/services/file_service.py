@@ -111,6 +111,7 @@ def create_task_and_dataset_from_upload(
     return {
         "task_id": task.id,
         "dataset_id": dataset.id,
+        "original_filename": original_filename,
         "preview": preview_records,
         "sample_count": int(matrix.shape[1]),
         "feature_count": int(matrix.shape[0]),

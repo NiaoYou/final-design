@@ -7,6 +7,11 @@ from sqlalchemy import Column, DateTime, Integer, String, Text
 from app.core.database import Base
 
 
+def _utcnow() -> dt.datetime:
+    """返回当前 UTC 时间（兼容 Python 3.12+ 废弃 utcnow）。"""
+    return dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
+
+
 class Task(Base):
     __tablename__ = "tasks"
 
@@ -14,12 +19,12 @@ class Task(Base):
     task_name = Column(String(255), nullable=False, default="")
     status = Column(String(64), nullable=False, default="uploaded")
 
-    created_at = Column(DateTime, nullable=False, default=dt.datetime.utcnow)
+    created_at = Column(DateTime, nullable=False, default=_utcnow)
     updated_at = Column(
         DateTime,
         nullable=False,
-        default=dt.datetime.utcnow,
-        onupdate=dt.datetime.utcnow,
+        default=_utcnow,
+        onupdate=_utcnow,
     )
 
     # 上传文件的物理路径

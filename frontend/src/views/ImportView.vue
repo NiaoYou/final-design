@@ -161,7 +161,16 @@ function goResult() {
 
     <div v-if="preview" class="card-panel">
       <h3 class="h3">数据预览（前 20 行）</h3>
-      <el-table :data="preview.preview" height="280" stripe border size="small" />
+      <el-table :data="preview.preview" height="280" stripe border size="small">
+        <el-table-column
+          v-for="col in preview.preview.length ? Object.keys(preview.preview[0]) : []"
+          :key="col"
+          :prop="col"
+          :label="col"
+          min-width="120"
+          show-overflow-tooltip
+        />
+      </el-table>
     </div>
 
     <div class="card-panel">
