@@ -31,6 +31,14 @@ def get_batch_correction_metrics():
     return data
 
 
+@router.get("/batch-correction/pca-after")
+def get_pca_after_correction():
+    data = bmr.load_pca_after_correction()
+    if data is None:
+        raise HTTPException(status_code=404, detail="pca_after_correction.json 不存在，请先运行 merged baseline 流程。")
+    return data
+
+
 @router.get("/files")
 def list_merged_files():
     return {"files": bmr.list_downloadable_files(), "download_base": "/api/benchmark/merged/download"}

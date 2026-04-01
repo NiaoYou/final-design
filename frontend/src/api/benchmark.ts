@@ -42,10 +42,8 @@ export function mergedDownloadUrl(filename: string): string {
 
 export async function fetchPcaAfterJson(): Promise<PcaAfterPayload | null> {
   try {
-    const { data } = await http.get<string>(mergedDownloadUrl('pca_after_correction.json'), {
-      responseType: 'text',
-    })
-    return JSON.parse(data) as PcaAfterPayload
+    const { data } = await http.get<PcaAfterPayload>('/api/benchmark/merged/batch-correction/pca-after')
+    return data
   } catch {
     return null
   }

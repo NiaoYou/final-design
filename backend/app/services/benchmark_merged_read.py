@@ -252,6 +252,11 @@ def pca_plot_path() -> Optional[Path]:
     return p if p.is_file() else None
 
 
+def load_pca_after_correction() -> Optional[Dict[str, Any]]:
+    """加载校正后的 PCA 数据（坐标与解释方差比）。"""
+    return read_json(pipeline_dir() / "pca_after_correction.json")
+
+
 # ==============================
 # evaluation（方法对比实验）只读
 # ==============================

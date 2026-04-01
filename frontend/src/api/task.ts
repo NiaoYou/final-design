@@ -30,3 +30,8 @@ export async function runBatchCorrect(taskId: number): Promise<Record<string, un
   const { data } = await http.post<Record<string, unknown>>(`/api/tasks/${taskId}/batch-correct`)
   return data
 }
+
+export async function runEvaluation(taskId: number): Promise<Record<string, unknown>> {
+  const { data } = await http.get<Record<string, unknown>>(`/api/tasks/${taskId}/evaluation`)
+  return data
+}
