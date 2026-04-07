@@ -10,3 +10,5 @@ scipy
 matplotlib
 openpyxl
 jinja2
+neuroCombat
+statsmodels

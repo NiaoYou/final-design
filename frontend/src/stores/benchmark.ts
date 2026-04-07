@@ -8,6 +8,8 @@ import type {
   EvaluationPcaPayload,
   EvaluationSummary,
   EvaluationTableResponse,
+  ImputationEvalFeatureRmse,
+  ImputationEvalSummary,
   MergedFilesResponse,
   MergedSummaryPayload,
   PcaAfterPayload,
@@ -23,6 +25,10 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
   const evaluationTable = ref<EvaluationTableResponse | null>(null)
   const evaluationPcas = ref<Record<string, EvaluationPcaPayload | null>>({})
   const evaluationFiles = ref<EvaluationFilesResponse | null>(null)
+  // 缺失值填充评估
+  const imputationEvalSummary = ref<ImputationEvalSummary | null>(null)
+  const imputationEvalFeatureRmse = ref<ImputationEvalFeatureRmse | null>(null)
+
   const loading = ref(false)
   const error = ref<string | null>(null)
   const loadedAt = ref(0)
@@ -32,7 +38,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
     error.value = null
     try {
       summary.value = await api.fetchMergedSummary()
-      const [rep, met, fil, pca, es, et, ef] = await Promise.all([
+      const [rep, met, fil, pca, es, et, ef, ies, ief] = await Promise.all([
         api.fetchBatchCorrectionReport().catch(() => null),
         api.fetchBatchCorrectionMetrics().catch(() => null),
         api.fetchMergedFiles().catch(() => null),
@@ -40,6 +46,8 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
         api.fetchEvaluationSummary().catch(() => null),
         api.fetchEvaluationTable().catch(() => null),
         api.fetchEvaluationFiles().catch(() => null),
+        api.fetchImputationEvalSummary().catch(() => null),
+        api.fetchImputationEvalFeatureRmse().catch(() => null),
       ])
       report.value = rep
       metrics.value = met
@@ -48,6 +56,8 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
       evaluationSummary.value = es
       evaluationTable.value = et
       evaluationFiles.value = ef
+      imputationEvalSummary.value = ies
+      imputationEvalFeatureRmse.value = ief
       loadedAt.value = Date.now()
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
@@ -57,7 +67,6 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
   }
 
   async function loadEvaluationPca(method: string) {
-    // method 可为 internal（combat）或 display（combat-like）；后端会做兼容映射
     if (!method) return
     try {
       evaluationPcas.value[method] = await api.fetchEvaluationMethodPca(method)
@@ -76,6 +85,8 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
     evaluationTable,
     evaluationPcas,
     evaluationFiles,
+    imputationEvalSummary,
+    imputationEvalFeatureRmse,
     loading,
     error,
     loadedAt,

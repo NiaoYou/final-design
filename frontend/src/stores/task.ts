@@ -31,17 +31,28 @@ export const useTaskStore = defineStore('task', () => {
   const stepPreprocess = ref<PipelineStepState>('wait')
   const stepImpute = ref<PipelineStepState>('wait')
   const stepBatch = ref<PipelineStepState>('wait')
+  // 下方三步在 benchmark merged 管线中完成，此处作为"已就绪"展示用
+  const stepImputationEval = ref<PipelineStepState>('success')
+  const stepDiffAnalysis = ref<PipelineStepState>('success')
+  const stepAnnotation = ref<PipelineStepState>('success')
 
   const steps = computed(() => [
-    { key: 'pre', label: '预处理', state: stepPreprocess.value },
-    { key: 'imp', label: '缺失值填充', state: stepImpute.value },
-    { key: 'bat', label: '批次校正', state: stepBatch.value },
+    { key: 'pre',     label: '预处理',     state: stepPreprocess.value },
+    { key: 'imp',     label: '缺失值填充', state: stepImpute.value },
+    { key: 'bat',     label: '批次校正',   state: stepBatch.value },
+    { key: 'imp_eval',label: '填充评估',   state: stepImputationEval.value },
+    { key: 'diff',    label: '差异分析',   state: stepDiffAnalysis.value },
+    { key: 'anno',    label: '特征注释',   state: stepAnnotation.value },
   ])
 
   function resetSteps() {
     stepPreprocess.value = 'wait'
     stepImpute.value = 'wait'
     stepBatch.value = 'wait'
+    // 填充评估/差异分析/注释已在 merged 管线完成，重置时保持 success
+    stepImputationEval.value = 'success'
+    stepDiffAnalysis.value = 'success'
+    stepAnnotation.value = 'success'
   }
 
   function buildTaskBody(): TaskCreateBody | null {

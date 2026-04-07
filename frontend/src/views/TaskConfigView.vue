@@ -28,8 +28,8 @@ function run() {
   <div class="page-container">
     <p class="page-title">参数配置 / 任务运行</p>
     <p class="page-sub">
-      与通用 HTTP 任务链（上传 → 预处理 → 填充 → 批次）对应。<strong>benchmark merged 的 baseline 批次校正</strong>在独立管线中实现，详见「结果展示」；此处批次选项中的
-      baseline 会提示使用 merged 页面。
+      通用任务链负责 <strong>预处理 → 缺失值填充 → 批次校正</strong> 三步（HTTP 接口驱动）；
+      <strong>填充评估、差异分析、特征注释</strong> 已在 benchmark merged 独立管线中完成，进度条绿色表示已就绪，详见「结果展示」。
     </p>
 
     <div class="card-panel">

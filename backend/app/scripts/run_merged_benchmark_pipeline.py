@@ -8,6 +8,7 @@ from typing import Any, Dict
 import numpy as np
 import pandas as pd
 
+from app.algorithms.batch_correction.combat import run_combat_safe
 from app.core.config import Settings
 from app.services.baseline_batch_correction_merged import run_baseline_batch_correction_merged_pipeline
 from app.services.batch_service import run_batch_correction_matrix
@@ -17,6 +18,7 @@ from app.services.evaluation_service import (
     run_evaluation_matrix,
     run_preprocess_method_comparison_evaluation,
 )
+from app.services.imputation_eval_service import run_imputation_mask_evaluation
 from app.services.imputation_service import run_imputation_matrix
 from app.services.preprocess_service import run_preprocess_matrix
 
@@ -30,8 +32,21 @@ def _read_merged(processed_root: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.D
     return fm, sm, xf
 
 
+def _get_batch_labels(sample_meta: pd.DataFrame, matrix: pd.DataFrame) -> np.ndarray:
+    """从 sample_meta 对齐并提取 batch_id 数组（与 matrix 行顺序一致）。"""
+    if "merged_sample_id" in sample_meta.columns:
+        meta = sample_meta.set_index("merged_sample_id").loc[matrix.index.astype(str)]
+    elif "sample_col_name" in sample_meta.columns:
+        meta = sample_meta.set_index("sample_col_name").loc[matrix.index]
+    else:
+        meta = sample_meta
+    return meta["batch_id"].astype(str).to_numpy()
+
+
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Merge Batch1~Batch7 then run preprocess/impute/batch-correct/evaluation")
+    p = argparse.ArgumentParser(
+        description="Merge Batch1~Batch7 then run preprocess/impute/batch-correct/evaluation"
+    )
     p.add_argument("--processed-root", type=str, default=str(Settings.PROCESSED_DIR))
     p.add_argument("--merge-strategy", type=str, default="inner", choices=["inner", "outer"])
     p.add_argument("--skip-merge", action="store_true", help="若 benchmark_merged 已存在且不需重新合并")
@@ -42,8 +57,14 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--max-feature-missing-rate", type=float, default=0.5)
     p.add_argument("--imputation-method", type=str, default="knn", choices=["mean", "median", "knn"])
     p.add_argument("--knn-k", type=int, default=5)
-    p.add_argument("--batch-method", type=str, default="combat")
+    p.add_argument("--batch-method", type=str, default="combat", choices=["combat", "baseline"])
+    p.add_argument("--combat-parametric", dest="combat_parametric", action="store_true", default=True)
+    p.add_argument("--combat-non-parametric", dest="combat_parametric", action="store_false")
     p.add_argument("--pca-components", type=int, default=2)
+    # 缺失值填充评估参数
+    p.add_argument("--skip-imputation-eval", action="store_true", help="跳过 Mask-then-Impute 填充评估（数据量大时可节省时间）")
+    p.add_argument("--imputation-eval-mask-ratio", type=float, default=0.15)
+    p.add_argument("--imputation-eval-repeats", type=int, default=3)
     return p.parse_args()
 
 
@@ -51,6 +72,7 @@ def main() -> None:
     args = parse_args()
     processed_root = Path(args.processed_root)
 
+    # ---- 1. 合并多批次数据 ----
     if not args.skip_merge:
         merge_benchmark_batches(
             processed_root,
@@ -62,6 +84,7 @@ def main() -> None:
     pipeline_dir = processed_root / "benchmark_merged" / "_pipeline"
     pipeline_dir.mkdir(parents=True, exist_ok=True)
 
+    # ---- 2. 预处理 ----
     preprocess_out = run_preprocess_matrix(
         sample_by_feature=sample_by_feature,
         sample_meta=sample_meta,
@@ -77,7 +100,7 @@ def main() -> None:
     preprocessed = pd.read_csv(Path(preprocess_out["preprocessed_matrix_path"]), index_col=0)
     preprocessed.index = preprocessed.index.astype(str)
 
-    # 主链路保持不动：仍按命令行指定 method 写入 pipeline_dir/imputed_sample_by_feature.csv
+    # ---- 3. 主链路缺失值填充 ----
     imputation_out = run_imputation_matrix(
         matrix=preprocessed,
         config={"method": args.imputation_method, "knn_k": args.knn_k},
@@ -87,39 +110,7 @@ def main() -> None:
     imputed = pd.read_csv(Path(imputation_out["imputed_matrix_path"]), index_col=0)
     imputed.index = imputed.index.astype(str)
 
-    # 仅用于“方法对比评估”的 combat-like 校正（不影响 baseline 逻辑，也不改主链路产物）
-    # 说明：这里是“按 batch 做 per-feature 位置-尺度对齐到全局”的简化实现，用于对比评估；
-    # 严格 ComBat（经验 Bayes 语义）仍未在本仓库实现。
-    def _combat_like_sample_by_feature(X_df: pd.DataFrame, sm: pd.DataFrame) -> pd.DataFrame:
-        if "merged_sample_id" not in sm.columns or "batch_id" not in sm.columns:
-            raise ValueError("combat-like: sample_meta 需要 merged_sample_id 与 batch_id")
-        meta = sm.set_index("merged_sample_id").loc[X_df.index.astype(str)]
-        batch = meta["batch_id"].astype(str).to_numpy()
-
-        X = X_df.apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
-        X = np.nan_to_num(X, nan=0.0)
-
-        overall_mean = np.mean(X, axis=0, keepdims=True)
-        overall_std = np.std(X, axis=0, keepdims=True, ddof=0)
-        overall_std = np.where(overall_std == 0, 1.0, overall_std)
-
-        corrected = X.copy()
-        for b in np.unique(batch):
-            idx = batch == b
-            if idx.sum() == 0:
-                continue
-            bm = np.mean(X[idx, :], axis=0, keepdims=True)
-            bs = np.std(X[idx, :], axis=0, keepdims=True, ddof=0)
-            bs = np.where(bs == 0, 1.0, bs)
-            corrected[idx, :] = (X[idx, :] - bm) / bs * overall_std + overall_mean
-
-        return pd.DataFrame(corrected, index=X_df.index, columns=X_df.columns)
-
-    combat_df = _combat_like_sample_by_feature(imputed, sample_meta)
-
-    # 评估模块需要 mean/median/knn/baseline 四种方法统一对比：
-    # - mean/median/knn：对同一 preprocessed 矩阵分别填充（写入各自子目录，避免覆盖主链路产物）
-    # - baseline：使用 merged baseline 批次校正产物 batch_corrected_sample_by_feature.csv（由下方 baseline pipeline 生成）
+    # ---- 4. 多种填充方法（用于评估对比）----
     imputed_by_method: dict[str, pd.DataFrame] = {}
     impute_methods = ["mean", "median", "knn"]
     for m in impute_methods:
@@ -133,13 +124,41 @@ def main() -> None:
         mat.index = mat.index.astype(str)
         imputed_by_method[m] = mat
 
+    # ---- 5. 批次校正（主链路）----
     batch_out = run_batch_correction_matrix(
         matrix=imputed,
         sample_meta=sample_meta,
-        config={"method": args.batch_method, "batch_id_field": "batch_id"},
+        config={
+            "method": args.batch_method,
+            "batch_id_field": "batch_id",
+            "parametric": args.combat_parametric,
+        },
         output_dir=pipeline_dir,
     )
 
+    print(f"  batch_correct status: {batch_out.get('status')}")
+    print(f"  batch_correct reason: {batch_out.get('reason')}")
+
+    # ---- 6. ComBat 校正（用于评估对比，即使主链路选了 baseline 也运行） ----
+    batch_labels = _get_batch_labels(sample_meta, imputed)
+    combat_df, combat_err = run_combat_safe(
+        imputed, batch_labels, parametric=args.combat_parametric
+    )
+    combat_status: Dict[str, Any] = {}
+    if combat_df is None:
+        print(f"  [WARNING] ComBat 对比组失败: {combat_err}")
+        combat_status = {"available": False, "error": combat_err}
+    else:
+        combat_path = pipeline_dir / "_combat_corrected_sample_by_feature.csv"
+        combat_df.to_csv(combat_path, index=True)
+        combat_status = {
+            "available": True,
+            "path": str(combat_path),
+            "parametric": args.combat_parametric,
+        }
+        print(f"  ComBat 对比组: 成功，保存至 {combat_path}")
+
+    # ---- 7. Baseline 批次校正（产出主要报告/PCA 图）----
     eval_out = run_evaluation_matrix(
         matrix_before=imputed,
         matrix_after=None,
@@ -162,7 +181,7 @@ def main() -> None:
         input_matrix_filename="imputed_sample_by_feature.csv",
     )
 
-    # 统一评估：将 mean/median/knn/baseline 组织为 matrices_by_method 并输出到 _pipeline/evaluation/
+    # ---- 8. 统一多方法对比评估 ----
     baseline_matrix_path = pipeline_dir / "batch_corrected_sample_by_feature.csv"
     baseline_df = pd.read_csv(baseline_matrix_path, index_col=0)
     baseline_df.index = baseline_df.index.astype(str)
@@ -171,40 +190,83 @@ def main() -> None:
         "mean": imputed_by_method["mean"],
         "median": imputed_by_method["median"],
         "knn": imputed_by_method["knn"],
-        "combat": combat_df,
         "baseline": baseline_df,
     }
+
+    # 若 ComBat 成功，加入对比
+    if combat_df is not None:
+        matrices_by_method["combat"] = combat_df
+
+    # 确定对比图的 before/after
+    before_method = (
+        str(args.imputation_method).lower()
+        if str(args.imputation_method).lower() in {"mean", "median", "knn"}
+        else "knn"
+    )
+    after_method = "combat" if combat_df is not None else "baseline"
+
     evaluation_compare_out = run_preprocess_method_comparison_evaluation(
         matrices_by_method=matrices_by_method,
         sample_meta=sample_meta,
         output_dir=pipeline_dir / "evaluation",
         n_components=2,
-        before_method=str(args.imputation_method).lower() if str(args.imputation_method).lower() in {"mean", "median", "knn"} else "knn",
-        after_method="baseline",
+        before_method=before_method,
+        after_method=after_method,
     )
 
+    # ---- 9. 缺失值填充 Mask-then-Impute 评估 ----
+    imputation_eval_out: Dict[str, Any] = {}
+    if not args.skip_imputation_eval:
+        print("\n运行缺失值填充评估（Mask-then-Impute）...")
+        try:
+            imputation_eval_out = run_imputation_mask_evaluation(
+                matrix=imputed,           # 使用主链路填充后矩阵（无 NaN）作为基准
+                mask_ratio=args.imputation_eval_mask_ratio,
+                knn_k=args.knn_k,
+                n_repeats=args.imputation_eval_repeats,
+                output_dir=pipeline_dir / "imputation_eval",
+            )
+            print(f"  填充评估完成 — 最优方法: {imputation_eval_out.get('best_method')}")
+            for m, stats in (imputation_eval_out.get("summary") or {}).items():
+                print(f"    {m:8s}: RMSE={stats['rmse_mean']:.4f} ± {stats['rmse_std']:.4f}"
+                      f"  MAE={stats['mae_mean']:.4f}  NRMSE={stats['nrmse_mean']:.4f}")
+        except Exception as e:
+            print(f"  [WARNING] 填充评估失败: {e}")
+            imputation_eval_out = {"error": str(e)}
+    else:
+        print("  跳过填充评估（--skip-imputation-eval）")
+
+    # ---- 10. 写汇总报告 ----
     report: Dict[str, Any] = {
         "merge_strategy": args.merge_strategy,
         "preprocess_out": preprocess_out,
         "imputation_out": imputation_out,
-        "imputation_variants_note": "为方法对比评估额外生成 mean/median/knn 的填充结果，写入 _pipeline/_imputation_{method}/ 子目录；主链路仍使用 imputed_sample_by_feature.csv。",
-        "batch_correction_out": batch_out,
+        "imputation_variants_note": (
+            "为方法对比评估额外生成 mean/median/knn 的填充结果，"
+            "写入 _pipeline/_imputation_{method}/ 子目录；主链路仍使用 imputed_sample_by_feature.csv。"
+        ),
+        "batch_correction_main_out": batch_out,
+        "combat_comparison_status": combat_status,
         "evaluation_out": eval_out,
         "pre_correction_evaluation_out": pre_eval_out,
         "baseline_batch_correction_out": baseline_out,
         "evaluation_compare_out": evaluation_compare_out,
+        "methods_in_comparison": list(matrices_by_method.keys()),
+        "combat_available_in_comparison": combat_df is not None,
+        "imputation_eval_out": imputation_eval_out,
     }
     mr_path = processed_root / "benchmark_merged" / "merge_report.json"
     if mr_path.is_file():
         report["merge_report_path"] = str(mr_path)
+
     with (pipeline_dir / "merged_pipeline_report.json").open("w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 
-    print("OK: benchmark_merged pipeline finished.")
-    print(f"  merged dir: {processed_root / 'benchmark_merged'}")
+    print("\nOK: benchmark_merged pipeline finished.")
+    print(f"  merged dir : {processed_root / 'benchmark_merged'}")
     print(f"  pipeline dir: {pipeline_dir}")
-    print(f"  batch_correct status: {batch_out.get('status')}")
-    print(f"  strict_combat_implemented: {batch_out.get('strict_combat_implemented')}")
+    print(f"  methods in comparison: {list(matrices_by_method.keys())}")
+    print(f"  combat in comparison : {combat_df is not None}")
 
 
 if __name__ == "__main__":

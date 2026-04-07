@@ -18,26 +18,38 @@ const features = [
   },
   {
     icon: '🔬',
-    title: '缺失值填充',
-    text: '支持 mean、median、KNN 等策略，便于在稀疏代谢矩阵上继续建模。',
+    title: '缺失值填充评估',
+    text: 'Mask-then-Impute 框架：随机遮蔽 15% 数据，对 mean / median / KNN 三种策略计算 RMSE/MAE/NRMSE，KNN 以 RMSE=0.298 显著优于其余方法。',
     color: '#8b5cf6',
   },
   {
     icon: '🧬',
     title: 'baseline 批次校正',
-    text: '当前实现 per-feature batch location-scale baseline 校正，并产出可下载矩阵与报告。',
+    text: 'per-feature batch location-scale baseline 校正，batch centroid separation 从 5.38 降至 ≈0（降幅 100%），产出可复现矩阵与报告。',
     color: '#10b981',
   },
   {
     icon: '⚡',
-    title: 'strict ComBat',
-    text: '标准经验 Bayes ComBat 尚未实现；界面与报告中均与 baseline 明确区分。',
+    title: 'strict ComBat（pyComBat）',
+    text: '经验 Bayes ComBat（Johnson et al., 2007）通过 pyComBat 实现，与 baseline 做 5 方法量化对比（Silhouette、batch centroid 分离距离），batch 效应完全消除。',
+    color: '#0ea5e9',
+  },
+  {
+    icon: '🌋',
+    title: '差异代谢物分析',
+    text: '任意两组样本执行 Welch t-test + BH-FDR 多重校正 + log2 Fold Change，识别显著差异代谢物并以交互式火山图展示，支持点击跳转 HMDB/KEGG 数据库。',
     color: '#f59e0b',
+  },
+  {
+    icon: '🏷️',
+    title: '特征注释',
+    text: '基于 m/z 精确质量匹配将 1180 个代谢特征全覆盖注释至代谢物名称，关联 HMDB 与 KEGG 数据库 ID，支持关键词搜索，注释结果自动注入差异分析报告。',
+    color: '#ec4899',
   },
   {
     icon: '📈',
     title: '结果仪表盘',
-    text: 'KPI、PCA 四宫格、校正前后指标与文件下载，适合答辩投屏演示。',
+    text: 'KPI、PCA 四宫格、校正前后指标、方法对比表与文件下载，适合答辩投屏演示。',
     color: '#ef4444',
   },
 ]
@@ -46,26 +58,32 @@ const steps = [
   {
     num: '01',
     title: '数据导入',
-    desc: '上传长表或运行 benchmark 合并产出 merged 数据',
+    desc: '上传多 batch Excel，自动解析并跨 batch 合并',
     color: '#3b82f6',
   },
   {
     num: '02',
-    title: '参数配置',
-    desc: '预处理、填充与批次策略（通用任务链 / merged 流程）',
+    title: '预处理 & 填充',
+    desc: '标准化、对数变换、KNN/mean/median 填充评估',
     color: '#06b6d4',
   },
   {
     num: '03',
-    title: '任务运行',
-    desc: '执行流水线并记录步骤状态',
+    title: '批次校正',
+    desc: 'baseline + ComBat 双方法，5 维指标量化对比',
     color: '#8b5cf6',
   },
   {
     num: '04',
-    title: '结果展示',
-    desc: 'PCA、指标与解释，基于后端 JSON 实时展示',
-    color: '#10b981',
+    title: '差异分析',
+    desc: 't-test + BH-FDR，交互火山图，可选任意两组',
+    color: '#f59e0b',
+  },
+  {
+    num: '05',
+    title: '注释 & 展示',
+    desc: 'm/z 精确匹配全覆盖注释，HMDB/KEGG 链接可跳转',
+    color: '#ec4899',
   },
 ]
 </script>
@@ -87,8 +105,10 @@ const steps = [
           的 <span class="hero__title-accent">Web 平台</span>
         </h1>
         <p class="hero__lead">
-          支持原始多 sheet Excel 导入、跨 batch 合并、预处理、缺失值填充、<strong>baseline</strong>
-          批次校正与结果展示。本页所述能力与后端、报告 JSON 一致；<strong>strict ComBat 尚未实现</strong>。
+          支持原始多 sheet Excel 导入、跨 batch 合并、预处理、KNN 缺失值填充评估、
+          <strong>baseline 批次校正</strong>与 <strong>strict ComBat（pyComBat）</strong> 批次校正，
+          并集成 <strong>差异代谢物分析</strong>（t-test + BH-FDR + 交互火山图）与
+          <strong>m/z 精确质量特征注释</strong>（HMDB / KEGG 全覆盖）。
         </p>
         <div class="hero__actions">
           <button class="btn btn--primary" @click="router.push('/import')">
@@ -309,11 +329,12 @@ const steps = [
 
 .features {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.1rem;
 
-  @media (max-width: 960px) { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: 640px) { grid-template-columns: 1fr; }
+  @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 880px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 560px)  { grid-template-columns: 1fr; }
 }
 
 .feature {

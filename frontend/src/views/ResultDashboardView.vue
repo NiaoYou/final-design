@@ -8,13 +8,20 @@ import MethodStatusCard from '@/components/MethodStatusCard.vue'
 import DownloadFileCard from '@/components/DownloadFileCard.vue'
 import PcaImagePanel from '@/components/PcaImagePanel.vue'
 import EvRatioChart from '@/components/EvRatioChart.vue'
+import ImputationEvalCard from '@/components/ImputationEvalCard.vue'
+import VolcanoPlotCard from '@/components/VolcanoPlotCard.vue'
+import AnnotationTableCard from '@/components/AnnotationTableCard.vue'
 import { evaluationDownloadUrl, evaluationPcaImageUrl, pcaBeforeAfterImageUrl } from '@/api/benchmark'
 import { formatNumber, formatRatio } from '@/utils/format'
 import type { BatchCorrectionMetrics } from '@/types/benchmark'
 
 const store = useBenchmarkStore()
-const { summary, report, metrics, files, pcaAfter, evaluationSummary, evaluationTable, evaluationPcas, evaluationFiles, loading, error } =
-  storeToRefs(store)
+const {
+  summary, report, metrics, files, pcaAfter,
+  evaluationSummary, evaluationTable, evaluationPcas, evaluationFiles,
+  imputationEvalSummary, imputationEvalFeatureRmse,
+  loading, error,
+} = storeToRefs(store)
 
 onMounted(() => {
   void store.loadAll()
@@ -61,6 +68,16 @@ const interpretation = computed(() => {
   return parts
 })
 
+/** 格式化 evaluation 表格中的数值（处理科学记数法字符串，统一保留 4 位有效小数） */
+function fmtEvalNum(val: string | null | undefined): string {
+  if (val == null || val === '') return '—'
+  const n = Number(val)
+  if (isNaN(n)) return String(val)
+  // centroid separation 接近 0 时（< 1e-8）显示为 ≈0
+  if (Math.abs(n) < 1e-8) return '≈0'
+  return n.toFixed(4)
+}
+
 const selectedEvalMethod = ref<string>('baseline')
 
 const evalMethodOptions = computed(() => {
@@ -100,8 +117,8 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     <p class="page-title">结果展示 · Benchmark Merged</p>
     <p class="page-sub" style="margin-bottom:1.25rem">
       数据来自后端 <code>/api/benchmark/merged/*</code> 与产物目录 JSON；不做手填指标。
-      <strong>当前实现的是 baseline 批次校正；strict ComBat 尚未实现。</strong>
-      请勿将 baseline 称为 ComBat。
+      主链路 KPI / PCA 展示 <strong>baseline</strong> 批次校正结果；
+      <strong>strict ComBat（pyComBat）已实现</strong>，可在下方「方法对比实验」区块查看对比数据。
     </p>
 
     <el-alert
@@ -183,6 +200,42 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
       <p v-if="!interpretation.length" class="interp muted">加载报告与 metrics 后可自动生成解释句段。</p>
     </section>
 
+    <!-- ======== 缺失值填充评估区块 ======== -->
+    <section class="card-panel">
+      <h3 class="section-heading">缺失值填充方法评估（Mask-then-Impute）</h3>
+      <p class="interp muted">
+        在已填充矩阵上随机遮蔽 <strong>15%</strong> 的值，分别用 <strong>mean / median / KNN</strong>
+        重新填充，与真实值对比计算 RMSE / MAE / NRMSE，量化各方法精度。
+      </p>
+      <ImputationEvalCard
+        :summary="imputationEvalSummary"
+        :feature-rmse="imputationEvalFeatureRmse"
+        :loading="loading && !imputationEvalSummary"
+      />
+    </section>
+
+    <!-- ======== 差异代谢物分析区块 ======== -->
+    <section class="card-panel">
+      <h3 class="section-heading">差异代谢物分析（Differential Analysis）</h3>
+      <p class="interp muted">
+        基于批次校正后矩阵，对任意两组样本执行独立双样本 <strong>t-test</strong>，
+        并经 <strong>BH-FDR</strong> 多重校正，计算 <strong>log2 Fold Change</strong>。
+        火山图中红色表示显著上调，蓝色表示显著下调，灰色为无显著差异特征。
+      </p>
+      <VolcanoPlotCard />
+    </section>
+
+    <!-- ======== 特征注释区块 ======== -->
+    <section class="card-panel">
+      <h3 class="section-heading">特征注释（Feature Annotation）</h3>
+      <p class="interp muted">
+        基于各批次 <strong>annotation.csv</strong> 中的 m/z 精确质量匹配，
+        将 1180 个代谢特征映射到代谢物名称（100% 覆盖），
+        并附 <strong>HMDB</strong> 与 <strong>KEGG</strong> 数据库链接，支持关键词搜索。
+      </p>
+      <AnnotationTableCard />
+    </section>
+
     <section class="card-panel">
       <h3 class="section-heading">文件下载</h3>
       <template v-if="files?.files?.length">
@@ -199,7 +252,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
       <div v-if="evaluationFiles?.files?.length" class="dl-split">
         <div class="subhead">Evaluation 产物下载（方法对比实验）</div>
         <p class="interp muted">
-          其中 <strong>combat-like</strong> 为简化对齐方法（用于对比），不代表 strict ComBat 已实现。
+          包含 mean / median / knn / baseline / <strong>ComBat</strong>（pyComBat）各方法的 PCA 坐标 JSON 与评估汇总表。
         </p>
         <DownloadFileCard
           v-for="f in evaluationFiles.files"
@@ -215,8 +268,10 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     <section class="card-panel">
       <h3 class="section-heading">方法对比实验（evaluation）</h3>
       <p class="interp muted">
-        本区块读取 <code>benchmark_merged/_pipeline/evaluation</code> 下的评估产物。
-        其中 <strong>combat-like</strong> 为简化对齐方法（用于对比），不代表 strict ComBat 已实现。
+        本区块读取 <code>benchmark_merged/_pipeline/evaluation</code> 下的评估产物，
+        对比 <strong>mean / median / knn</strong>（仅填充，无批次校正）、
+        <strong>baseline</strong>（per-feature location-scale 基线校正）与
+        <strong>ComBat</strong>（pyComBat 经验 Bayes，Johnson et al., 2007）三类方法的指标表现。
       </p>
 
       <el-alert
@@ -241,9 +296,24 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
           >
             <el-table-column prop="method" label="方法（对外）" min-width="140" />
             <el-table-column prop="method_internal" label="内部 key" width="120" />
-            <el-table-column prop="silhouette_batch_id_pc12" label="silhouette(batch_id)" min-width="160" />
-            <el-table-column prop="silhouette_group_label_pc12" label="silhouette(group_label)" min-width="170" />
-            <el-table-column prop="batch_centroid_separation_pc12" label="batch centroid distance" min-width="190" />
+            <el-table-column
+              prop="silhouette_batch_id_pc12"
+              label="silhouette(batch_id)"
+              min-width="160"
+              :formatter="(r: Record<string,string>) => fmtEvalNum(r.silhouette_batch_id_pc12)"
+            />
+            <el-table-column
+              prop="silhouette_group_label_pc12"
+              label="silhouette(group_label)"
+              min-width="170"
+              :formatter="(r: Record<string,string>) => fmtEvalNum(r.silhouette_group_label_pc12)"
+            />
+            <el-table-column
+              prop="batch_centroid_separation_pc12"
+              label="batch centroid distance"
+              min-width="190"
+              :formatter="(r: Record<string,string>) => fmtEvalNum(r.batch_centroid_separation_pc12)"
+            />
           </el-table>
           <el-empty v-else description="暂无 evaluation_table.csv（请先运行 merged pipeline）" />
         </div>
@@ -267,8 +337,19 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
               :value="o.internal"
             />
           </el-select>
-          <el-tag type="warning" effect="plain" v-if="evalMethodOptions.find(o => o.internal===selectedEvalMethod)?.display==='combat-like'">
-            combat-like（非 strict ComBat）
+          <el-tag
+            v-if="selectedEvalMethod === 'combat'"
+            type="success"
+            effect="light"
+          >
+            strict ComBat（pyComBat 经验 Bayes）
+          </el-tag>
+          <el-tag
+            v-else-if="selectedEvalMethod === 'baseline'"
+            type="primary"
+            effect="light"
+          >
+            per-feature location-scale 基线校正
           </el-tag>
         </div>
         <pre class="jsondump jsondump--light" v-if="selectedEvalPca">{{ JSON.stringify(selectedEvalPca, null, 2).slice(0, 1800) }}{{ (JSON.stringify(selectedEvalPca).length > 1800) ? '\n…' : '' }}</pre>

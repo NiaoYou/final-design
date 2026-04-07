@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from sqlalchemy.orm import Session
 
 from app.models.dataset import Dataset
@@ -18,7 +20,7 @@ def create_dataset(
     batch_column: str,
     group_column: str,
     data_format: str,
-    stored_path: str | None,
+    stored_path: Optional[str],
 ) -> Dataset:
     dataset = Dataset(
         task_id=task_id,

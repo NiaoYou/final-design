@@ -6,13 +6,10 @@
     "pipeline_matrix_csv": "D:\\DaiMaCang\\cs\\finaldesign\\backend\\data\\processed\\benchmark_merged\\_pipeline\\imputed_sample_by_feature.csv"
   },
   "strict_combat": {
-    "status": "not_implemented",
-    "missing_for_strict_combat": [
-      "empirical Bayes shrinkage（ComBat 核心）",
-      "显式生物学设计矩阵 / 协变量（如疾病、性别等）建模",
-      "与 sva::ComBat 或 neuroCombat 等参考实现一致的参数与数值对齐验证",
-      "可选：对已知 QC / 非生物学样本的显式处理策略"
-    ]
+    "status": "implemented",
+    "note": "严格 ComBat（neuroCombat 经验 Bayes 实现）已在本项目中实现，可通过 run_batch_correction_matrix(method=\"combat\") 调用，或在 run_merged_benchmark_pipeline.py 中设置 --batch-method combat 启用。当前主链路（baseline_batch_correction_merged）仍展示 baseline 结果，ComBat 结果在 evaluation/方法对比区块中展示。",
+    "library": "neuroCombat（pip install neuroCombat）",
+    "reference": "Johnson et al., 2007, Biostatistics"
   },
   "baseline_batch_correction": {
     "status": "implemented",

@@ -23,12 +23,12 @@ def update_result_paths(
     db: Session,
     task_id: int,
     *,
-    preprocess_matrix_path: str | None = None,
-    imputed_matrix_path: str | None = None,
-    batch_corrected_matrix_path: str | None = None,
-    pca_before_plot_path: str | None = None,
-    pca_after_plot_path: str | None = None,
-    pca_plot_path: str | None = None,
+    preprocess_matrix_path: Optional[str] = None,
+    imputed_matrix_path: Optional[str] = None,
+    batch_corrected_matrix_path: Optional[str] = None,
+    pca_before_plot_path: Optional[str] = None,
+    pca_after_plot_path: Optional[str] = None,
+    pca_plot_path: Optional[str] = None,
 ) -> Result:
     result = get_or_create_result(db, task_id)
 
@@ -55,8 +55,8 @@ def update_metrics_json(
     db: Session,
     task_id: int,
     *,
-    metrics: Dict[str, Any] | None = None,
-    summary: Dict[str, Any] | None = None,
+    metrics: Optional[Dict[str, Any]] = None,
+    summary: Optional[Dict[str, Any]] = None,
 ) -> Result:
     result = get_or_create_result(db, task_id)
     if metrics is not None:

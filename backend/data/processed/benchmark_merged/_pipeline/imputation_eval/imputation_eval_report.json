@@ -1,0 +1,54 @@
+{
+  "schema_version": "imputation_eval_v1",
+  "config": {
+    "mask_ratio": 0.15,
+    "n_repeats": 3,
+    "knn_k": 5,
+    "random_seed": 42,
+    "n_samples": 1715,
+    "n_features": 1180,
+    "n_masked_per_repeat": 303555
+  },
+  "elapsed_seconds": 18.53,
+  "methods": {
+    "mean": {
+      "method": "mean",
+      "rmse_mean": 1.0011217772285141,
+      "rmse_std": 0.007167193743454819,
+      "mae_mean": 0.4376392362637995,
+      "mae_std": 0.0008589637728114703,
+      "nrmse_mean": 1.0006421028120687,
+      "nrmse_std": 7.674930960310885e-06
+    },
+    "median": {
+      "method": "median",
+      "rmse_mean": 1.036061554664735,
+      "rmse_std": 0.0070472040493714415,
+      "mae_mean": 0.34269037718254775,
+      "mae_std": 0.0008055573889230328,
+      "nrmse_mean": 1.0355677853966194,
+      "nrmse_std": 0.00036872275606021556
+    },
+    "knn": {
+      "method": "knn",
+      "rmse_mean": 0.2979729638084451,
+      "rmse_std": 0.004075758181826061,
+      "mae_mean": 0.07402147923608807,
+      "mae_std": 0.0003059180558635861,
+      "nrmse_mean": 0.29782055099327126,
+      "nrmse_std": 0.002490709570262848
+    }
+  },
+  "ranking_by_rmse": [
+    "knn",
+    "mean",
+    "median"
+  ],
+  "best_method": "knn",
+  "notes": [
+    "评估方式：Mask-then-Impute（在无缺失矩阵上随机遮蔽后填充，与真值对比）。",
+    "指标平均自 3 次独立重复（不同随机遮蔽种子）。",
+    "RMSE/MAE 越低越好；NRMSE = RMSE / 特征标准差（用于跨特征归一化比较）。",
+    "特征级 RMSE 分布见 imputation_eval_feature.json，可用于箱线图。"
+  ]
+}

@@ -2,44 +2,31 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import numpy as np
 import pandas as pd
 from sqlalchemy.orm import Session
 
+from app.algorithms.batch_correction.combat import run_combat_safe
 from app.repositories.dataset_repository import get_dataset_by_task_id
 from app.repositories.task_repository import update_task_status
 from app.utils.dataframe_utils import extract_sample_metadata, read_long_dataframe
 from app.utils.file_utils import ensure_dir, task_temp_dir
 
 
-def _combat_like_correction(matrix: pd.DataFrame, batch_labels: np.ndarray) -> pd.DataFrame:
+def _baseline_location_scale(matrix: pd.DataFrame, batch_labels: np.ndarray) -> pd.DataFrame:
     """
-    简化版批次校正：
-    - 对每个特征、每个批次，先标准化到“该批次自身均值/方差”
-    - 再映射回全局均值/方差
-
-    注意：这不是标准 ComBat 实现，但适合作为 MVP 可运行占位逻辑。
+    逐特征-逐批次位置-尺度对齐（baseline）。
+    matrix: sample × feature
     """
+    from app.algorithms.batch_correction.baseline_location_scale_sample import (
+        per_feature_batch_location_scale_baseline,
+    )
 
-    X = matrix.to_numpy(dtype=float)
-    overall_mean = np.nanmean(X, axis=1, keepdims=True)
-    overall_std = np.nanstd(X, axis=1, keepdims=True, ddof=0)
-    overall_std = np.where(overall_std == 0, 1.0, overall_std)
-
-    corrected = X.copy()
-    unique_batches = np.unique(batch_labels)
-    for b in unique_batches:
-        idx = batch_labels == b
-        if idx.sum() == 0:
-            continue
-        batch_mean = np.nanmean(X[:, idx], axis=1, keepdims=True)
-        batch_std = np.nanstd(X[:, idx], axis=1, keepdims=True, ddof=0)
-        batch_std = np.where(batch_std == 0, 1.0, batch_std)
-        corrected[:, idx] = (X[:, idx] - batch_mean) / batch_std * overall_std + overall_mean
-
-    return pd.DataFrame(corrected, index=matrix.index, columns=matrix.columns)
+    X = matrix.apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
+    X_corr = per_feature_batch_location_scale_baseline(X, batch_labels, eps=1e-8)
+    return pd.DataFrame(X_corr, index=matrix.index, columns=matrix.columns)
 
 
 def run_batch_correction(
@@ -48,6 +35,10 @@ def run_batch_correction(
     task_id: int,
     batch_config: Dict[str, Any],
 ) -> Dict[str, Any]:
+    """
+    通用任务链批次校正接口（用于"单次上传任务"流程）。
+    支持 method: 'combat'（strict ComBat via pyComBat）或 'baseline'。
+    """
     dataset = get_dataset_by_task_id(db, task_id)
 
     temp_dir = task_temp_dir(task_id)
@@ -67,17 +58,22 @@ def run_batch_correction(
     )
 
     method = str(batch_config.get("method", "combat")).lower()
-    if method != "combat":
-        raise ValueError("MVP 目前仅支持 method='combat'（简化实现）。")
 
-    corrected = _combat_like_correction(matrix, batch_labels=batch_labels)
+    if method == "combat":
+        corrected, err = run_combat_safe(matrix, batch_labels)
+        if corrected is None:
+            raise RuntimeError(f"ComBat 校正失败: {err}")
+    elif method == "baseline":
+        corrected = _baseline_location_scale(matrix, batch_labels)
+    else:
+        raise ValueError(f"不支持的批次校正方法: {method}。支持: combat, baseline")
 
     out_path = temp_dir / f"{task_id}_batch_corrected.csv"
     ensure_dir(out_path.parent)
     corrected.to_csv(out_path)
 
     update_task_status(db, task_id, status="batch_done")
-    return {"batch_corrected_matrix_path": str(out_path)}
+    return {"batch_corrected_matrix_path": str(out_path), "method": method}
 
 
 def run_batch_correction_matrix(
@@ -86,14 +82,18 @@ def run_batch_correction_matrix(
     sample_meta: pd.DataFrame,
     config: Dict[str, Any],
     output_dir: Path,
+    covariate_df: Optional[pd.DataFrame] = None,
 ) -> Dict[str, Any]:
     """
-    matrix format:
-    - matrix: sample x feature (数值矩阵)
-    - sample_meta: 包含 batch_id，用于判定是否有足够 batch 做校正
+    矩阵级批次校正服务（用于 benchmark_merged pipeline）。
 
-    诚实说明：**严格 ComBat（Bioconductor 语义）尚未在本仓库实现**。
-    本函数仅做 batch 条件检查、样本数统计与可读报告，不输出“已完成 ComBat 校正”的矩阵。
+    支持的 method（config["method"]）：
+      - "combat"   : 严格 ComBat（pyComBat 经验 Bayes 实现）
+      - "baseline" : per-feature location-scale 基线对齐
+
+    matrix: sample × feature（数值矩阵，已完成缺失值填充）
+    sample_meta: 必须包含 batch_id 字段（及 merged_sample_id 或 sample_col_name 作为主键）
+    covariate_df: 可选生物学协变量（sample × cov），仅 combat 方法使用
     """
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -104,7 +104,7 @@ def run_batch_correction_matrix(
         report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
         return {"batch_correct_report_path": str(report_path), **report}
 
-    # 对齐样本顺序（跨 batch 合并使用 merged_sample_id）
+    # 对齐样本顺序
     if "merged_sample_id" in sample_meta.columns:
         meta = sample_meta.set_index("merged_sample_id").loc[matrix.index.astype(str)]
     elif "sample_col_name" in sample_meta.columns:
@@ -112,53 +112,74 @@ def run_batch_correction_matrix(
     else:
         meta = sample_meta
 
-    batch_ids = meta[batch_field].dropna().astype(str).unique().tolist()
-    method = str(config.get("method", "combat")).lower()
+    batch_labels = meta[batch_field].astype(str).to_numpy()
+    unique_batches = np.unique(batch_labels)
+    samples_per_batch = {str(b): int((batch_labels == b).sum()) for b in unique_batches}
 
-    samples_per_batch = meta.groupby(batch_field).size().to_dict()
-    samples_per_batch = {str(k): int(v) for k, v in samples_per_batch.items()}
+    method = str(config.get("method", "combat")).lower()
+    parametric = bool(config.get("parametric", True))
 
     readiness = {
-        "n_batches": len(batch_ids),
-        "batch_ids": batch_ids,
+        "n_batches": int(unique_batches.size),
+        "batch_ids": unique_batches.tolist(),
         "samples_per_batch": samples_per_batch,
         "min_samples_per_batch": int(min(samples_per_batch.values())) if samples_per_batch else 0,
-        "strict_combat_implemented_in_repo": False,
-        "can_run_real_combat_from_data_alone": len(batch_ids) >= 2 and min(samples_per_batch.values()) >= 2
-        if samples_per_batch
-        else False,
-        "blockers": [],
+        "method_requested": method,
+        "combat_implemented_in_repo": True,
     }
-    if len(batch_ids) < 2:
-        readiness["blockers"].append("batch_id 唯一值少于 2，无法做跨批次校正。")
-    if readiness["min_samples_per_batch"] < 2:
-        readiness["blockers"].append("存在样本数 <2 的 batch，ComBat 等模型通常不稳定或需特殊处理。")
 
-    if len(batch_ids) < 2:
+    if unique_batches.size < 2:
         report = {
             "status": "skipped",
-            "reason": f"batch_id 只有 1 个（{batch_ids[0]}），不足以进行批次效应校正。",
-            "batch_id_count": len(batch_ids),
-            "batch_ids": batch_ids,
-            "batch_correction_readiness": readiness,
-            "strict_combat_implemented": False,
+            "reason": f"batch_id 只有 {unique_batches.size} 个，不足以进行批次效应校正。",
+            **readiness,
         }
-    else:
-        # 多 batch：数据上已具备“尝试校正”的条件，但严格 ComBat 仍未实现
-        report = {
-            "status": "not_implemented",
-            "reason": (
-                "已检测到多个 batch_id，具备跨批次校正的数据结构；"
-                "但本仓库尚未实现严格 ComBat（及协变量/设计矩阵等完整流程），"
-                "因此不会生成已 ComBat 校正的输出矩阵。"
-            ),
-            "batch_id_count": len(batch_ids),
-            "batch_ids": batch_ids,
-            "method_requested": method,
-            "batch_correction_readiness": readiness,
-            "strict_combat_implemented": False,
-        }
+        report_path = output_dir / "batch_correct_report.json"
+        report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        return {"batch_correct_report_path": str(report_path), **report}
 
+    # ---- 执行校正 ----
+    if method == "combat":
+        corrected, err = run_combat_safe(
+            matrix,
+            batch_labels,
+            covariate_df=covariate_df,
+            parametric=parametric,
+        )
+        if corrected is None:
+            # ComBat 失败时回退到 baseline，并在报告中说明
+            corrected = _baseline_location_scale(matrix, batch_labels)
+            status = "fallback_to_baseline"
+            reason = f"ComBat 运行失败（{err}），已自动回退到 baseline 方法。"
+        else:
+            status = "success"
+            reason = f"strict ComBat（neuroCombat，Johnson et al. 2007）成功运行，参数模式: {'parametric' if parametric else 'non-parametric'}。"
+    elif method == "baseline":
+        corrected = _baseline_location_scale(matrix, batch_labels)
+        status = "success"
+        reason = "baseline（per-feature location-scale）校正完成。"
+    else:
+        report = {
+            "status": "error",
+            "reason": f"不支持的方法: {method}。支持: combat, baseline",
+            **readiness,
+        }
+        report_path = output_dir / "batch_correct_report.json"
+        report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        return {"batch_correct_report_path": str(report_path), **report}
+
+    # 保存校正后矩阵
+    corrected_path = output_dir / "batch_corrected_sample_by_feature.csv"
+    corrected.to_csv(corrected_path, index=True)
+
+    report = {
+        "status": status,
+        "reason": reason,
+        "method": method,
+        "parametric": parametric,
+        "corrected_matrix_path": str(corrected_path),
+        **readiness,
+    }
     report_path = output_dir / "batch_correct_report.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -168,6 +189,6 @@ def run_batch_correction_matrix(
     return {
         "batch_correct_report_path": str(report_path),
         "batch_correction_readiness_path": str(readiness_path),
+        "corrected_matrix_path": str(corrected_path),
         **report,
     }
-

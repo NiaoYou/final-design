@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from sqlalchemy.orm import Session
 
 from app.models.task import Task
@@ -25,7 +27,7 @@ def create_task(
     return task
 
 
-def update_task_status(db: Session, task_id: int, *, status: str, error_message: str | None = None) -> Task:
+def update_task_status(db: Session, task_id: int, *, status: str, error_message: Optional[str] = None) -> Task:
     task = get_task(db, task_id)
     task.status = status
     if error_message is not None:

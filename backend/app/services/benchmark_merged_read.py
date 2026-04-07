@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import csv
+import pandas as pd
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -316,7 +317,7 @@ EVALUATION_FILE_PURPOSE_ZH: Dict[str, str] = {
     "pca_median.json": "median 填充后的 PCA 坐标与解释方差比（展示用）。",
     "pca_knn.json": "knn 填充后的 PCA 坐标与解释方差比（展示用）。",
     "pca_baseline.json": "baseline 校正后的 PCA 坐标与解释方差比（展示用）。",
-    "pca_combat.json": "combat-like（简化对齐方法）PCA 坐标与解释方差比；不代表 strict ComBat 已实现。",
+    "pca_combat.json": "ComBat（neuroCombat 经验 Bayes）PCA 坐标与解释方差比（Johnson et al., 2007）。",
 }
 
 
@@ -392,5 +393,181 @@ def build_evaluation_summary_payload() -> Optional[Dict[str, Any]]:
         "after_method_for_plot": (rep.get("inputs") or {}).get("after_method_for_plot"),
         "before_method_for_plot_display": (rep.get("inputs") or {}).get("before_method_for_plot_display"),
         "after_method_for_plot_display": (rep.get("inputs") or {}).get("after_method_for_plot_display"),
-        "note": "方法对比实验为展示用评估产物；其中 combat-like 为简化对齐方法，并非 strict ComBat（经验 Bayes）实现。",
+        "note": "方法对比实验为展示用评估产物；combat 为 neuroCombat 经验 Bayes 实现（Johnson et al., 2007）。",
+    }
+
+
+# ==============================
+# imputation 评估（Mask-then-Impute）只读
+# ==============================
+
+def imputation_eval_dir() -> Path:
+    return pipeline_dir() / "imputation_eval"
+
+
+def load_imputation_eval_report() -> Optional[Dict[str, Any]]:
+    return read_json(imputation_eval_dir() / "imputation_eval_report.json")
+
+
+def load_imputation_eval_feature() -> Optional[Dict[str, Any]]:
+    return read_json(imputation_eval_dir() / "imputation_eval_feature.json")
+
+
+def build_imputation_eval_summary_payload() -> Optional[Dict[str, Any]]:
+    rep = load_imputation_eval_report()
+    if not rep:
+        return None
+    methods = rep.get("methods") or {}
+    ranking = rep.get("ranking_by_rmse") or []
+    return {
+        "available": True,
+        "schema_version": rep.get("schema_version"),
+        "config": rep.get("config") or {},
+        "elapsed_seconds": rep.get("elapsed_seconds"),
+        "best_method": rep.get("best_method"),
+        "ranking_by_rmse": ranking,
+        "methods": {
+            m: {
+                "method": v.get("method", m),
+                "rmse_mean":  v.get("rmse_mean"),
+                "rmse_std":   v.get("rmse_std"),
+                "mae_mean":   v.get("mae_mean"),
+                "mae_std":    v.get("mae_std"),
+                "nrmse_mean": v.get("nrmse_mean"),
+                "nrmse_std":  v.get("nrmse_std"),
+            }
+            for m, v in methods.items()
+        },
+        "notes": rep.get("notes") or [],
+    }
+
+
+# ==============================
+# 差异代谢物分析 只读 / 计算入口
+# ==============================
+
+def diff_analysis_dir() -> Path:
+    return pipeline_dir() / "diff_analysis"
+
+
+def load_available_groups() -> List[str]:
+    """
+    从 merged_sample_meta.csv 中读取 formal 样本（sample_type='formal_or_unknown'）
+    的 group_label 列表，按频次降序返回。
+    """
+    meta_path = merged_root() / "merged_sample_meta.csv"
+    if not meta_path.is_file():
+        return []
+    try:
+        meta = pd.read_csv(meta_path)
+        # 优先取 formal_or_unknown，如无则取全部
+        if "sample_type" in meta.columns:
+            formal = meta[meta["sample_type"] == "formal_or_unknown"]
+        else:
+            formal = meta
+        if "group_label" not in formal.columns:
+            return []
+        counts = formal["group_label"].value_counts()
+        return counts.index.astype(str).tolist()
+    except Exception:
+        return []
+
+
+def _diff_cache_path(group1: str, group2: str) -> Path:
+    """差异分析结果缓存文件路径（以 group 名生成安全文件名）。"""
+    safe_g1 = re.sub(r"[^\w\-]", "_", group1)
+    safe_g2 = re.sub(r"[^\w\-]", "_", group2)
+    return diff_analysis_dir() / f"diff_{safe_g1}_vs_{safe_g2}.json"
+
+
+def get_or_run_diff_analysis(
+    group1: str,
+    group2: str,
+    fc_threshold: float = 1.0,
+    pvalue_threshold: float = 0.05,
+    use_fdr: bool = True,
+) -> Dict[str, Any]:
+    """
+    优先从磁盘缓存读取差异分析结果；若缓存不存在，实时运行并写入缓存。
+    缓存键 = (group1, group2, fc_threshold, pvalue_threshold, use_fdr)。
+    """
+    cache_path = _diff_cache_path(group1, group2)
+
+    # 读缓存（验证关键参数是否匹配）
+    if cache_path.is_file():
+        try:
+            cached = json.loads(cache_path.read_text(encoding="utf-8"))
+            if (
+                cached.get("group1") == group1
+                and cached.get("group2") == group2
+                and abs(cached.get("fc_threshold", -999) - fc_threshold) < 1e-9
+                and abs(cached.get("pvalue_threshold", -999) - pvalue_threshold) < 1e-9
+                and cached.get("use_fdr") == use_fdr
+            ):
+                return cached
+        except Exception:
+            pass
+
+    # 缓存未命中 → 实时计算
+    from app.services.differential_analysis_service import run_differential_analysis_for_benchmark
+
+    result = run_differential_analysis_for_benchmark(
+        benchmark_merged_dir=merged_root(),
+        pipeline_dir=pipeline_dir(),
+        group1=group1,
+        group2=group2,
+        fc_threshold=fc_threshold,
+        pvalue_threshold=pvalue_threshold,
+        use_fdr=use_fdr,
+    )
+    return result
+
+
+# ==============================
+# 特征注释 只读 / 构建入口
+# ==============================
+
+def load_annotation_data() -> Optional[Dict[str, Any]]:
+    """读取 _pipeline/annotated_feature_meta.json（注释结果缓存）。"""
+    p = pipeline_dir() / "annotated_feature_meta.json"
+    return read_json(p)
+
+
+def get_or_build_annotation() -> Dict[str, Any]:
+    """
+    优先从磁盘读注释缓存；若不存在则实时构建并写入。
+    """
+    cached = load_annotation_data()
+    if cached:
+        return cached
+
+    from app.services.annotation_service import build_feature_annotation
+    return build_feature_annotation(
+        benchmark_merged_dir=merged_root(),
+        pipeline_dir=pipeline_dir(),
+    )
+
+
+def get_annotation_lookup() -> Dict[str, Dict[str, Any]]:
+    """
+    返回 {feature_col → annotation_dict} 查找表，
+    供差异分析结果富化代谢物名时使用。
+    """
+    from app.services.annotation_service import build_annotation_lookup
+    return build_annotation_lookup(pipeline_dir())
+
+
+def build_annotation_summary_payload() -> Optional[Dict[str, Any]]:
+    """返回注释汇总（不含 features 列表，减小 payload 体积）。"""
+    data = load_annotation_data()
+    if not data:
+        return None
+    return {
+        "available": True,
+        "schema_version": data.get("schema_version"),
+        "n_features": data.get("n_features"),
+        "n_annotated": data.get("n_annotated"),
+        "n_with_kegg": data.get("n_with_kegg"),
+        "n_with_hmdb": data.get("n_with_hmdb"),
+        "coverage_pct": data.get("coverage_pct"),
     }

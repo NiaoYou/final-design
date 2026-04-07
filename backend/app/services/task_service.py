@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from sqlalchemy.orm import Session
 
@@ -43,7 +43,7 @@ def update_task_status_safe(
     *,
     task_id: int,
     status: str,
-    error_message: str | None = None,
+    error_message: Optional[str] = None,
 ) -> None:
     update_task_status(db, task_id, status=status, error_message=error_message)
 

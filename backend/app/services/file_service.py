@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import uuid4
 
 import pandas as pd
@@ -36,7 +36,7 @@ def create_task_and_dataset_from_upload(
     db: Session,
     *,
     upload_file: UploadFile,
-    task_name: str | None,
+    task_name: Optional[str],
     feature_column: str,
     sample_column: str,
     value_column: str,

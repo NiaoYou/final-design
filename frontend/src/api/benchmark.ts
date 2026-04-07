@@ -1,7 +1,11 @@
 import { http } from '@/utils/http'
 import type {
+  AnnotationFeaturesResponse,
+  AnnotationSummary,
   BatchCorrectionMetrics,
   BatchCorrectionReport,
+  DiffAnalysisResult,
+  DiffGroupsResponse,
   EvaluationPcaPayload,
   EvaluationFilesResponse,
   EvaluationSummary,
@@ -80,4 +84,85 @@ export async function fetchEvaluationFiles(): Promise<EvaluationFilesResponse> {
 
 export function evaluationDownloadUrl(filename: string): string {
   return `/api/benchmark/merged/evaluation/download/${encodeURIComponent(filename)}`
+}
+
+// ==============================
+// imputation 评估（Mask-then-Impute）只读 API
+// ==============================
+
+export async function fetchImputationEvalSummary() {
+  try {
+    const { data } = await http.get('/api/benchmark/merged/imputation-eval/summary')
+    return data as import('@/types/benchmark').ImputationEvalSummary
+  } catch {
+    return null
+  }
+}
+
+// ==============================
+// 差异代谢物分析 API
+// ==============================
+
+export async function fetchDiffGroups(): Promise<DiffGroupsResponse> {
+  const { data } = await http.get<DiffGroupsResponse>('/api/benchmark/merged/diff-analysis/groups')
+  return data
+}
+
+export async function fetchDiffAnalysis(
+  group1: string,
+  group2: string,
+  fcThreshold = 1.0,
+  pvalueThreshold = 0.05,
+  useFdr = true,
+): Promise<DiffAnalysisResult> {
+  const params = new URLSearchParams({
+    group1,
+    group2,
+    fc_threshold: String(fcThreshold),
+    pvalue_threshold: String(pvalueThreshold),
+    use_fdr: String(useFdr),
+  })
+  const { data } = await http.get<DiffAnalysisResult>(
+    `/api/benchmark/merged/diff-analysis/run?${params}`
+  )
+  return data
+}
+
+// ==============================
+// 特征注释 API
+// ==============================
+
+export async function fetchAnnotationSummary(): Promise<AnnotationSummary | null> {
+  try {
+    const { data } = await http.get<AnnotationSummary>('/api/benchmark/merged/annotation/summary')
+    return data
+  } catch {
+    return null
+  }
+}
+
+export async function fetchAnnotationFeatures(
+  offset = 0,
+  limit = 100,
+  search?: string,
+): Promise<AnnotationFeaturesResponse | null> {
+  try {
+    const params = new URLSearchParams({ offset: String(offset), limit: String(limit) })
+    if (search) params.set('search', search)
+    const { data } = await http.get<AnnotationFeaturesResponse>(
+      `/api/benchmark/merged/annotation/features?${params}`
+    )
+    return data
+  } catch {
+    return null
+  }
+}
+
+export async function fetchImputationEvalFeatureRmse() {
+  try {
+    const { data } = await http.get('/api/benchmark/merged/imputation-eval/feature-rmse')
+    return data as import('@/types/benchmark').ImputationEvalFeatureRmse
+  } catch {
+    return null
+  }
 }

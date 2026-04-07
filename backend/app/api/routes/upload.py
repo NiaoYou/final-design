@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
@@ -17,7 +17,7 @@ router = APIRouter()
 @router.post("/upload", response_model=UploadResponse)
 def upload_dataset(
     file: UploadFile = File(...),
-    task_name: str | None = Form(None),
+    task_name: Optional[str] = Form(None),
     data_format: str = Form("long"),
     feature_column: str = Form(..., description="long 格式：特征列名"),
     sample_column: str = Form(..., description="long 格式：样本列名"),
