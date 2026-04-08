@@ -2,7 +2,7 @@
 
 > 面向代谢组学数据处理的 Web 系统架构与实现现状说明  
 > **本文档以当前仓库真实代码为准，所有指标均来自真实数据运行结果（1715 样本 × 1180 特征 × 7 batches）。**  
-> 最后更新：2026-04-08
+> 最后更新：2026-04-08（MetaKG 知识图谱可视化已实现）
 
 ---
 
@@ -296,9 +296,40 @@ Input(1180) → Linear(256) → BatchNorm → Dropout(0.3)
 
 ---
 
-### 4.10 知识图谱溯源模块
+### 4.10 知识图谱溯源模块 ✅ 已实现
 
-> 当前实现状态：**部分实现**（通路富集已有力导向图，完整知识图谱扩展为规划项）
+**职责**：基于 MetaKG 多库整合知识图谱（KEGG / SMPDB / HMDB），以力导向网络图展示本项目 977 个代谢物与通路、生化反应、酶、药物等实体的一跳关系网络
+
+**数据来源**：
+- 原始文件：`metakg_entities.csv`（500 MB）+ `metakg_triples.csv`（2.2 GB）
+- 预处理工具：`backend/app/scripts/build_metakg_subgraph.py`（一次性离线运行，约 30 秒）
+- 输出子图：`_pipeline/metakg_subgraph.json`（2.6 MB，进 Git）
+
+**子图规模**：
+
+| 类型 | 数量 |
+|------|------|
+| 种子代谢物（Compound） | 977 |
+| 生化反应（Reaction） | 3,578 |
+| 酶（Enzyme，EC编号） | 1,891 |
+| 通路（Pathway，SMPDB） | 991 |
+| 药物（Drug） | 143 |
+| Module / Network | 286 |
+| **总节点** | **7,866** |
+| **总边** | **14,173** |
+
+**关系类型**：has_pathway（5,415）/ has_reaction（4,947）/ has_enzyme（3,068）/ has_module（490）/ has_network（106）/ is_a / same_as
+
+**前端**：
+- 力导向网络图（ECharts graph + force layout）
+- 节点类型过滤（按 Compound/Pathway/Reaction/Enzyme/Drug 选择）
+- 关系类型过滤（多选）
+- 搜索高亮（按代谢物名 / ID，黄色高亮命中节点）
+- 种子专属模式（仅展示代谢物直连节点）
+- 最大节点数滑块（50~800，防卡顿）
+- 节点悬浮 tooltip（代谢物名 / 分子式 / m/z / 类型）
+
+**API**：`GET /api/benchmark/merged/metakg-subgraph`（参数：node_types / relation_types / seed_only）
 
 ---
 
@@ -476,6 +507,7 @@ frontend/src/
 │   ├── VolcanoPlotCard.vue         # 交互火山图（ECharts）+ 显著特征表
 │   ├── ImputationEvalCard.vue      # 填充评估 RMSE 对比（含 Autoencoder 紫色）
 │   ├── PathwayEnrichmentCard.vue   # 气泡图 + 力导向网络图 + 富集明细表
+│   ├── MetaKGCard.vue              # MetaKG 知识图谱力导向图 + 搜索高亮 + 类型过滤
 │   ├── PipelineStepBar.vue         # 6 步进度条
 │   ├── MetricCompareCard.vue       # before/after 指标卡
 │   ├── KpiCard.vue
@@ -541,6 +573,7 @@ frontend/src/
 | GET | `/api/benchmark/merged/diff-analysis/groups` | 可用分组列表（60 组） |
 | POST | `/api/benchmark/merged/diff-analysis/run` | 运行/缓存读取差异分析 |
 | GET | `/api/benchmark/merged/pathway-enrichment` | KEGG 通路富集分析（超几何检验+BH-FDR，参数：group1/group2/fc_threshold/pvalue_threshold/use_fdr/top_n） |
+| GET | `/api/benchmark/merged/metakg-subgraph` | MetaKG 知识图谱子图（参数：node_types/relation_types/seed_only） |
 
 ---
 
@@ -585,7 +618,7 @@ PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py
 | 阶段六 | 特征注释（m/z 匹配，100% 覆盖，HMDB/KEGG） | ✅ 完成 |
 | **阶段七** | **Autoencoder 深度学习填充（PyTorch，RMSE=0.2249，最优）** | ✅ **完成** |
 | **阶段八** | **KEGG 通路富集分析（超几何检验+BH-FDR，气泡图+网络图）** | ✅ **完成** |
-| 扩展 | 完整知识图谱溯源（kgml 格式完整通路图） | 规划项 |
+| **阶段九** | **MetaKG 知识图谱溯源（7866节点/14173边，力导向图+搜索+过滤）** | ✅ **完成** |
 
 ---
 

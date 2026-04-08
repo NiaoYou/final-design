@@ -244,3 +244,52 @@ export async function fetchPathwayEnrichment(
   )
   return data
 }
+
+// ==============================
+// MetaKG 知识图谱子图 API
+// ==============================
+
+export interface MetaKGNode {
+  id: string
+  type: string            // Compound | Pathway | Reaction | Enzyme | Drug | Module | Network
+  label: string           // 去掉前缀后的 ID（如 C00041）
+  is_seed: boolean        // 是否为本项目代谢物
+  metabolite_name?: string
+  formula?: string
+  ion_mz?: number
+}
+
+export interface MetaKGEdge {
+  head: string
+  relation: string
+  tail: string
+}
+
+export interface MetaKGSubgraph {
+  meta: {
+    n_nodes: number
+    n_edges: number
+    n_seed_compounds: number
+    node_type_counts: Record<string, number>
+    relation_counts: Record<string, number>
+  }
+  n_nodes: number
+  n_edges: number
+  nodes: MetaKGNode[]
+  edges: MetaKGEdge[]
+}
+
+export async function fetchMetakgSubgraph(options?: {
+  nodeTypes?: string    // 逗号分隔，如 "Compound,Pathway,Enzyme"
+  relationTypes?: string // 逗号分隔，如 "has_pathway,has_enzyme"
+  seedOnly?: boolean
+}): Promise<MetaKGSubgraph> {
+  const params = new URLSearchParams()
+  if (options?.nodeTypes)     params.set('node_types', options.nodeTypes)
+  if (options?.relationTypes) params.set('relation_types', options.relationTypes)
+  // P1 fix: 显式传递 bool 值，避免 seedOnly=false 时漏传参数
+  if (options?.seedOnly !== undefined) params.set('seed_only', String(options.seedOnly))
+  const query = params.toString() ? `?${params}` : ''
+  const { data } = await http.get<MetaKGSubgraph>(`/api/benchmark/merged/metakg-subgraph${query}`)
+  return data
+}

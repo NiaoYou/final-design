@@ -12,6 +12,7 @@ import ImputationEvalCard from '@/components/ImputationEvalCard.vue'
 import VolcanoPlotCard from '@/components/VolcanoPlotCard.vue'
 import AnnotationTableCard from '@/components/AnnotationTableCard.vue'
 import PathwayEnrichmentCard from '@/components/PathwayEnrichmentCard.vue'
+import MetaKGCard from '@/components/MetaKGCard.vue'
 import { evaluationDownloadUrl, evaluationPcaImageUrl, pcaBeforeAfterImageUrl } from '@/api/benchmark'
 import { formatNumber, formatRatio } from '@/utils/format'
 import type { BatchCorrectionMetrics } from '@/types/benchmark'
@@ -241,6 +242,17 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
         首次运行自动下载并缓存。
       </p>
       <PathwayEnrichmentCard />
+    </section>
+
+    <!-- ======== MetaKG 知识图谱溯源区块 ======== -->
+    <section class="card-panel">
+      <h3 class="section-heading">MetaKG 知识图谱溯源</h3>
+      <p class="interp muted">
+        基于 <strong>MetaKG</strong> 多库整合知识图谱（KEGG / SMPDB / HMDB），展示本项目代谢物
+        与通路、反应、酶之间的一跳关联网络（节点数与边数见下方统计条）。
+        节点可拖拽交互，支持关键词高亮搜索，可按节点类型与关系类型动态过滤。
+      </p>
+      <MetaKGCard />
     </section>
 
     <!-- ======== 特征注释区块 ======== -->

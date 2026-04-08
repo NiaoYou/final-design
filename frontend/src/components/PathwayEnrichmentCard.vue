@@ -95,9 +95,10 @@ function renderBubble() {
   const pathways = result.value?.pathways
   if (!Array.isArray(pathways) || pathways.length === 0 || !bubbleRef.value) return
 
-  if (!bubbleChart) {
+  if (!bubbleChart && bubbleRef.value) {
     bubbleChart = echarts.init(bubbleRef.value, undefined, { renderer: 'canvas' })
   }
+  if (!bubbleChart) return
 
   // 取前 15 条（从小 pvalue 排），倒序让最显著在顶部
   const top = pathways.slice(0, 15).reverse()

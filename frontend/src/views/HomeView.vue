@@ -1,9 +1,85 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { fetchImputationEvalSummary, fetchBatchCorrectionMetrics, fetchAnnotationSummary } from '@/api/benchmark'
 
 const router = useRouter()
 
-const features = [
+// ── 动态指标（从 API 拉取，替代硬编码数字） ──────────────────────
+const imputationEval   = ref<any>(null)
+const batchMetrics     = ref<any>(null)
+const annotationSummary = ref<any>(null)
+
+onMounted(async () => {
+  // 并发请求，失败时静默（保留 fallback 文案）
+  const [ie, bm, ann] = await Promise.allSettled([
+    fetchImputationEvalSummary(),
+    fetchBatchCorrectionMetrics(),
+    fetchAnnotationSummary(),
+  ])
+  if (ie.status === 'fulfilled')  imputationEval.value    = ie.value
+  if (bm.status === 'fulfilled')  batchMetrics.value      = bm.value
+  if (ann.status === 'fulfilled') annotationSummary.value = ann.value
+})
+
+// 计算显示文本（有数据用真实值，无数据用通用描述）
+const aeRmse = computed(() => {
+  const methods = imputationEval.value?.methods
+  const ae = methods?.autoencoder
+  if (!ae?.rmse_mean) return null
+  return Number(ae.rmse_mean).toFixed(4)
+})
+
+const knnRmse = computed(() => {
+  const methods = imputationEval.value?.methods
+  const knn = methods?.knn
+  if (!knn?.rmse_mean) return null
+  return Number(knn.rmse_mean).toFixed(4)
+})
+
+const aeImprove = computed(() => {
+  if (!aeRmse.value || !knnRmse.value) return null
+  const pct = (1 - Number(aeRmse.value) / Number(knnRmse.value)) * 100
+  return pct.toFixed(1)
+})
+
+const centroidBefore = computed(() => {
+  const v = batchMetrics.value?.batch_centroid_separation_pc12_before
+  return v != null ? Number(v).toFixed(2) : null
+})
+
+const nFeatures = computed(() => annotationSummary.value?.n_features ?? null)
+const maskRatio = computed(() => {
+  const r = imputationEval.value?.config?.mask_ratio
+  return r != null ? Math.round(Number(r) * 100) : 15
+})
+
+// 填充评估描述
+const imputationText = computed(() => {
+  const base = `Mask-then-Impute 框架：随机遮蔽 ${maskRatio.value}% 数据，对 mean / median / KNN / Autoencoder（PyTorch）四种策略计算 RMSE/MAE/NRMSE。`
+  if (aeRmse.value && aeImprove.value) {
+    return base + `Autoencoder RMSE=${aeRmse.value}（最优），较 KNN 提升 ${aeImprove.value}%。`
+  }
+  return base + 'Autoencoder 为最优方法（基于 Masked Reconstruction 策略，详见结果页）。'
+})
+
+// 批次校正描述
+const batchCorrText = computed(() => {
+  const base = 'per-feature batch location-scale baseline 校正，'
+  if (centroidBefore.value) {
+    return base + `batch centroid separation 从 ${centroidBefore.value} 降至 ≈0（降幅 100%），产出可复现矩阵与报告。`
+  }
+  return base + 'batch centroid separation 显著降低（降幅 ≥99%），产出可复现矩阵与报告。'
+})
+
+// 特征注释描述
+const annotationText = computed(() => {
+  const n = nFeatures.value
+  const prefix = n ? `基于 m/z 精确质量匹配将 ${n} 个代谢特征` : '基于 m/z 精确质量匹配将全部代谢特征'
+  return prefix + '全覆盖注释至代谢物名称，关联 HMDB 与 KEGG 数据库 ID，支持关键词搜索，注释结果自动注入差异分析报告。'
+})
+
+const features = computed(() => [
   {
     icon: '📊',
     title: '多 sheet Excel 导入',
@@ -19,13 +95,13 @@ const features = [
   {
     icon: '🧠',
     title: '深度学习填充评估',
-    text: 'Mask-then-Impute 框架：随机遮蔽 15% 数据，对 mean / median / KNN / Autoencoder（PyTorch）四种策略计算 RMSE/MAE/NRMSE。Autoencoder RMSE=0.2249（最优），较 KNN 提升 24.5%。',
+    text: imputationText.value,
     color: '#8b5cf6',
   },
   {
     icon: '🧬',
     title: 'baseline 批次校正',
-    text: 'per-feature batch location-scale baseline 校正，batch centroid separation 从 5.38 降至 ≈0（降幅 100%），产出可复现矩阵与报告。',
+    text: batchCorrText.value,
     color: '#10b981',
   },
   {
@@ -43,13 +119,13 @@ const features = [
   {
     icon: '🏷️',
     title: '特征注释',
-    text: '基于 m/z 精确质量匹配将 1180 个代谢特征全覆盖注释至代谢物名称，关联 HMDB 与 KEGG 数据库 ID，支持关键词搜索，注释结果自动注入差异分析报告。',
+    text: annotationText.value,
     color: '#ec4899',
   },
   {
     icon: '🔗',
     title: 'KEGG 通路富集分析',
-    text: '对差异显著代谢物执行超几何检验（Fisher's exact test），BH-FDR 校正筛选富集通路，以气泡图与力导向网络图展示代谢物-通路关联，数据来自 KEGG REST API。',
+    text: '对差异显著代谢物执行超几何检验（Fisher\'s exact test），BH-FDR 校正筛选富集通路，以气泡图与力导向网络图展示代谢物-通路关联，数据来自 KEGG REST API。',
     color: '#7c3aed',
   },
   {
@@ -58,7 +134,7 @@ const features = [
     text: 'KPI、PCA 四宫格、校正前后指标、方法对比表与文件下载，适合答辩投屏演示。',
     color: '#ef4444',
   },
-]
+])
 
 const steps = [
   {

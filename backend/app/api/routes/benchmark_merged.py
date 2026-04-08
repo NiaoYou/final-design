@@ -307,3 +307,78 @@ def get_annotation_features(
         "limit": limit,
         "features": page,
     }
+
+
+# ==============================
+# MetaKG 知识图谱子图 API
+# ==============================
+
+@router.get("/metakg-subgraph")
+def get_metakg_subgraph(
+    node_types: Optional[str] = Query(
+        None,
+        description="逗号分隔的节点类型过滤，如 Compound,Pathway,Enzyme；不传则返回全部",
+    ),
+    relation_types: Optional[str] = Query(
+        None,
+        description="逗号分隔的关系类型过滤，如 has_pathway,has_enzyme；不传则返回全部",
+    ),
+    seed_only: bool = Query(
+        False,
+        description="True=只返回与种子代谢物直接相连的节点和边（一跳）",
+    ),
+):
+    """
+    返回 MetaKG 子图（节点 + 边），供前端 ECharts force-graph 可视化。
+    子图由 build_metakg_subgraph.py 预先从 MetaKG 2.2GB 原始文件提取，仅包含
+    本项目 977 个 KEGG compound ID 的一跳邻居，文件约 2.6 MB。
+    """
+    sg_path = bmr.pipeline_dir() / "metakg_subgraph.json"
+    if not sg_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="metakg_subgraph.json 不存在，请先运行 build_metakg_subgraph.py。",
+        )
+
+    data = bmr.read_json(sg_path)
+    if data is None:
+        raise HTTPException(status_code=500, detail="metakg_subgraph.json 读取失败。")
+
+    nodes = data.get("nodes", [])
+    edges = data.get("edges", [])
+
+    # P1 fix: 在任何过滤前保存原始种子节点 ID，确保种子节点始终可被保留
+    original_seed_ids = {n["id"] for n in nodes if n.get("is_seed")}
+
+    # 按节点类型过滤
+    if node_types:
+        allowed_types = {t.strip() for t in node_types.split(",") if t.strip()}
+        nodes = [n for n in nodes if n.get("type") in allowed_types]
+        node_ids = {n["id"] for n in nodes}
+        edges = [e for e in edges if e["head"] in node_ids and e["tail"] in node_ids]
+
+    # 按关系类型过滤
+    if relation_types:
+        allowed_rels = {r.strip() for r in relation_types.split(",") if r.strip()}
+        edges = [e for e in edges if e.get("relation") in allowed_rels]
+        # 重新裁剪节点（只保留边中出现的 + 原始种子节点）
+        edge_node_ids = {e["head"] for e in edges} | {e["tail"] for e in edges}
+        keep_ids = edge_node_ids | original_seed_ids  # P1 fix: 用原始种子，不受 node_types 影响
+        nodes = [n for n in nodes if n["id"] in keep_ids]
+
+    # seed_only 模式：只保留与种子直接相连的节点
+    if seed_only:
+        # P0 fix: 种子可能因 node_types 过滤被移除，始终用 original_seed_ids
+        seed_ids = original_seed_ids
+        # P0 fix: head 或 tail 任一为种子的边都保留（方向无关）
+        edges = [e for e in edges if e["head"] in seed_ids or e["tail"] in seed_ids]
+        neighbor_ids = {e["head"] for e in edges} | {e["tail"] for e in edges} | seed_ids
+        nodes = [n for n in nodes if n["id"] in neighbor_ids]
+
+    return {
+        "meta": data.get("meta", {}),
+        "n_nodes": len(nodes),
+        "n_edges": len(edges),
+        "nodes": nodes,
+        "edges": edges,
+    }
