@@ -192,7 +192,7 @@ def build_feature_annotation(
                         [annotation_pool, ann[missing]], ignore_index=True
                     )
         except Exception as e:
-            logger.warning("加载 %s 失败: %s", ann_path, e)
+            logger.warning("加载注释文件失败 [%s]: %s: %s", ann_path, type(e).__name__, e)
 
     if annotation_pool is None:
         raise RuntimeError("所有 batch 目录中均未找到有效的 annotation.csv。")

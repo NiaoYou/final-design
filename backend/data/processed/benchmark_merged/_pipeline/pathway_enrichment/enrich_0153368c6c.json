@@ -1,0 +1,1748 @@
+{
+  "available": true,
+  "n_sig_features": 569,
+  "n_bg_features": 981,
+  "n_pathways_tested": 254,
+  "n_sig_pathways": 3,
+  "pathways": [
+    {
+      "pathway_id": "map00470",
+      "pathway_name": "D-Amino acid metabolism",
+      "hits": 30,
+      "pathway_size": 31,
+      "background_size": 981,
+      "sig_size": 569,
+      "rich_factor": 0.9677,
+      "gene_ratio": "30/569",
+      "bg_ratio": "31/981",
+      "pvalue": 8.1e-07,
+      "hit_cpd_ids": [
+        "C00022",
+        "C00025",
+        "C00026",
+        "C00037",
+        "C00041",
+        "C00047",
+        "C00062",
+        "C00064",
+        "C00065",
+        "C00077",
+        "C00079",
+        "C00133",
+        "C00135",
+        "C00148",
+        "C00166",
+        "C00188",
+        "C00217",
+        "C00431",
+        "C00515",
+        "C00739",
+        "C00740",
+        "C00763",
+        "C00792",
+        "C00793",
+        "C00819",
+        "C01157",
+        "C02237",
+        "C03239",
+        "C03440",
+        "C04282"
+      ],
+      "qvalue": 0.000206
+    },
+    {
+      "pathway_id": "map00310",
+      "pathway_name": "Lysine degradation",
+      "hits": 16,
+      "pathway_size": 17,
+      "background_size": 981,
+      "sig_size": 569,
+      "rich_factor": 0.9412,
+      "gene_ratio": "16/569",
+      "bg_ratio": "17/981",
+      "pvalue": 0.00117459,
+      "hit_cpd_ids": [
+        "C00026",
+        "C00037",
+        "C00042",
+        "C00047",
+        "C00322",
+        "C00431",
+        "C00739",
+        "C00956",
+        "C01087",
+        "C01142",
+        "C01186",
+        "C03087",
+        "C03196",
+        "C03239",
+        "C03656",
+        "C04076"
+      ],
+      "qvalue": 0.149173
+    },
+    {
+      "pathway_id": "map01060",
+      "pathway_name": "Biosynthesis of plant secondary metabolites",
+      "hits": 35,
+      "pathway_size": 44,
+      "background_size": 981,
+      "sig_size": 569,
+      "rich_factor": 0.7955,
+      "gene_ratio": "35/569",
+      "bg_ratio": "44/981",
+      "pvalue": 0.00184341,
+      "hit_cpd_ids": [
+        "C00022",
+        "C00025",
+        "C00026",
+        "C00037",
+        "C00041",
+        "C00042",
+        "C00047",
+        "C00062",
+        "C00064",
+        "C00065",
+        "C00077",
+        "C00079",
+        "C00082",
+        "C00122",
+        "C00123",
+        "C00135",
+        "C00152",
+        "C00166",
+        "C00183",
+        "C00188",
+        "C00253",
+        "C00385",
+        "C00398",
+        "C00407",
+        "C00418",
+        "C00430",
+        "C01234",
+        "C03758",
+        "C03765",
+        "C04076",
+        "C06423",
+        "C07130",
+        "C07480",
+        "C08491",
+        "C13747"
+      ],
+      "qvalue": 0.156075
+    }
+  ],
+  "network": {
+    "nodes": [
+      {
+        "id": "map00470",
+        "name": "D-Amino acid metabolism",
+        "category": 1,
+        "symbolSize": 55,
+        "value": 30,
+        "label": {
+          "show": true,
+          "fontSize": 10
+        },
+        "_meta": {
+          "pathway_id": "map00470",
+          "hits": 30,
+          "pathway_size": 31,
+          "pvalue": 8.1e-07,
+          "qvalue": 0.000206,
+          "rich_factor": 0.9677,
+          "intensity": 1.0
+        }
+      },
+      {
+        "id": "C00022",
+        "name": "Pyruvate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00022",
+          "formula": "C3H4O3",
+          "metabolite_name": "Pyruvate"
+        }
+      },
+      {
+        "id": "C00025",
+        "name": "Glutamate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00025",
+          "formula": "C5H9NO4",
+          "metabolite_name": "Glutamate"
+        }
+      },
+      {
+        "id": "C00026",
+        "name": "Oxoglutarate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00026",
+          "formula": "C5H6O5",
+          "metabolite_name": "Oxoglutarate"
+        }
+      },
+      {
+        "id": "C00037",
+        "name": "Glycine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00037",
+          "formula": "C2H5NO2",
+          "metabolite_name": "Glycine"
+        }
+      },
+      {
+        "id": "C00041",
+        "name": "Alanine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00041",
+          "formula": "C3H7NO2",
+          "metabolite_name": "Alanine"
+        }
+      },
+      {
+        "id": "C00047",
+        "name": "Lysine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00047",
+          "formula": "C6H14N2O2",
+          "metabolite_name": "Lysine"
+        }
+      },
+      {
+        "id": "C00062",
+        "name": "Arginine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00062",
+          "formula": "C6H14N4O2",
+          "metabolite_name": "Arginine"
+        }
+      },
+      {
+        "id": "C00064",
+        "name": "Glutamine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00064",
+          "formula": "C5H10N2O3",
+          "metabolite_name": "Glutamine"
+        }
+      },
+      {
+        "id": "C00065",
+        "name": "Serine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00065",
+          "formula": "C3H7NO3",
+          "metabolite_name": "Serine"
+        }
+      },
+      {
+        "id": "C00077",
+        "name": "Ornithine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00077",
+          "formula": "C5H12N2O2",
+          "metabolite_name": "Ornithine"
+        }
+      },
+      {
+        "id": "C00079",
+        "name": "Phenylalanine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00079",
+          "formula": "C9H11NO2",
+          "metabolite_name": "Phenylalanine"
+        }
+      },
+      {
+        "id": "C00133",
+        "name": "Alanine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00133",
+          "formula": "C3H7NO2",
+          "metabolite_name": "Alanine"
+        }
+      },
+      {
+        "id": "C00135",
+        "name": "Histidine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00135",
+          "formula": "C6H9N3O2",
+          "metabolite_name": "Histidine"
+        }
+      },
+      {
+        "id": "C00148",
+        "name": "Proline",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00148",
+          "formula": "C5H9NO2",
+          "metabolite_name": "Proline"
+        }
+      },
+      {
+        "id": "C00166",
+        "name": "Coumarate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00166",
+          "formula": "C9H8O3",
+          "metabolite_name": "Coumarate"
+        }
+      },
+      {
+        "id": "C00188",
+        "name": "Threonine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00188",
+          "formula": "C4H9NO3",
+          "metabolite_name": "Threonine"
+        }
+      },
+      {
+        "id": "C00217",
+        "name": "Glutamate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00217",
+          "formula": "C5H9NO4",
+          "metabolite_name": "Glutamate"
+        }
+      },
+      {
+        "id": "C00431",
+        "name": "Valine; Betaine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00431",
+          "formula": "C5H11NO2",
+          "metabolite_name": "Valine; Betaine"
+        }
+      },
+      {
+        "id": "C00515",
+        "name": "Ornithine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00515",
+          "formula": "C5H12N2O2",
+          "metabolite_name": "Ornithine"
+        }
+      },
+      {
+        "id": "C00739",
+        "name": "Lysine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00739",
+          "formula": "C6H14N2O2",
+          "metabolite_name": "Lysine"
+        }
+      },
+      {
+        "id": "C00740",
+        "name": "Serine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00740",
+          "formula": "C3H7NO3",
+          "metabolite_name": "Serine"
+        }
+      },
+      {
+        "id": "C00763",
+        "name": "Proline",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00763",
+          "formula": "C5H9NO2",
+          "metabolite_name": "Proline"
+        }
+      },
+      {
+        "id": "C00792",
+        "name": "Arginine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00792",
+          "formula": "C6H14N4O2",
+          "metabolite_name": "Arginine"
+        }
+      },
+      {
+        "id": "C00793",
+        "name": "Cys",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00793",
+          "formula": "C3H7NO2S",
+          "metabolite_name": "Cys"
+        }
+      },
+      {
+        "id": "C00819",
+        "name": "Glutamine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00819",
+          "formula": "C5H10N2O3",
+          "metabolite_name": "Glutamine"
+        }
+      },
+      {
+        "id": "C01157",
+        "name": "5-Aminolevulinic acid",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C01157",
+          "formula": "C5H9NO3",
+          "metabolite_name": "5-Aminolevulinic acid"
+        }
+      },
+      {
+        "id": "C02237",
+        "name": "Oxoproline",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C02237",
+          "formula": "C5H7NO3",
+          "metabolite_name": "Oxoproline"
+        }
+      },
+      {
+        "id": "C03239",
+        "name": "4-Acetamidobutanoate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C03239",
+          "formula": "C6H11NO3",
+          "metabolite_name": "4-Acetamidobutanoate"
+        }
+      },
+      {
+        "id": "C03440",
+        "name": "5-Aminolevulinic acid",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C03440",
+          "formula": "C5H9NO3",
+          "metabolite_name": "5-Aminolevulinic acid"
+        }
+      },
+      {
+        "id": "C04282",
+        "name": "Oxoproline",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C04282",
+          "formula": "C5H7NO3",
+          "metabolite_name": "Oxoproline"
+        }
+      },
+      {
+        "id": "map00310",
+        "name": "Lysine degradation",
+        "category": 1,
+        "symbolSize": 55,
+        "value": 16,
+        "label": {
+          "show": true,
+          "fontSize": 10
+        },
+        "_meta": {
+          "pathway_id": "map00310",
+          "hits": 16,
+          "pathway_size": 17,
+          "pvalue": 0.00117459,
+          "qvalue": 0.149173,
+          "rich_factor": 0.9412,
+          "intensity": 0.224
+        }
+      },
+      {
+        "id": "C00042",
+        "name": "Succinate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00042",
+          "formula": "C4H6O4",
+          "metabolite_name": "Succinate"
+        }
+      },
+      {
+        "id": "C00322",
+        "name": "Oxoadipate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00322",
+          "formula": "C6H8O5",
+          "metabolite_name": "Oxoadipate"
+        }
+      },
+      {
+        "id": "C00956",
+        "name": "Aminoadipate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00956",
+          "formula": "C6H11NO4",
+          "metabolite_name": "Aminoadipate"
+        }
+      },
+      {
+        "id": "C01087",
+        "name": "Hydroxyglutarate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C01087",
+          "formula": "C5H8O5",
+          "metabolite_name": "Hydroxyglutarate"
+        }
+      },
+      {
+        "id": "C01142",
+        "name": "Lysine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C01142",
+          "formula": "C6H14N2O2",
+          "metabolite_name": "Lysine"
+        }
+      },
+      {
+        "id": "C01186",
+        "name": "Lysine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C01186",
+          "formula": "C6H14N2O2",
+          "metabolite_name": "Lysine"
+        }
+      },
+      {
+        "id": "C03087",
+        "name": "2-Methylbutyrylglycine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C03087",
+          "formula": "C7H13NO3",
+          "metabolite_name": "2-Methylbutyrylglycine"
+        }
+      },
+      {
+        "id": "C03196",
+        "name": "Hydroxyglutarate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C03196",
+          "formula": "C5H8O5",
+          "metabolite_name": "Hydroxyglutarate"
+        }
+      },
+      {
+        "id": "C03656",
+        "name": "4-Acetamidobutanoate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C03656",
+          "formula": "C6H11NO3",
+          "metabolite_name": "4-Acetamidobutanoate"
+        }
+      },
+      {
+        "id": "C04076",
+        "name": "4-Acetamidobutanoate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C04076",
+          "formula": "C6H11NO3",
+          "metabolite_name": "4-Acetamidobutanoate"
+        }
+      },
+      {
+        "id": "map01060",
+        "name": "Biosynthesis of plant secondary metabolites",
+        "category": 1,
+        "symbolSize": 55,
+        "value": 35,
+        "label": {
+          "show": true,
+          "fontSize": 10
+        },
+        "_meta": {
+          "pathway_id": "map01060",
+          "hits": 35,
+          "pathway_size": 44,
+          "pvalue": 0.00184341,
+          "qvalue": 0.156075,
+          "rich_factor": 0.7955,
+          "intensity": 0.219
+        }
+      },
+      {
+        "id": "C00082",
+        "name": "Tyrosine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00082",
+          "formula": "C9H11NO3",
+          "metabolite_name": "Tyrosine"
+        }
+      },
+      {
+        "id": "C00122",
+        "name": "Fumarate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00122",
+          "formula": "C4H4O4",
+          "metabolite_name": "Fumarate"
+        }
+      },
+      {
+        "id": "C00123",
+        "name": "(Iso)Leucine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00123",
+          "formula": "C6H13NO2",
+          "metabolite_name": "(Iso)Leucine"
+        }
+      },
+      {
+        "id": "C00152",
+        "name": "Asparagine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00152",
+          "formula": "C4H8N2O3",
+          "metabolite_name": "Asparagine"
+        }
+      },
+      {
+        "id": "C00183",
+        "name": "Valine; Betaine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00183",
+          "formula": "C5H11NO2",
+          "metabolite_name": "Valine; Betaine"
+        }
+      },
+      {
+        "id": "C00253",
+        "name": "Nicotinate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00253",
+          "formula": "C6H5NO2",
+          "metabolite_name": "Nicotinate"
+        }
+      },
+      {
+        "id": "C00385",
+        "name": "Xanthine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00385",
+          "formula": "C5H4N4O2",
+          "metabolite_name": "Xanthine"
+        }
+      },
+      {
+        "id": "C00398",
+        "name": "Tryptamine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00398",
+          "formula": "C10H12N2",
+          "metabolite_name": "Tryptamine"
+        }
+      },
+      {
+        "id": "C00407",
+        "name": "(Iso)Leucine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00407",
+          "formula": "C6H13NO2",
+          "metabolite_name": "(Iso)Leucine"
+        }
+      },
+      {
+        "id": "C00418",
+        "name": "4-Methyl-4-(methylthio)-2-pentanone",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00418",
+          "formula": "C7H14OS",
+          "metabolite_name": "4-Methyl-4-(methylthio)-2-pentanone"
+        }
+      },
+      {
+        "id": "C00430",
+        "name": "5-Aminolevulinic acid",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C00430",
+          "formula": "C5H9NO3",
+          "metabolite_name": "5-Aminolevulinic acid"
+        }
+      },
+      {
+        "id": "C01234",
+        "name": "Homoserine lactone",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C01234",
+          "formula": "C4H7NO2",
+          "metabolite_name": "Homoserine lactone"
+        }
+      },
+      {
+        "id": "C03758",
+        "name": "1-Methylpyrrolo[1,2-a]pyrazine",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C03758",
+          "formula": "C8H8N2",
+          "metabolite_name": "1-Methylpyrrolo[1,2-a]pyrazine"
+        }
+      },
+      {
+        "id": "C03765",
+        "name": "Phenyl acetate",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C03765",
+          "formula": "C8H8O2",
+          "metabolite_name": "Phenyl acetate"
+        }
+      },
+      {
+        "id": "C06423",
+        "name": "Octanoic acid",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C06423",
+          "formula": "C8H16O2",
+          "metabolite_name": "Octanoic acid"
+        }
+      },
+      {
+        "id": "C07130",
+        "name": "Theophylline",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C07130",
+          "formula": "C7H8N4O2",
+          "metabolite_name": "Theophylline"
+        }
+      },
+      {
+        "id": "C07480",
+        "name": "Theophylline",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C07480",
+          "formula": "C7H8N4O2",
+          "metabolite_name": "Theophylline"
+        }
+      },
+      {
+        "id": "C08491",
+        "name": "Jasmonic acid",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C08491",
+          "formula": "C12H18O3",
+          "metabolite_name": "Jasmonic acid"
+        }
+      },
+      {
+        "id": "C13747",
+        "name": "Theophylline",
+        "category": 0,
+        "symbolSize": 9,
+        "value": 1,
+        "label": {
+          "show": false
+        },
+        "_meta": {
+          "cpd_id": "C13747",
+          "formula": "C7H8N4O2",
+          "metabolite_name": "Theophylline"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "C00022",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00025",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00026",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00037",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00041",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00047",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00062",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00064",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00065",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00077",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00079",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00133",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00135",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00148",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00166",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00188",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00217",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00431",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00515",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00739",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00740",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00763",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00792",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00793",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00819",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C01157",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C02237",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03239",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03440",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C04282",
+        "target": "map00470",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00026",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00037",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00042",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00047",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00322",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00431",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00739",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00956",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C01087",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C01142",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C01186",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03087",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03196",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03239",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03656",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C04076",
+        "target": "map00310",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00022",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00025",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00026",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00037",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00041",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00042",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00047",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00062",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00064",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00065",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00077",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00079",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00082",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00122",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00123",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00135",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00152",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00166",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00183",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00188",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00253",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00385",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00398",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00407",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00418",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C00430",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C01234",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03758",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C03765",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C04076",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C06423",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C07130",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C07480",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C08491",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      },
+      {
+        "source": "C13747",
+        "target": "map01060",
+        "lineStyle": {
+          "opacity": 0.4,
+          "width": 1
+        }
+      }
+    ],
+    "categories": [
+      {
+        "name": "显著差异代谢物"
+      },
+      {
+        "name": "KEGG 通路"
+      }
+    ]
+  },
+  "group1": "P1_AA_0001",
+  "group2": "P1_AA_1024",
+  "fc_threshold": 1.0,
+  "pvalue_threshold": 0.05,
+  "use_fdr": true,
+  "n_sig_features_total": 538
+}

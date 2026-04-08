@@ -21,6 +21,8 @@ type EvalSummary = {
     mask_ratio?: number
     n_repeats?: number
     knn_k?: number
+    ae_epochs?: number
+    ae_hidden?: number[]
     n_samples?: number
     n_features?: number
   }
@@ -59,10 +61,14 @@ const boxChartRef = ref<HTMLDivElement | null>(null)
 let boxChart: echarts.ECharts | null = null
 
 const METHOD_COLORS: Record<string, string> = {
-  mean:   '#3b82f6',
-  median: '#06b6d4',
-  knn:    '#10b981',
+  mean:        '#3b82f6',
+  median:      '#06b6d4',
+  knn:         '#10b981',
+  autoencoder: '#8b5cf6',
 }
+
+/** 需要显示"深度学习"标签的方法 */
+const DL_METHODS = new Set(['autoencoder'])
 
 function buildBoxData(values: (number | null)[]): [number, number, number, number, number] | null {
   const nums = values.filter((v): v is number => v !== null && !isNaN(v))
@@ -96,13 +102,15 @@ function renderBoxChart() {
       trigger: 'item',
       axisPointer: { type: 'shadow' },
       formatter: (p: any) => {
-        const d = p.data as number[]
+        const d = p.data as (number | undefined)[]
+        if (!d || d.length < 6) return p.seriesName ?? ''
+        const fmt = (v: number | undefined) => (v != null && isFinite(v) ? v.toFixed(4) : '—')
         return `<b>${p.seriesName}</b><br/>
-          min: ${d[1]?.toFixed(4)}<br/>
-          Q1: ${d[2]?.toFixed(4)}<br/>
-          Median: ${d[3]?.toFixed(4)}<br/>
-          Q3: ${d[4]?.toFixed(4)}<br/>
-          max: ${d[5]?.toFixed(4)}`
+          min: ${fmt(d[1])}<br/>
+          Q1: ${fmt(d[2])}<br/>
+          Median: ${fmt(d[3])}<br/>
+          Q3: ${fmt(d[4])}<br/>
+          max: ${fmt(d[5])}`
       },
     },
     grid: { left: 48, right: 16, top: 24, bottom: 32 },
@@ -156,6 +164,12 @@ watch(() => props.featureRmse, () => renderBoxChart(), { deep: true })
         <span class="ieval__config-item">
           KNN k=<strong>{{ summary.config?.knn_k }}</strong>
         </span>
+        <span v-if="summary.config?.ae_epochs" class="ieval__config-item">
+          AE epochs=<strong>{{ summary.config.ae_epochs }}</strong>
+        </span>
+        <span v-if="summary.config?.ae_hidden?.length" class="ieval__config-item">
+          AE hidden=<strong>{{ summary.config.ae_hidden.join('→') }}</strong>
+        </span>
         <span class="ieval__config-item">
           样本 <strong>{{ summary.config?.n_samples }}</strong>
           × 特征 <strong>{{ summary.config?.n_features }}</strong>
@@ -179,9 +193,16 @@ watch(() => props.featureRmse, () => renderBoxChart(), { deep: true })
               <span class="ieval__method-cell">
                 <span
                   class="ieval__dot"
-                  :style="{ background: { mean: '#3b82f6', median: '#06b6d4', knn: '#10b981' }[row.method] ?? '#94a3b8' }"
+                  :style="{ background: METHOD_COLORS[row.method] ?? '#94a3b8' }"
                 />
                 {{ row.method }}
+                <el-tag
+                  v-if="DL_METHODS.has(row.method)"
+                  type="warning"
+                  size="small"
+                  effect="light"
+                  style="margin-left:4px"
+                >深度学习</el-tag>
                 <el-tag v-if="row.is_best" type="success" size="small" effect="light" style="margin-left:4px">最优</el-tag>
               </span>
             </template>
@@ -276,6 +297,13 @@ watch(() => props.featureRmse, () => renderBoxChart(), { deep: true })
 .ieval__best-val {
   font-weight: 700;
   color: #059669;
+}
+
+/* autoencoder 行高亮背景（淡紫） */
+:deep(.el-table__row) td .ieval__method-cell {
+  .ieval__dot[style*='8b5cf6'] {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+  }
 }
 
 .ieval__std {

@@ -17,9 +17,9 @@ const features = [
     color: '#06b6d4',
   },
   {
-    icon: '🔬',
-    title: '缺失值填充评估',
-    text: 'Mask-then-Impute 框架：随机遮蔽 15% 数据，对 mean / median / KNN 三种策略计算 RMSE/MAE/NRMSE，KNN 以 RMSE=0.298 显著优于其余方法。',
+    icon: '🧠',
+    title: '深度学习填充评估',
+    text: 'Mask-then-Impute 框架：随机遮蔽 15% 数据，对 mean / median / KNN / Autoencoder（PyTorch）四种策略计算 RMSE/MAE/NRMSE。Autoencoder RMSE=0.2249（最优），较 KNN 提升 24.5%。',
     color: '#8b5cf6',
   },
   {
@@ -45,6 +45,12 @@ const features = [
     title: '特征注释',
     text: '基于 m/z 精确质量匹配将 1180 个代谢特征全覆盖注释至代谢物名称，关联 HMDB 与 KEGG 数据库 ID，支持关键词搜索，注释结果自动注入差异分析报告。',
     color: '#ec4899',
+  },
+  {
+    icon: '🔗',
+    title: 'KEGG 通路富集分析',
+    text: '对差异显著代谢物执行超几何检验（Fisher's exact test），BH-FDR 校正筛选富集通路，以气泡图与力导向网络图展示代谢物-通路关联，数据来自 KEGG REST API。',
+    color: '#7c3aed',
   },
   {
     icon: '📈',
@@ -329,11 +335,10 @@ const steps = [
 
 .features {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.1rem;
 
-  @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 880px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 960px)  { grid-template-columns: repeat(2, 1fr); }
   @media (max-width: 560px)  { grid-template-columns: 1fr; }
 }
 

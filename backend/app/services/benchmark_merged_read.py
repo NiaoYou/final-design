@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 import csv
 import pandas as pd
@@ -8,6 +9,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from app.core.config import Settings
+
+logger = logging.getLogger(__name__)
 
 
 def merged_root() -> Path:
@@ -23,7 +26,8 @@ def read_json(path: Path) -> Optional[Dict[str, Any]]:
         return None
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as e:
+        logger.warning("读取 JSON 失败: %s，原因: %s: %s", path, type(e).__name__, e)
         return None
 
 
@@ -274,7 +278,7 @@ def load_evaluation_report() -> Optional[Dict[str, Any]]:
 def load_evaluation_table_rows() -> Optional[List[Dict[str, Any]]]:
     """
     读取 evaluation_table.csv 为行列表（字段均为字符串/可空）。
-    注意：这是“展示用只读接口”，不在后端做复杂类型推断。
+    注意：这是"展示用只读接口"，不在后端做复杂类型推断。
     """
     p = evaluation_dir() / "evaluation_table.csv"
     if not p.is_file():
@@ -283,7 +287,10 @@ def load_evaluation_table_rows() -> Optional[List[Dict[str, Any]]]:
         with p.open("r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             return [dict(r) for r in reader]
-    except Exception:
+    except FileNotFoundError:
+        return None
+    except Exception as e:
+        logger.warning("读取 evaluation_table.csv 失败: %s: %s", type(e).__name__, e)
         return None
 
 

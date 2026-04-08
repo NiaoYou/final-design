@@ -12,3 +12,5 @@ openpyxl
 jinja2
 neuroCombat
 statsmodels
+requests
+torch

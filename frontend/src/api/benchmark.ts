@@ -166,3 +166,81 @@ export async function fetchImputationEvalFeatureRmse() {
     return null
   }
 }
+
+// ==============================
+// 通路富集分析 API
+// ==============================
+
+export interface PathwayItem {
+  pathway_id: string
+  pathway_name: string
+  hits: number
+  pathway_size: number
+  background_size: number
+  sig_size: number
+  rich_factor: number
+  gene_ratio: string
+  bg_ratio: string
+  pvalue: number
+  qvalue: number
+  hit_cpd_ids: string[]
+}
+
+export interface NetworkNode {
+  id: string
+  name: string
+  category: number       // 0=代谢物, 1=通路
+  symbolSize: number
+  value: number
+  label: { show: boolean; fontSize?: number }
+  _meta: Record<string, any>
+}
+
+export interface NetworkEdge {
+  source: string
+  target: string
+  lineStyle: { opacity: number; width: number }
+}
+
+export interface PathwayEnrichmentResult {
+  available: boolean
+  reason?: string
+  group1?: string
+  group2?: string
+  fc_threshold?: number
+  pvalue_threshold?: number
+  use_fdr?: boolean
+  n_sig_features?: number
+  n_sig_features_total?: number
+  n_bg_features?: number
+  n_pathways_tested?: number
+  n_sig_pathways?: number
+  pathways: PathwayItem[]
+  network: {
+    nodes: NetworkNode[]
+    edges: NetworkEdge[]
+    categories: { name: string }[]
+  }
+}
+
+export async function fetchPathwayEnrichment(
+  group1: string,
+  group2: string,
+  fcThreshold = 1.0,
+  pvalueThreshold = 0.05,
+  useFdr = true,
+  topN = 20,
+): Promise<PathwayEnrichmentResult> {
+  const params = new URLSearchParams({
+    group1,
+    group2,
+    fc_threshold: String(fcThreshold),
+    pvalue_threshold: String(pvalueThreshold),
+    use_fdr: String(useFdr),
+    top_n: String(topN),
+  })
+  const { data } = await http.get<PathwayEnrichmentResult>(
+    `/api/benchmark/merged/pathway-enrichment?${params}`,
+  )
+  return data
+}

@@ -274,6 +274,20 @@ def run_differential_analysis_for_benchmark(
 
     matrix = pd.read_csv(matrix_path, index_col=0)
     matrix.index = matrix.index.astype(str)
+
+    # ---- 矩阵完整性验证 ----
+    all_nan_rows = matrix.isna().all(axis=1)
+    if all_nan_rows.any():
+        logger.warning("矩阵中存在 %d 行全为 NaN，已自动过滤（sample_id: %s...）",
+                       all_nan_rows.sum(), list(matrix.index[all_nan_rows])[:3])
+        matrix = matrix.loc[~all_nan_rows]
+    all_nan_cols = matrix.isna().all(axis=0)
+    if all_nan_cols.any():
+        logger.warning("矩阵中存在 %d 列全为 NaN，已自动过滤", all_nan_cols.sum())
+        matrix = matrix.loc[:, ~all_nan_cols]
+    if matrix.empty:
+        raise ValueError("过滤全 NaN 行/列后矩阵为空，请检查输入文件。")
+
     sample_meta = pd.read_csv(meta_path)
 
     result = run_differential_analysis(

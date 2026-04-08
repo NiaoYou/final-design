@@ -168,18 +168,26 @@ def get_available_groups():
 def run_diff_analysis(
     group1: str = Query(..., description="对照组 group_label"),
     group2: str = Query(..., description="实验组 group_label"),
-    fc_threshold: float = Query(1.0, description="|log2FC| 阈值"),
-    pvalue_threshold: float = Query(0.05, description="p-value / q-value 显著性阈值"),
+    fc_threshold: float = Query(1.0, ge=0.0, le=20.0, description="|log2FC| 阈值（0~20）"),
+    pvalue_threshold: float = Query(0.05, gt=0.0, le=1.0, description="p-value / q-value 显著性阈值（0~1]"),
     use_fdr: bool = Query(True, description="True=用 q-value(FDR)，False=用原始 p-value"),
 ):
     """
     对指定两个 group 运行差异代谢物分析（t-test + BH-FDR + log2FC）。
     结果从磁盘缓存读取（如存在），否则实时计算并写入缓存。
     """
+    # ---- 参数校验 ----
+    g1 = group1.strip()
+    g2 = group2.strip()
+    if not g1 or not g2:
+        raise HTTPException(status_code=400, detail="group1 和 group2 不能为空。")
+    if g1 == g2:
+        raise HTTPException(status_code=400, detail="group1 与 group2 不能相同，请选择两个不同组别。")
+
     try:
         result = bmr.get_or_run_diff_analysis(
-            group1=group1,
-            group2=group2,
+            group1=g1,
+            group2=g2,
             fc_threshold=fc_threshold,
             pvalue_threshold=pvalue_threshold,
             use_fdr=use_fdr,
@@ -190,6 +198,52 @@ def run_diff_analysis(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"差异分析失败: {e}")
+    return result
+
+
+# ==============================
+# 通路富集分析 API
+# ==============================
+
+@router.get("/pathway-enrichment")
+def get_pathway_enrichment(
+    group1: str = Query(..., description="对照组 group_label"),
+    group2: str = Query(..., description="实验组 group_label"),
+    fc_threshold: float = Query(1.0, ge=0.0, le=20.0, description="|log2FC| 阈值"),
+    pvalue_threshold: float = Query(0.05, gt=0.0, le=1.0, description="显著性阈值"),
+    use_fdr: bool = Query(True, description="True=用 FDR，False=用原始 p-value"),
+    top_n: int = Query(20, ge=5, le=50, description="返回最显著通路数"),
+):
+    """
+    对指定两组样本的差异特征执行 KEGG 通路富集分析（超几何检验 + BH-FDR）。
+    KEGG 数据首次调用会从 rest.kegg.jp 下载并缓存（约 10~30s）；后续调用直接读缓存。
+    """
+    g1 = group1.strip()
+    g2 = group2.strip()
+    if not g1 or not g2:
+        raise HTTPException(status_code=400, detail="group1 和 group2 不能为空。")
+    if g1 == g2:
+        raise HTTPException(status_code=400, detail="group1 与 group2 不能相同。")
+
+    from app.services.pathway_enrichment_service import get_or_run_pathway_enrichment
+
+    try:
+        result = get_or_run_pathway_enrichment(
+            pipeline_dir=bmr.pipeline_dir(),
+            benchmark_merged_dir=bmr.merged_root(),
+            group1=g1,
+            group2=g2,
+            fc_threshold=fc_threshold,
+            pvalue_threshold=pvalue_threshold,
+            use_fdr=use_fdr,
+            top_n=top_n,
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"通路富集分析失败: {e}")
     return result
 
 

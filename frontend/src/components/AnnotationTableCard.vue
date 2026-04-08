@@ -8,6 +8,8 @@ const summary = ref<AnnotationSummary | null>(null)
 const features = ref<AnnotatedFeature[]>([])
 const total = ref(0)
 const loading = ref(false)
+const pageLoading = ref(false)
+const errorMsg = ref<string | null>(null)
 const searchText = ref('')
 const currentPage = ref(1)
 const pageSize = ref(50)
@@ -15,20 +17,31 @@ const pageSize = ref(50)
 // ---- 初始加载 ----
 onMounted(async () => {
   loading.value = true
+  errorMsg.value = null
   try {
     summary.value = await fetchAnnotationSummary()
     await loadPage()
+  } catch (e: any) {
+    errorMsg.value = e?.response?.data?.detail ?? '注释数据加载失败，请刷新重试。'
   } finally {
     loading.value = false
   }
 })
 
 async function loadPage() {
-  const offset = (currentPage.value - 1) * pageSize.value
-  const resp = await fetchAnnotationFeatures(offset, pageSize.value, searchText.value || undefined)
-  if (resp) {
-    features.value = resp.features
-    total.value = resp.total
+  pageLoading.value = true
+  errorMsg.value = null
+  try {
+    const offset = (currentPage.value - 1) * pageSize.value
+    const resp = await fetchAnnotationFeatures(offset, pageSize.value, searchText.value || undefined)
+    if (resp) {
+      features.value = resp.features
+      total.value = resp.total
+    }
+  } catch (e: any) {
+    errorMsg.value = e?.response?.data?.detail ?? '分页加载失败，请重试。'
+  } finally {
+    pageLoading.value = false
   }
 }
 
@@ -37,11 +50,23 @@ async function onSearch() {
   await loadPage()
 }
 
+// 监听分页切换
 watch(currentPage, loadPage)
+// searchText 通过 @clear / @keyup.enter / 搜索按钮触发 onSearch，无需额外 watch
 </script>
 
 <template>
   <div class="ann">
+    <!-- 错误提示 -->
+    <el-alert
+      v-if="errorMsg"
+      type="error"
+      :title="errorMsg"
+      :closable="false"
+      show-icon
+      style="margin-bottom: 0.75rem"
+    />
+
     <!-- 汇总统计 -->
     <div v-if="summary" class="ann__stats">
       <span class="ann__stat">
@@ -79,7 +104,7 @@ watch(currentPage, loadPage)
 
     <!-- 注释表格 -->
     <el-table
-      v-loading="loading"
+      v-loading="loading || pageLoading"
       :data="features"
       size="small"
       stripe
@@ -92,7 +117,7 @@ watch(currentPage, loadPage)
       <!-- m/z -->
       <el-table-column label="m/z" width="100">
         <template #default="{ row }">
-          <span class="ann__mz">{{ row.ion_mz.toFixed(4) }}</span>
+          <span class="ann__mz">{{ row.ion_mz != null ? row.ion_mz.toFixed(4) : '—' }}</span>
         </template>
       </el-table-column>
 

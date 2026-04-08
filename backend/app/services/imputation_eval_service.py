@@ -4,8 +4,15 @@
 评估策略
 ---------
 在已完整填充的矩阵上，随机遮蔽一定比例的值为 NaN（模拟缺失），
-分别用 mean / median / KNN 三种方法填充，与真实值对比计算 RMSE / MAE，
+分别用 mean / median / KNN / autoencoder 四种方法填充，与真实值对比计算 RMSE / MAE，
 量化不同填充方法的精度。
+
+支持方法
+---------
+- mean        : 列均值填充
+- median      : 列中位数填充
+- knn         : K 近邻填充（sklearn）
+- autoencoder : 深度学习 Autoencoder（PyTorch，Masked Reconstruction 训练）
 
 输出产物
 ---------
@@ -50,6 +57,39 @@ def _impute_knn(X_masked: np.ndarray, k: int = 5) -> np.ndarray:
     k = min(k, max(1, n - 1))
     imputer = KNNImputer(n_neighbors=k)
     return imputer.fit_transform(X_masked)
+
+
+def _impute_autoencoder(
+    X_masked: np.ndarray,
+    *,
+    n_epochs: int = 80,
+    hidden_dim: int = 256,
+    latent_dim: int = 64,
+    random_seed: int = 42,
+    verbose: bool = False,
+) -> np.ndarray:
+    """
+    深度学习 Autoencoder 填充（Masked Reconstruction 策略）。
+    若 PyTorch 未安装，回退到 KNN 并打印警告。
+    """
+    try:
+        from app.algorithms.imputation.autoencoder_imputer import impute_autoencoder
+        return impute_autoencoder(
+            X_masked,
+            hidden_dim=hidden_dim,
+            latent_dim=latent_dim,
+            n_epochs=n_epochs,
+            random_seed=random_seed,
+            verbose=verbose,
+        )
+    except ImportError:
+        import warnings
+        warnings.warn(
+            "PyTorch 未安装，autoencoder 填充回退到 KNN（pip install torch 以启用真实深度学习填充）",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        return _impute_knn(X_masked)
 
 
 def _rmse(true: np.ndarray, pred: np.ndarray) -> float:
@@ -98,7 +138,7 @@ def run_imputation_mask_evaluation(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if methods is None:
-        methods = ["mean", "median", "knn"]
+        methods = ["mean", "median", "knn", "autoencoder"]
 
     X_full = matrix.apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
     n_samples, n_features = X_full.shape
@@ -137,6 +177,15 @@ def run_imputation_mask_evaluation(
                 X_imp = _impute_median(X_masked)
             elif m == "knn":
                 X_imp = _impute_knn(X_masked, k=knn_k)
+            elif m == "autoencoder":
+                X_imp = _impute_autoencoder(
+                    X_masked,
+                    n_epochs=80,
+                    hidden_dim=256,
+                    latent_dim=64,
+                    random_seed=random_seed + rep,  # 每次 repeat 用不同种子
+                    verbose=False,
+                )
             else:
                 continue
 
@@ -194,6 +243,8 @@ def run_imputation_mask_evaluation(
             f"指标平均自 {n_repeats} 次独立重复（不同随机遮蔽种子）。",
             "RMSE/MAE 越低越好；NRMSE = RMSE / 特征标准差（用于跨特征归一化比较）。",
             "特征级 RMSE 分布见 imputation_eval_feature.json，可用于箱线图。",
+            "autoencoder：PyTorch Encoder-Decoder（hidden=256, latent=64），"
+            "仅对已观测位置计算 Masked Reconstruction MSE 损失（参考 MIDA, Gondara & Wang 2018）。",
         ],
     }
 

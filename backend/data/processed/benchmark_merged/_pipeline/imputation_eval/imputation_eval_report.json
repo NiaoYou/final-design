@@ -9,7 +9,7 @@
     "n_features": 1180,
     "n_masked_per_repeat": 303555
   },
-  "elapsed_seconds": 18.53,
+  "elapsed_seconds": 43.52,
   "methods": {
     "mean": {
       "method": "mean",
@@ -37,18 +37,29 @@
       "mae_std": 0.0003059180558635861,
       "nrmse_mean": 0.29782055099327126,
       "nrmse_std": 0.002490709570262848
+    },
+    "autoencoder": {
+      "method": "autoencoder",
+      "rmse_mean": 0.2248810039256599,
+      "rmse_std": 0.0034780197983302168,
+      "mae_mean": 0.09243453810069531,
+      "mae_std": 0.0010715670512090468,
+      "nrmse_mean": 0.22477651869875373,
+      "nrmse_std": 0.0033076041865778656
     }
   },
   "ranking_by_rmse": [
+    "autoencoder",
     "knn",
     "mean",
     "median"
   ],
-  "best_method": "knn",
+  "best_method": "autoencoder",
   "notes": [
     "评估方式：Mask-then-Impute（在无缺失矩阵上随机遮蔽后填充，与真值对比）。",
     "指标平均自 3 次独立重复（不同随机遮蔽种子）。",
     "RMSE/MAE 越低越好；NRMSE = RMSE / 特征标准差（用于跨特征归一化比较）。",
-    "特征级 RMSE 分布见 imputation_eval_feature.json，可用于箱线图。"
+    "特征级 RMSE 分布见 imputation_eval_feature.json，可用于箱线图。",
+    "autoencoder：PyTorch Encoder-Decoder（hidden=256, latent=64），仅对已观测位置计算 Masked Reconstruction MSE 损失（参考 MIDA, Gondara & Wang 2018）。"
   ]
 }

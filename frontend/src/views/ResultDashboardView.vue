@@ -11,6 +11,7 @@ import EvRatioChart from '@/components/EvRatioChart.vue'
 import ImputationEvalCard from '@/components/ImputationEvalCard.vue'
 import VolcanoPlotCard from '@/components/VolcanoPlotCard.vue'
 import AnnotationTableCard from '@/components/AnnotationTableCard.vue'
+import PathwayEnrichmentCard from '@/components/PathwayEnrichmentCard.vue'
 import { evaluationDownloadUrl, evaluationPcaImageUrl, pcaBeforeAfterImageUrl } from '@/api/benchmark'
 import { formatNumber, formatRatio } from '@/utils/format'
 import type { BatchCorrectionMetrics } from '@/types/benchmark'
@@ -204,8 +205,12 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     <section class="card-panel">
       <h3 class="section-heading">缺失值填充方法评估（Mask-then-Impute）</h3>
       <p class="interp muted">
-        在已填充矩阵上随机遮蔽 <strong>15%</strong> 的值，分别用 <strong>mean / median / KNN</strong>
-        重新填充，与真实值对比计算 RMSE / MAE / NRMSE，量化各方法精度。
+        在已填充矩阵上随机遮蔽
+        <strong>{{ imputationEvalSummary?.config?.mask_ratio != null ? ((imputationEvalSummary.config.mask_ratio * 100).toFixed(0) + '%') : '…' }}</strong>
+        的值，共
+        <strong>{{ imputationEvalSummary?.config?.n_repeats ?? '…' }}</strong>
+        次重复，计算 RMSE / MAE / NRMSE，量化各填充方法精度。
+        最优方法：<strong>{{ imputationEvalSummary?.best_method ?? '（加载中）' }}</strong>。
       </p>
       <ImputationEvalCard
         :summary="imputationEvalSummary"
@@ -225,13 +230,26 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
       <VolcanoPlotCard />
     </section>
 
+    <!-- ======== 通路富集分析区块 ======== -->
+    <section class="card-panel">
+      <h3 class="section-heading">通路富集分析（KEGG Pathway Enrichment）</h3>
+      <p class="interp muted">
+        基于差异显著代谢物（<strong>label ∈ {上调, 下调}</strong>）的 KEGG Compound ID，
+        以全部含注释特征为背景集执行<strong>超几何检验</strong>（等价 Fisher's exact test），
+        经 <strong>BH-FDR</strong> 校正筛选富集通路；结果以气泡图与力导向网络图展示。
+        KEGG 数据来自 <a href="https://rest.kegg.jp" target="_blank" style="color:#7c3aed">rest.kegg.jp</a>，
+        首次运行自动下载并缓存。
+      </p>
+      <PathwayEnrichmentCard />
+    </section>
+
     <!-- ======== 特征注释区块 ======== -->
     <section class="card-panel">
       <h3 class="section-heading">特征注释（Feature Annotation）</h3>
       <p class="interp muted">
         基于各批次 <strong>annotation.csv</strong> 中的 m/z 精确质量匹配，
-        将 1180 个代谢特征映射到代谢物名称（100% 覆盖），
-        并附 <strong>HMDB</strong> 与 <strong>KEGG</strong> 数据库链接，支持关键词搜索。
+        映射代谢物名称，并附 <strong>HMDB</strong> 与 <strong>KEGG</strong> 数据库链接，支持关键词搜索。
+        （特征总数与覆盖率见下方统计条）
       </p>
       <AnnotationTableCard />
     </section>
