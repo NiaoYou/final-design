@@ -55,7 +55,7 @@ const enabledTypes = ref<string[]>(Object.keys(TYPE_COLOR))
 const enabledRels  = ref<string[]>(['has_pathway', 'has_reaction', 'has_enzyme', 'has_module'])
 const seedOnly     = ref(false)
 const searchKeyword = ref('')
-const maxNodes     = ref(400)   // 节点数上限（太多会卡）
+const maxNodes     = ref(600)   // 节点数上限（种子 Compound 977 个，设低了会把其他类型挤出去）
 
 // ─── 派生数据 ────────────────────────────────────────────────
 const availableRelations = computed(() => {
@@ -75,7 +75,7 @@ const filteredData = computed(() => {
     nodes = nodes.filter(n => n.is_seed)
   }
 
-  // 3. 搜索高亮（只过滤 Compound 中的匹配节点 + 保留邻居）
+  // 3. 搜索高亮（匹配代谢物名称或 ID）
   const kw = searchKeyword.value.trim().toLowerCase()
   let highlightIds = new Set<string>()
   if (kw) {
@@ -86,17 +86,41 @@ const filteredData = computed(() => {
     }
   }
 
-  // 4. 过滤边
+  // 4. 过滤边（只保留两端节点都在当前节点集中、且关系类型被选中的边）
   const nodeIds = new Set(nodes.map(n => n.id))
   let edges = allEdges.value.filter(
     e => relSet.has(e.relation) && nodeIds.has(e.head) && nodeIds.has(e.tail)
   )
 
-  // 5. 裁剪到 maxNodes（优先保留种子和搜索命中节点）
+  // 5. 裁剪到 maxNodes
+  // 关键修复：种子 Compound 节点可能超过 maxNodes 上限，导致非 Compound 类型节点
+  // （Pathway/Reaction/Enzyme 等）全部被挤出，只剩蓝色节点。
+  // 新策略：先按 "有边参与" 计算每个节点的连接度，优先保留：
+  //   a. 搜索命中节点
+  //   b. 非 Compound 邻居节点（Pathway/Reaction/Enzyme 等，保证多颜色可见）
+  //   c. 有边的 Compound 种子节点
+  //   d. 其余节点
   if (nodes.length > maxNodes.value) {
-    const priority = nodes.filter(n => n.is_seed || highlightIds.has(n.id))
-    const others   = nodes.filter(n => !n.is_seed && !highlightIds.has(n.id))
-    nodes = [...priority, ...others].slice(0, maxNodes.value)
+    // 计算每个节点的边数
+    const edgeCount = new Map<string, number>()
+    for (const e of edges) {
+      edgeCount.set(e.head, (edgeCount.get(e.head) ?? 0) + 1)
+      edgeCount.set(e.tail, (edgeCount.get(e.tail) ?? 0) + 1)
+    }
+
+    const searchHits   = nodes.filter(n => highlightIds.has(n.id))
+    const nonCompound  = nodes.filter(n => !highlightIds.has(n.id) && n.type !== 'Compound')
+    const seedWithEdge = nodes.filter(n => !highlightIds.has(n.id) && n.type === 'Compound' && n.is_seed && (edgeCount.get(n.id) ?? 0) > 0)
+    const rest         = nodes.filter(n => !highlightIds.has(n.id) && n.type === 'Compound' && !n.is_seed)
+    const seedNoEdge   = nodes.filter(n => !highlightIds.has(n.id) && n.type === 'Compound' && n.is_seed && (edgeCount.get(n.id) ?? 0) === 0)
+
+    // 非 Compound 节点按连接度降序排列，优先展示高连接度节点（如大通路）
+    nonCompound.sort((a, b) => (edgeCount.get(b.id) ?? 0) - (edgeCount.get(a.id) ?? 0))
+    seedWithEdge.sort((a, b) => (edgeCount.get(b.id) ?? 0) - (edgeCount.get(a.id) ?? 0))
+
+    nodes = [...searchHits, ...nonCompound, ...seedWithEdge, ...rest, ...seedNoEdge]
+      .slice(0, maxNodes.value)
+
     const finalIds = new Set(nodes.map(n => n.id))
     edges = edges.filter(e => finalIds.has(e.head) && finalIds.has(e.tail))
   }
@@ -339,9 +363,9 @@ onBeforeUnmount(() => {
           <div class="mkg-ctrl-label" style="margin-left:16px">最大节点数：</div>
           <el-slider
             v-model="maxNodes"
-            :min="50" :max="800" :step="50"
-            style="width:140px;margin-left:8px"
-            :marks="{ 200: '200', 400: '400', 800: '800' }"
+            :min="100" :max="1200" :step="100"
+            style="width:160px;margin-left:8px"
+            :marks="{ 400: '400', 600: '600', 1000: '1000' }"
           />
           <span class="mkg-count-badge">{{ maxNodes }}</span>
         </div>

@@ -92,9 +92,26 @@ function renderBoxChart() {
   }
 
   const methods = fr.methods ?? Object.keys(fr.feature_rmse_by_method)
-  const seriesData = methods.map((m) => {
+
+  // 构建每个方法的箱线图数据（[min, Q1, median, Q3, max] 顺序，ECharts boxplot 要求）
+  const boxData = methods.map((m) => {
     const vals = fr.feature_rmse_by_method?.[m] ?? []
     return buildBoxData(vals)
+  })
+
+  // 用单 series + category x 轴，保证每个箱子与 x 轴标签严格对齐
+  // ECharts boxplot 单 series 时 data[i] 对应 xAxis.data[i]
+  const seriesData = boxData.map((d, i) => {
+    if (!d) return null
+    return {
+      value: d,
+      itemStyle: {
+        color: (METHOD_COLORS[methods[i]] ?? '#94a3b8') + '44', // 半透明填充
+        borderColor: METHOD_COLORS[methods[i]] ?? '#94a3b8',
+        borderWidth: 2,
+        opacity: 1,
+      },
+    }
   })
 
   boxChart.setOption({
@@ -102,40 +119,53 @@ function renderBoxChart() {
       trigger: 'item',
       axisPointer: { type: 'shadow' },
       formatter: (p: any) => {
-        const d = p.data as (number | undefined)[]
-        if (!d || d.length < 6) return p.seriesName ?? ''
+        const d = Array.isArray(p.data?.value) ? p.data.value : p.data
+        if (!d || d.length < 5) return p.name ?? ''
         const fmt = (v: number | undefined) => (v != null && isFinite(v) ? v.toFixed(4) : '—')
-        return `<b>${p.seriesName}</b><br/>
-          min: ${fmt(d[1])}<br/>
-          Q1: ${fmt(d[2])}<br/>
-          Median: ${fmt(d[3])}<br/>
-          Q3: ${fmt(d[4])}<br/>
-          max: ${fmt(d[5])}`
+        const methodName = methods[p.dataIndex] ?? p.name ?? ''
+        return `<b>${methodName}</b><br/>
+          min: ${fmt(d[0])}<br/>
+          Q1: ${fmt(d[1])}<br/>
+          Median: ${fmt(d[2])}<br/>
+          Q3: ${fmt(d[3])}<br/>
+          max: ${fmt(d[4])}`
       },
     },
-    grid: { left: 48, right: 16, top: 24, bottom: 32 },
+    grid: { left: 56, right: 20, top: 28, bottom: 48 },
     xAxis: {
       type: 'category',
       data: methods,
-      axisLabel: { fontSize: 12, fontWeight: 600 },
+      axisLabel: {
+        fontSize: 12,
+        fontWeight: 600,
+        color: '#334155',
+        // 防止长标签被截断
+        interval: 0,
+      },
+      axisTick: { alignWithLabel: true },
     },
     yAxis: {
       type: 'value',
       name: 'RMSE（特征级）',
       nameTextStyle: { fontSize: 11, color: '#64748b' },
       axisLabel: { formatter: (v: number) => v.toFixed(2) },
+      splitLine: { lineStyle: { color: '#e2e8f0' } },
     },
-    series: methods.map((m, i) => ({
-      name: m,
-      type: 'boxplot',
-      data: seriesData[i] ? [seriesData[i]] : [],
-      itemStyle: {
-        color: METHOD_COLORS[m] ?? '#94a3b8',
-        borderColor: METHOD_COLORS[m] ?? '#94a3b8',
-        opacity: 0.72,
+    series: [
+      {
+        name: '特征级 RMSE',
+        type: 'boxplot',
+        // data 中每一项对应 xAxis.data 中同索引的类目，null 跳过
+        data: seriesData,
+        // 单 series 时每项 itemStyle 写在数据里，这里设置默认兜底
+        itemStyle: {
+          color: '#3b82f644',
+          borderColor: '#3b82f6',
+          borderWidth: 2,
+        },
       },
-    })),
-  })
+    ],
+  }, true) // notMerge=true，防止旧 series 残留
 }
 
 onMounted(() => renderBoxChart())

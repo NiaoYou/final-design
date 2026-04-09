@@ -48,25 +48,60 @@ const heuristicRows = computed(() => {
 })
 
 const interpretation = computed(() => {
-  const m = metrics.value
+  const m = metrics.value as BatchCorrectionMetrics | null
   const r = report.value
   const parts: string[] = []
+
   if (m) {
+    // 质心距离
     parts.push(
-      `batch_centroid_separation_pc12：校正前 ${formatNumber(m.batch_centroid_separation_pc12_before)}，` +
-        `校正后 ${formatNumber(m.batch_centroid_separation_pc12_after)}，` +
-        `Δ=${formatNumber(m.delta_batch_centroid_separation)}。`,
+      `批次质心距离（batch_centroid_separation_pc12）：` +
+      `校正前 ${formatNumber(m.batch_centroid_separation_pc12_before)}，` +
+      `校正后 ${formatNumber(m.batch_centroid_separation_pc12_after)}，` +
+      `Δ=${formatNumber(m.delta_batch_centroid_separation)}。` +
+      `批次间质心距离大幅下降，说明各批次的整体分布中心已显著对齐。`,
     )
+
+    // silhouette(batch_id)
+    if (m.silhouette_batch_id_pc12_before != null) {
+      const d = m.delta_silhouette_batch_id
+      const dir = d != null ? (d < 0 ? '下降（混合改善）' : '上升（批次分离未减弱）') : '—'
+      parts.push(
+        `批次轮廓系数（silhouette_batch_id_pc12）：` +
+        `校正前 ${formatNumber(m.silhouette_batch_id_pc12_before)}，` +
+        `校正后 ${formatNumber(m.silhouette_batch_id_pc12_after)}，` +
+        `Δ=${formatNumber(d)}（${dir}）。` +
+        `该指标越低越好，校正后越负表示批次间样本点难以区分。`,
+      )
+    }
+
+    // silhouette(group_label)
+    if (m.silhouette_group_label_pc12_before != null) {
+      const d = m.delta_silhouette_group_label
+      const dir = d != null ? (d > 0 ? '上升（生物学信号保留）' : '下降（需关注生物信号损失）') : '—'
+      parts.push(
+        `生物学分组轮廓系数（silhouette_group_label_pc12）：` +
+        `校正前 ${formatNumber(m.silhouette_group_label_pc12_before)}，` +
+        `校正后 ${formatNumber(m.silhouette_group_label_pc12_after)}，` +
+        `Δ=${formatNumber(d)}（${dir}）。` +
+        `该指标越高越好，反映校正后样本按组别聚集的程度（即生物学结构是否保留）。`,
+      )
+    }
+
     const notes = m.heuristic_mixing_notes
-    if (notes?.length) parts.push(`启发式备注（来自 metrics）：${notes.join('；')}`)
+    if (notes?.length) parts.push(`综合判据：${notes.join('；')}`)
   }
+
   if (r?.baseline_batch_correction?.method_id) {
+    const combatStatus = (r.strict_combat as { status?: string } | undefined)?.status
+    const combatDesc = combatStatus === 'implemented'
+      ? 'ComBat-like 校正（neuroCombat）已实现，可在下方方法对比区块查看其指标。'
+      : 'ComBat-like 校正尚未实现，当前仅展示 baseline 结果。'
     parts.push(
-      `batch_correction_method_report.json 记载 baseline method_id=${String(r.baseline_batch_correction.method_id)}；` +
-        `strict_combat.status=${String((r.strict_combat as { status?: string } | undefined)?.status ?? '—')}。` +
-        ' 因此本页展示的是 baseline 可复现校正，不是 strict ComBat。',
+      `本页主链路展示方法：${String(r.baseline_batch_correction.method_id)}（逐特征位置尺度对齐）。${combatDesc}`,
     )
   }
+
   return parts
 })
 
@@ -119,8 +154,8 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     <p class="page-title">结果展示 · Benchmark Merged</p>
     <p class="page-sub" style="margin-bottom:1.25rem">
       数据来自后端 <code>/api/benchmark/merged/*</code> 与产物目录 JSON；不做手填指标。
-      主链路 KPI / PCA 展示 <strong>baseline</strong> 批次校正结果；
-      <strong>strict ComBat（pyComBat）已实现</strong>，可在下方「方法对比实验」区块查看对比数据。
+      主链路 KPI / PCA 展示 <strong>baseline</strong>（逐特征位置尺度对齐）批次校正结果；
+      <strong>ComBat-like 校正（neuroCombat）已实现</strong>，可在下方「方法对比实验」区块查看对比数据。
     </p>
 
     <el-alert
@@ -166,23 +201,30 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     <section class="card-panel">
       <h3 class="section-heading">指标摘要（batch_correction_metrics.json）</h3>
       <div class="metric-grid" v-if="metrics">
+        <!-- batch_centroid_separation：越低越好，delta<0 为绿 -->
         <MetricCompareCard
           title="batch_centroid_separation_pc12"
           :before="metrics.batch_centroid_separation_pc12_before"
           :after="metrics.batch_centroid_separation_pc12_after"
           :delta="metrics.delta_batch_centroid_separation"
+          hint="PC1–PC2 上各批次质心间平均欧氏距离。越小说明批次间分布越接近（混合越好）。"
         />
+        <!-- silhouette(batch_id)：越低越好，delta<0 为绿（batch 难以区分 = 混合好） -->
         <MetricCompareCard
           title="silhouette(batch_id)"
           :before="metrics.silhouette_batch_id_pc12_before"
           :after="metrics.silhouette_batch_id_pc12_after"
           :delta="metrics.delta_silhouette_batch_id"
+          hint="以 batch_id 为标签计算的 Silhouette 分数。校正后应下降（越负越好），说明批次间样本点不再可区分。"
         />
+        <!-- silhouette(group_label)：越高越好，delta>0 为绿（生物信号保留） -->
         <MetricCompareCard
           title="silhouette(group_label)"
           :before="metrics.silhouette_group_label_pc12_before"
           :after="metrics.silhouette_group_label_pc12_after"
           :delta="metrics.delta_silhouette_group_label"
+          :positive-is-good="true"
+          hint="以 group_label 为标签计算的 Silhouette 分数。校正后应上升（越高越好），说明生物学分组结构得到保留。"
         />
       </div>
       <el-skeleton v-else-if="loading" :rows="4" animated />
@@ -197,7 +239,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     </section>
 
     <section class="card-panel">
-      <h3 class="section-heading">结果解释（数值与状态均引用自 JSON）</h3>
+      <h3 class="section-heading">指标解读（数值直接引用自 batch_correction_metrics.json）</h3>
       <p v-for="(p, i) in interpretation" :key="i" class="interp">{{ p }}</p>
       <p v-if="!interpretation.length" class="interp muted">加载报告与 metrics 后可自动生成解释句段。</p>
     </section>
@@ -282,7 +324,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
       <div v-if="evaluationFiles?.files?.length" class="dl-split">
         <div class="subhead">Evaluation 产物下载（方法对比实验）</div>
         <p class="interp muted">
-          包含 mean / median / knn / baseline / <strong>ComBat</strong>（pyComBat）各方法的 PCA 坐标 JSON 与评估汇总表。
+          包含 mean / median / knn / baseline / <strong>combat-like</strong>（neuroCombat）各方法的 PCA 坐标 JSON 与评估汇总表。
         </p>
         <DownloadFileCard
           v-for="f in evaluationFiles.files"
@@ -300,8 +342,9 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
       <p class="interp muted">
         本区块读取 <code>benchmark_merged/_pipeline/evaluation</code> 下的评估产物，
         对比 <strong>mean / median / knn</strong>（仅填充，无批次校正）、
-        <strong>baseline</strong>（per-feature location-scale 基线校正）与
-        <strong>ComBat</strong>（pyComBat 经验 Bayes，Johnson et al., 2007）三类方法的指标表现。
+        <strong>baseline</strong>（per-feature location-scale 逐特征位置尺度对齐）与
+        <strong>combat-like</strong>（neuroCombat，经验 Bayes 实现，参考 Johnson et al., 2007）三类方法的指标表现。
+        图中 "before" 对应 <strong>knn 填充未校正</strong>，"after" 对应 <strong>baseline 校正</strong>结果。
       </p>
 
       <el-alert
@@ -349,7 +392,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
         </div>
 
         <div class="card-panel card-panel--flat">
-          <div class="subhead">PCA 对比图（evaluation/pca_before_vs_after.png）</div>
+          <div class="subhead">PCA 对比图（knn 填充 vs baseline 校正）</div>
           <div class="img-frame">
             <img :src="evalPcaUrl" alt="evaluation pca before vs after" class="img" loading="lazy" />
           </div>
@@ -372,7 +415,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
             type="success"
             effect="light"
           >
-            strict ComBat（pyComBat 经验 Bayes）
+            ComBat-like（neuroCombat 经验 Bayes）
           </el-tag>
           <el-tag
             v-else-if="selectedEvalMethod === 'baseline'"

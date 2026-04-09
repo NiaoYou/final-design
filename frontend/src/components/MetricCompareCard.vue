@@ -6,6 +6,14 @@ const props = defineProps<{
   before: unknown
   after: unknown
   delta?: unknown
+  /**
+   * 当 delta 为正时是否表示"好"。
+   * - 默认 false：delta < 0 = 好（如 batch_centroid_separation / silhouette_batch_id，越低越好）
+   * - true：delta > 0 = 好（如 silhouette_group_label，越高越好，说明生物信号保留越好）
+   */
+  positiveIsGood?: boolean
+  /** 可选的指标解释提示文字，悬浮时显示 */
+  hint?: string
 }>()
 
 const deltaNum = computed(() => {
@@ -18,10 +26,9 @@ const deltaStr = computed(() => {
   return (deltaNum.value >= 0 ? '+' : '') + deltaNum.value.toFixed(4)
 })
 
-// Negative delta on batch separation = improvement (less separation = better mixing)
 const deltaGood = computed(() => {
   if (deltaNum.value == null) return null
-  return deltaNum.value < 0
+  return props.positiveIsGood ? deltaNum.value > 0 : deltaNum.value < 0
 })
 
 function fmt(v: unknown) {
@@ -33,7 +40,10 @@ function fmt(v: unknown) {
 
 <template>
   <div class="metric">
-    <div class="metric__title">{{ title }}</div>
+    <div class="metric__title">
+      {{ title }}
+      <span v-if="hint" class="metric__hint" :title="hint">(?)</span>
+    </div>
 
     <div class="metric__compare">
       <!-- Before -->
@@ -95,6 +105,22 @@ function fmt(v: unknown) {
   margin-bottom: 0.9rem;
   word-break: break-all;
   line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.metric__hint {
+  font-size: 0.68rem;
+  color: var(--app-muted-light);
+  cursor: help;
+  opacity: 0.7;
+  font-family: sans-serif;
+  flex-shrink: 0;
+  margin-top: 1px;
+
+  &:hover { opacity: 1; }
 }
 
 .metric__compare {
