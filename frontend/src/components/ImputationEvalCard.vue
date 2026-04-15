@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
 
 type MethodStats = {
@@ -101,8 +101,9 @@ function renderBoxChart() {
 
   // 用单 series + category x 轴，保证每个箱子与 x 轴标签严格对齐
   // ECharts boxplot 单 series 时 data[i] 对应 xAxis.data[i]
+  // 注意：data 中不能传 null，跳过无数据的方法（用 '-' 占位让 ECharts 忽略）
   const seriesData = boxData.map((d, i) => {
-    if (!d) return null
+    if (!d) return { value: '-' }  // ECharts boxplot 用字符串 '-' 跳过无效项
     return {
       value: d,
       itemStyle: {
@@ -168,8 +169,19 @@ function renderBoxChart() {
   }, true) // notMerge=true，防止旧 series 残留
 }
 
-onMounted(() => renderBoxChart())
-watch(() => props.featureRmse, () => renderBoxChart(), { deep: true })
+onMounted(async () => {
+  await nextTick()
+  renderBoxChart()
+})
+
+watch(
+  () => props.featureRmse,
+  async () => {
+    await nextTick()   // 等待 v-if="featureRmse?.feature_rmse_by_method" 的 DOM 插入
+    renderBoxChart()
+  },
+  { deep: true },
+)
 </script>
 
 <template>

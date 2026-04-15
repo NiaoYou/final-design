@@ -23,8 +23,9 @@ const TYPE_LABEL: Record<string, string> = {
   Reaction: '生化反应',
   Enzyme:   '酶',
   Drug:     '药物',
-  Module:   'Module',
-  Network:  'Network',
+  Module:   '模块',
+  Network:  '网络',
+  Other:    '其他',
 }
 
 const RELATION_LABEL: Record<string, string> = {
@@ -164,6 +165,7 @@ function renderGraph() {
   const kw = searchKeyword.value.trim()
 
   // 构建 ECharts 节点
+  // 注意：node_label 用于保存原始 ID 字符串，不能与 ECharts 内置 label 配置对象同名
   const eNodes = nodes.map(n => {
     const color  = TYPE_COLOR[n.type] ?? TYPE_COLOR.Other
     const isSeed = n.is_seed
@@ -172,7 +174,8 @@ function renderGraph() {
     return {
       id:          n.id,
       name,
-      label:       n.label,
+      node_id:     n.id,       // 用 node_id 保存原始 ID，避免与 ECharts label 字段冲突
+      node_label:  n.label,    // 用 node_label 保存原始标签字符串
       node_type:   n.type,
       is_seed:     isSeed,
       formula:     n.formula,
@@ -191,6 +194,7 @@ function renderGraph() {
         formatter: name.length > 12 ? name.slice(0, 12) + '…' : name,
         fontSize:  9,
         color:     '#334155',
+        overflow:  'truncate',
       },
     }
   })
@@ -218,7 +222,7 @@ function renderGraph() {
           const typeLabel = TYPE_LABEL[d.node_type] ?? d.node_type
           let html = `<div style="font-size:13px;font-weight:600;margin-bottom:4px">${d.name}</div>`
           html += `<div style="color:#64748b">类型：${typeLabel}</div>`
-          html += `<div style="color:#64748b">ID：${d.id}</div>`
+          html += `<div style="color:#64748b">ID：${d.node_id}</div>`
           if (d.formula) html += `<div style="color:#64748b">分子式：${d.formula}</div>`
           if (d.ion_mz)  html += `<div style="color:#64748b">m/z：${Number(d.ion_mz).toFixed(4)}</div>`
           if (d.is_seed) html += `<div style="color:#3b82f6;margin-top:4px">✦ 本项目代谢物</div>`
@@ -265,7 +269,8 @@ function renderGraph() {
 }
 
 // ─── 监听过滤条件变化 ─────────────────────────────────────────
-watch(filteredData, () => renderGraph(), { deep: true })
+// filteredData 是 computed，不需要 deep: true，computed 自动追踪依赖
+watch(filteredData, () => renderGraph())
 
 // ─── 节点数统计 ─────────────────────────────────────────────
 const stats = computed(() => {
@@ -411,7 +416,7 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .mkg-card {
   background: #fff;
   border-radius: 12px;
