@@ -458,11 +458,15 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
   @media (max-width: 900px) {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .grid-2 {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   margin-bottom: 1.25rem;
 
@@ -500,7 +504,7 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
 }
 
 .interp {
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.75rem;
   line-height: 1.65;
   font-size: 0.92rem;
 
@@ -518,6 +522,8 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
   border-radius: 8px;
   overflow: auto;
   max-height: 320px;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .jsondump--light {

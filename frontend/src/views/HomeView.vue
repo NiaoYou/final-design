@@ -354,6 +354,7 @@ const steps = [
   display: flex;
   flex-wrap: wrap;
   gap: 0.85rem;
+  align-items: center;
 }
 
 .hero__deco {
@@ -362,6 +363,10 @@ const steps = [
   bottom: 1.5rem;
   z-index: 0;
   pointer-events: none;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 /* ===== Buttons ===== */
@@ -482,7 +487,6 @@ const steps = [
 .steps {
   display: flex;
   align-items: flex-start;
-  gap: 0;
   flex-wrap: wrap;
   gap: 1rem;
 

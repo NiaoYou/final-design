@@ -94,14 +94,14 @@ defineProps<{
 
 <style scoped lang="scss">
 .method__banner {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .method__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -157,7 +157,7 @@ defineProps<{
   border: 1px solid rgba(37, 99, 235, 0.15);
   border-radius: 8px;
   padding: 0.65rem 0.85rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   line-height: 1.55;
 }
 

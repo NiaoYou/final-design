@@ -422,12 +422,15 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 0.6rem 1rem;
+  min-height: 56px;
 }
 
 .volcano__param-item {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-height: 56px;
+  justify-content: flex-end;
 
   label {
     font-size: 0.75rem;
@@ -464,6 +467,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 600;
+  height: 24px;
 
   &--meta {
     background: #f1f5f9;
@@ -496,6 +500,10 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
   width: 100%;
   height: 400px;
   margin-bottom: 1.25rem;
+
+  @media (max-width: 768px) {
+    height: 300px;
+  }
 }
 
 .volcano__table-section {

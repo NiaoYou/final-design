@@ -32,7 +32,7 @@ import SidebarMenu from '@/components/SidebarMenu.vue'
   top: 0;
   height: 100vh;
   overflow: hidden;
-  z-index: 200;
+  z-index: 99;
   box-shadow: 2px 0 16px rgba(11,17,32,.18);
 }
 
@@ -48,5 +48,13 @@ import SidebarMenu from '@/components/SidebarMenu.vue'
   flex: 1;
   padding: 1.75rem 2rem 3rem;
   overflow-y: auto;
+
+  @media (max-width: 768px) {
+    padding: 1.25rem 1.5rem 2rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem 1rem 1.5rem;
+  }
 }
 </style>

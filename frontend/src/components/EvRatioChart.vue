@@ -152,5 +152,10 @@ watch(
 .ev__chart {
   width: 100%;
   height: 280px;
+  min-height: 200px;
+
+  @media (max-width: 768px) {
+    height: 220px;
+  }
 }
 </style>

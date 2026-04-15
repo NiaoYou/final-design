@@ -300,6 +300,14 @@ watch(() => props.featureRmse, () => renderBoxChart(), { deep: true })
 
 .ieval__section {
   margin-bottom: 1.25rem;
+
+  :deep(.el-table) {
+    max-height: 400px;
+
+    @media (max-width: 768px) {
+      max-height: 300px;
+    }
+  }
 }
 
 .ieval__subhead {

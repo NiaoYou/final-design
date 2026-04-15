@@ -44,7 +44,7 @@ defineProps<{
 
 .pca__cap {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.7rem;
   padding: 0.9rem 1.1rem;
   border-bottom: 1px solid var(--app-border);
@@ -60,7 +60,6 @@ defineProps<{
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .pca__title {

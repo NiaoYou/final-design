@@ -56,7 +56,7 @@ const routeDesc = computed(() => {
   box-shadow: 0 1px 0 rgba(15,23,42,.04), var(--app-shadow);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 101;
 }
 
 .header__left {

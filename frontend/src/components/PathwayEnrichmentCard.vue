@@ -484,12 +484,15 @@ const sigPathways = computed(() =>
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 0.6rem 1rem;
+  min-height: 56px;
 }
 
 .pe__param-item {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-height: 56px;
+  justify-content: flex-end;
 
   label {
     font-size: 0.75rem;
@@ -581,6 +584,10 @@ const sigPathways = computed(() =>
   height: 420px;
   margin-bottom: 1.25rem;
   position: relative;
+
+  @media (max-width: 768px) {
+    height: 300px;
+  }
 }
 
 .pe__chart--network {
@@ -588,6 +595,10 @@ const sigPathways = computed(() =>
   border: 1px solid var(--app-border);
   border-radius: 8px;
   background: #fafbff;
+
+  @media (max-width: 768px) {
+    height: 350px;
+  }
 }
 
 .pe__network-hint {
@@ -597,7 +608,7 @@ const sigPathways = computed(() =>
   font-size: 0.75rem;
   color: var(--app-muted);
   pointer-events: none;
-  z-index: 10;
+  z-index: 100;
 }
 
 .pe__section {

@@ -498,6 +498,14 @@ onBeforeUnmount(() => {
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: #f8fafc;
+
+  @media (max-width: 768px) {
+    height: 400px;
+  }
+
+  @media (max-width: 480px) {
+    height: 300px;
+  }
 }
 
 /* 图例 */
