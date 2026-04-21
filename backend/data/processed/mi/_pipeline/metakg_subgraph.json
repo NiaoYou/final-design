@@ -1,0 +1,5831 @@
+{
+  "meta": {
+    "n_nodes": 268,
+    "n_edges": 825,
+    "n_seed_compounds": 22,
+    "node_type_counts": {
+      "Compound": 50,
+      "Disease": 35,
+      "Enzyme": 10,
+      "Gene": 35,
+      "Protein": 70,
+      "Pathway": 54,
+      "Reaction": 14
+    },
+    "relation_counts": {
+      "has_pathway": 446,
+      "related_to_protein": 182,
+      "related_to_gene": 91,
+      "has_disease": 51,
+      "same_as": 28,
+      "is_a": 18,
+      "has_reaction": 14,
+      "has_enzyme": 13,
+      "is a": 9
+    },
+    "description": "MetaKG subgraph for named metabolite dataset (one-hop neighbors)"
+  },
+  "nodes": [
+    {
+      "id": "compound_id:C02165",
+      "type": "Compound",
+      "label": "C02165",
+      "is_seed": true,
+      "metabolite_name": "Leukotriene B4",
+      "formula": "C20H32O4",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C05961",
+      "type": "Compound",
+      "label": "C05961",
+      "is_seed": true,
+      "metabolite_name": "6-Keto-prostaglandin F1a",
+      "formula": "C20H34O6",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C06314",
+      "type": "Compound",
+      "label": "C06314",
+      "is_seed": true,
+      "metabolite_name": "Lipoxin A4",
+      "formula": "C20H32O5",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C14748",
+      "type": "Compound",
+      "label": "C14748",
+      "is_seed": true,
+      "metabolite_name": "20-Hydroxyeicosatetraenoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C14762",
+      "type": "Compound",
+      "label": "C14762",
+      "is_seed": true,
+      "metabolite_name": "13-HODE",
+      "formula": "C18H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C14767",
+      "type": "Compound",
+      "label": "C14767",
+      "is_seed": true,
+      "metabolite_name": "alpha-Dimorphecolic acid",
+      "formula": "C18H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C14768",
+      "type": "Compound",
+      "label": "C14768",
+      "is_seed": true,
+      "metabolite_name": "5,6-Epoxy-8,11,14-eicosatrienoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C14777",
+      "type": "Compound",
+      "label": "C14777",
+      "is_seed": true,
+      "metabolite_name": "12-HETE",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "compound_id:C14826",
+      "type": "Compound",
+      "label": "C14826",
+      "is_seed": true,
+      "metabolite_name": "12,13-EpOME",
+      "formula": "C18H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "disease:Aseptic meningitis",
+      "type": "Disease",
+      "label": "Aseptic meningitis",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Autosomal  dominant polycystic kidney disease",
+      "type": "Disease",
+      "label": "Autosomal  dominant polycystic kidney disease",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Autosomal dominant polycystic kidney disease (ADPKD)",
+      "type": "Disease",
+      "label": "Autosomal dominant polycystic kidney disease (ADPKD)",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Cardiac disorders",
+      "type": "Disease",
+      "label": "Cardiac disorders",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Cardiopulmonary bypass",
+      "type": "Disease",
+      "label": "Cardiopulmonary bypass",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Cardiopulmonary resuscitation",
+      "type": "Disease",
+      "label": "Cardiopulmonary resuscitation",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Cerebral Vasospasm",
+      "type": "Disease",
+      "label": "Cerebral Vasospasm",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Cerebral vasospasm",
+      "type": "Disease",
+      "label": "Cerebral vasospasm",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Colorectal cancer",
+      "type": "Disease",
+      "label": "Colorectal cancer",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Coronary artery disease",
+      "type": "Disease",
+      "label": "Coronary artery disease",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Glutathione synthetase deficiency",
+      "type": "Disease",
+      "label": "Glutathione synthetase deficiency",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Health condition",
+      "type": "Disease",
+      "label": "Health condition",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Health effect",
+      "type": "Disease",
+      "label": "Health effect",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Hydrocephalus",
+      "type": "Disease",
+      "label": "Hydrocephalus",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Hypertension",
+      "type": "Disease",
+      "label": "Hypertension",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Hypoxia/Ischemia",
+      "type": "Disease",
+      "label": "Hypoxia/Ischemia",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Ischemia",
+      "type": "Disease",
+      "label": "Ischemia",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Leukotriene C4-Synthesis Deficiency",
+      "type": "Disease",
+      "label": "Leukotriene C4-Synthesis Deficiency",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Meningitis",
+      "type": "Disease",
+      "label": "Meningitis",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Peroxisomal biogenesis defect",
+      "type": "Disease",
+      "label": "Peroxisomal biogenesis defect",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Postoperative pulmonary hypertension",
+      "type": "Disease",
+      "label": "Postoperative pulmonary hypertension",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Renovascular disease",
+      "type": "Disease",
+      "label": "Renovascular disease",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Rheumatoid arthritis",
+      "type": "Disease",
+      "label": "Rheumatoid arthritis",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Sjögren-Larsson syndrome",
+      "type": "Disease",
+      "label": "Sjögren-Larsson syndrome",
+      "is_seed": false
+    },
+    {
+      "id": "disease:SjГ¶gren-larsson syndrome",
+      "type": "Disease",
+      "label": "SjГ¶gren-larsson syndrome",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Spinal cord injuries (acute stage)",
+      "type": "Disease",
+      "label": "Spinal cord injuries (acute stage)",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Vascular disorders",
+      "type": "Disease",
+      "label": "Vascular disorders",
+      "is_seed": false
+    },
+    {
+      "id": "disease:Zellweger syndrome",
+      "type": "Disease",
+      "label": "Zellweger syndrome",
+      "is_seed": false
+    },
+    {
+      "id": "disease:closed head injury",
+      "type": "Disease",
+      "label": "closed head injury",
+      "is_seed": false
+    },
+    {
+      "id": "disease:glutathione synthetase deficiency, acute metabolic crisis",
+      "type": "Disease",
+      "label": "glutathione synthetase deficiency, acute metabolic crisis",
+      "is_seed": false
+    },
+    {
+      "id": "disease:gunshot wound",
+      "type": "Disease",
+      "label": "gunshot wound",
+      "is_seed": false
+    },
+    {
+      "id": "disease:hydrocephalus",
+      "type": "Disease",
+      "label": "hydrocephalus",
+      "is_seed": false
+    },
+    {
+      "id": "disease:meningitis",
+      "type": "Disease",
+      "label": "meningitis",
+      "is_seed": false
+    },
+    {
+      "id": "disease:subarachnoid hemorrhage with cerebral vasospasm",
+      "type": "Disease",
+      "label": "subarachnoid hemorrhage with cerebral vasospasm",
+      "is_seed": false
+    },
+    {
+      "id": "disease:subarachnoid hemorrhage without cerebral vasospasm",
+      "type": "Disease",
+      "label": "subarachnoid hemorrhage without cerebral vasospasm",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:1.1.1.-",
+      "type": "Enzyme",
+      "label": "1.1.1.-",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:1.11.1.12",
+      "type": "Enzyme",
+      "label": "1.11.1.12",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:1.14.14.-",
+      "type": "Enzyme",
+      "label": "1.14.14.-",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:1.14.14.1",
+      "type": "Enzyme",
+      "label": "1.14.14.1",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:1.14.14.80",
+      "type": "Enzyme",
+      "label": "1.14.14.80",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:1.14.14.94",
+      "type": "Enzyme",
+      "label": "1.14.14.94",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:1.3.1.48",
+      "type": "Enzyme",
+      "label": "1.3.1.48",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:3.3.2.-",
+      "type": "Enzyme",
+      "label": "3.3.2.-",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:3.3.2.10",
+      "type": "Enzyme",
+      "label": "3.3.2.10",
+      "is_seed": false
+    },
+    {
+      "id": "enzyme_id:3.3.2.6",
+      "type": "Enzyme",
+      "label": "3.3.2.6",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP19A1",
+      "type": "Gene",
+      "label": "CYP19A1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP1A1",
+      "type": "Gene",
+      "label": "CYP1A1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP1A2",
+      "type": "Gene",
+      "label": "CYP1A2",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP1B1",
+      "type": "Gene",
+      "label": "CYP1B1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2A13",
+      "type": "Gene",
+      "label": "CYP2A13",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2A6",
+      "type": "Gene",
+      "label": "CYP2A6",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2A7",
+      "type": "Gene",
+      "label": "CYP2A7",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2B6",
+      "type": "Gene",
+      "label": "CYP2B6",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2C18",
+      "type": "Gene",
+      "label": "CYP2C18",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2C19",
+      "type": "Gene",
+      "label": "CYP2C19",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2C8",
+      "type": "Gene",
+      "label": "CYP2C8",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2C9",
+      "type": "Gene",
+      "label": "CYP2C9",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2D6",
+      "type": "Gene",
+      "label": "CYP2D6",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2E1",
+      "type": "Gene",
+      "label": "CYP2E1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2F1",
+      "type": "Gene",
+      "label": "CYP2F1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2J2",
+      "type": "Gene",
+      "label": "CYP2J2",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP2S1",
+      "type": "Gene",
+      "label": "CYP2S1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP3A4",
+      "type": "Gene",
+      "label": "CYP3A4",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP3A43",
+      "type": "Gene",
+      "label": "CYP3A43",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP3A5",
+      "type": "Gene",
+      "label": "CYP3A5",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP3A7",
+      "type": "Gene",
+      "label": "CYP3A7",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4A11",
+      "type": "Gene",
+      "label": "CYP4A11",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4A22",
+      "type": "Gene",
+      "label": "CYP4A22",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4B1",
+      "type": "Gene",
+      "label": "CYP4B1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4F11",
+      "type": "Gene",
+      "label": "CYP4F11",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4F2",
+      "type": "Gene",
+      "label": "CYP4F2",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4F22",
+      "type": "Gene",
+      "label": "CYP4F22",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4F3",
+      "type": "Gene",
+      "label": "CYP4F3",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4F8",
+      "type": "Gene",
+      "label": "CYP4F8",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4X1",
+      "type": "Gene",
+      "label": "CYP4X1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:CYP4Z1",
+      "type": "Gene",
+      "label": "CYP4Z1",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:EPHX2",
+      "type": "Gene",
+      "label": "EPHX2",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:LTA4H",
+      "type": "Gene",
+      "label": "LTA4H",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:LTB4R",
+      "type": "Gene",
+      "label": "LTB4R",
+      "is_seed": false
+    },
+    {
+      "id": "gene_name:LTB4R2",
+      "type": "Gene",
+      "label": "LTB4R2",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0001085",
+      "type": "Compound",
+      "label": "HMDB0001085",
+      "is_seed": true,
+      "metabolite_name": "Leukotriene B4",
+      "formula": "C20H32O4",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0002190",
+      "type": "Compound",
+      "label": "HMDB0002190",
+      "is_seed": true,
+      "metabolite_name": "5,6-Epoxy-8,11,14-eicosatrienoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0002283",
+      "type": "Compound",
+      "label": "HMDB0002283",
+      "is_seed": true,
+      "metabolite_name": "14R,15S-EpETrE",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0002886",
+      "type": "Compound",
+      "label": "HMDB0002886",
+      "is_seed": true,
+      "metabolite_name": "6-Keto-prostaglandin F1a",
+      "formula": "C20H34O6",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0003733",
+      "type": "Compound",
+      "label": "HMDB0003733",
+      "is_seed": true,
+      "metabolite_name": "Resolvin D1",
+      "formula": "C22H32O5",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0003978",
+      "type": "Compound",
+      "label": "HMDB0003978",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0004385",
+      "type": "Compound",
+      "label": "HMDB0004385",
+      "is_seed": true,
+      "metabolite_name": "Lipoxin A4",
+      "formula": "C20H32O5",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0004667",
+      "type": "Compound",
+      "label": "HMDB0004667",
+      "is_seed": true,
+      "metabolite_name": "13-HODE",
+      "formula": "C18H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0004670",
+      "type": "Compound",
+      "label": "HMDB0004670",
+      "is_seed": true,
+      "metabolite_name": "alpha-Dimorphecolic acid",
+      "formula": "C18H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0004673",
+      "type": "Compound",
+      "label": "HMDB0004673",
+      "is_seed": true,
+      "metabolite_name": "11,12-Epoxyeicosatrienoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0004698",
+      "type": "Compound",
+      "label": "HMDB0004698",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0004702",
+      "type": "Compound",
+      "label": "HMDB0004702",
+      "is_seed": true,
+      "metabolite_name": "12,13-EpOME",
+      "formula": "C18H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0005072",
+      "type": "Compound",
+      "label": "HMDB0005072",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0005998",
+      "type": "Compound",
+      "label": "HMDB0005998",
+      "is_seed": true,
+      "metabolite_name": "20-Hydroxyeicosatetraenoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0006111",
+      "type": "Compound",
+      "label": "HMDB0006111",
+      "is_seed": true,
+      "metabolite_name": "12-HETE",
+      "formula": "C20H32O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0006939",
+      "type": "Compound",
+      "label": "HMDB0006939",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0010205",
+      "type": "Compound",
+      "label": "HMDB0010205",
+      "is_seed": true,
+      "metabolite_name": "14,15-EpETE",
+      "formula": "C20H30O3",
+      "ion_mz": null
+    },
+    {
+      "id": "hmdb_id:HMDB0010223",
+      "type": "Compound",
+      "label": "HMDB0010223",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0010409",
+      "type": "Compound",
+      "label": "HMDB0010409",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0061708",
+      "type": "Compound",
+      "label": "HMDB0061708",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB01085",
+      "type": "Compound",
+      "label": "HMDB01085",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB0112194",
+      "type": "Compound",
+      "label": "HMDB0112194",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB02190",
+      "type": "Compound",
+      "label": "HMDB02190",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB02283",
+      "type": "Compound",
+      "label": "HMDB02283",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB02886",
+      "type": "Compound",
+      "label": "HMDB02886",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB03733",
+      "type": "Compound",
+      "label": "HMDB03733",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB03978",
+      "type": "Compound",
+      "label": "HMDB03978",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB04385",
+      "type": "Compound",
+      "label": "HMDB04385",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB04667",
+      "type": "Compound",
+      "label": "HMDB04667",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB04670",
+      "type": "Compound",
+      "label": "HMDB04670",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB04673",
+      "type": "Compound",
+      "label": "HMDB04673",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB04698",
+      "type": "Compound",
+      "label": "HMDB04698",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB04702",
+      "type": "Compound",
+      "label": "HMDB04702",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB05072",
+      "type": "Compound",
+      "label": "HMDB05072",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB05998",
+      "type": "Compound",
+      "label": "HMDB05998",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB06111",
+      "type": "Compound",
+      "label": "HMDB06111",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB06939",
+      "type": "Compound",
+      "label": "HMDB06939",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB10205",
+      "type": "Compound",
+      "label": "HMDB10205",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB10223",
+      "type": "Compound",
+      "label": "HMDB10223",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB10409",
+      "type": "Compound",
+      "label": "HMDB10409",
+      "is_seed": false
+    },
+    {
+      "id": "hmdb_id:HMDB61708",
+      "type": "Compound",
+      "label": "HMDB61708",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP00401",
+      "type": "Protein",
+      "label": "HMDBP00401",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01013",
+      "type": "Protein",
+      "label": "HMDBP01013",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01014",
+      "type": "Protein",
+      "label": "HMDBP01014",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01015",
+      "type": "Protein",
+      "label": "HMDBP01015",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01018",
+      "type": "Protein",
+      "label": "HMDBP01018",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01036",
+      "type": "Protein",
+      "label": "HMDBP01036",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01038",
+      "type": "Protein",
+      "label": "HMDBP01038",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01544",
+      "type": "Protein",
+      "label": "HMDBP01544",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01545",
+      "type": "Protein",
+      "label": "HMDBP01545",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01546",
+      "type": "Protein",
+      "label": "HMDBP01546",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01547",
+      "type": "Protein",
+      "label": "HMDBP01547",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01549",
+      "type": "Protein",
+      "label": "HMDBP01549",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01551",
+      "type": "Protein",
+      "label": "HMDBP01551",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01552",
+      "type": "Protein",
+      "label": "HMDBP01552",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01553",
+      "type": "Protein",
+      "label": "HMDBP01553",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01554",
+      "type": "Protein",
+      "label": "HMDBP01554",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01556",
+      "type": "Protein",
+      "label": "HMDBP01556",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01557",
+      "type": "Protein",
+      "label": "HMDBP01557",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01558",
+      "type": "Protein",
+      "label": "HMDBP01558",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01559",
+      "type": "Protein",
+      "label": "HMDBP01559",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01560",
+      "type": "Protein",
+      "label": "HMDBP01560",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01561",
+      "type": "Protein",
+      "label": "HMDBP01561",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01562",
+      "type": "Protein",
+      "label": "HMDBP01562",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01563",
+      "type": "Protein",
+      "label": "HMDBP01563",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01564",
+      "type": "Protein",
+      "label": "HMDBP01564",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01565",
+      "type": "Protein",
+      "label": "HMDBP01565",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01566",
+      "type": "Protein",
+      "label": "HMDBP01566",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01567",
+      "type": "Protein",
+      "label": "HMDBP01567",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01790",
+      "type": "Protein",
+      "label": "HMDBP01790",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP01841",
+      "type": "Protein",
+      "label": "HMDBP01841",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP07274",
+      "type": "Protein",
+      "label": "HMDBP07274",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP07417",
+      "type": "Protein",
+      "label": "HMDBP07417",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP07787",
+      "type": "Protein",
+      "label": "HMDBP07787",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP08640",
+      "type": "Protein",
+      "label": "HMDBP08640",
+      "is_seed": false
+    },
+    {
+      "id": "hmdbp_id:HMDBP09335",
+      "type": "Protein",
+      "label": "HMDBP09335",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00075",
+      "type": "Pathway",
+      "label": "SMP00075",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00077",
+      "type": "Pathway",
+      "label": "SMP00077",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00083",
+      "type": "Pathway",
+      "label": "SMP00083",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00084",
+      "type": "Pathway",
+      "label": "SMP00084",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00085",
+      "type": "Pathway",
+      "label": "SMP00085",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00086",
+      "type": "Pathway",
+      "label": "SMP00086",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00087",
+      "type": "Pathway",
+      "label": "SMP00087",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00093",
+      "type": "Pathway",
+      "label": "SMP00093",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00094",
+      "type": "Pathway",
+      "label": "SMP00094",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00096",
+      "type": "Pathway",
+      "label": "SMP00096",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00098",
+      "type": "Pathway",
+      "label": "SMP00098",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00101",
+      "type": "Pathway",
+      "label": "SMP00101",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00102",
+      "type": "Pathway",
+      "label": "SMP00102",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00104",
+      "type": "Pathway",
+      "label": "SMP00104",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00106",
+      "type": "Pathway",
+      "label": "SMP00106",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00109",
+      "type": "Pathway",
+      "label": "SMP00109",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00113",
+      "type": "Pathway",
+      "label": "SMP00113",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00114",
+      "type": "Pathway",
+      "label": "SMP00114",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00116",
+      "type": "Pathway",
+      "label": "SMP00116",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00120",
+      "type": "Pathway",
+      "label": "SMP00120",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00289",
+      "type": "Pathway",
+      "label": "SMP00289",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00353",
+      "type": "Pathway",
+      "label": "SMP00353",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00692",
+      "type": "Pathway",
+      "label": "SMP00692",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00693",
+      "type": "Pathway",
+      "label": "SMP00693",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00694",
+      "type": "Pathway",
+      "label": "SMP00694",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00695",
+      "type": "Pathway",
+      "label": "SMP00695",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00696",
+      "type": "Pathway",
+      "label": "SMP00696",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00697",
+      "type": "Pathway",
+      "label": "SMP00697",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00698",
+      "type": "Pathway",
+      "label": "SMP00698",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00699",
+      "type": "Pathway",
+      "label": "SMP00699",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00700",
+      "type": "Pathway",
+      "label": "SMP00700",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00701",
+      "type": "Pathway",
+      "label": "SMP00701",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00702",
+      "type": "Pathway",
+      "label": "SMP00702",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00703",
+      "type": "Pathway",
+      "label": "SMP00703",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00704",
+      "type": "Pathway",
+      "label": "SMP00704",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00705",
+      "type": "Pathway",
+      "label": "SMP00705",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00706",
+      "type": "Pathway",
+      "label": "SMP00706",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00707",
+      "type": "Pathway",
+      "label": "SMP00707",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00708",
+      "type": "Pathway",
+      "label": "SMP00708",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00709",
+      "type": "Pathway",
+      "label": "SMP00709",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:SMP00710",
+      "type": "Pathway",
+      "label": "SMP00710",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map00590",
+      "type": "Pathway",
+      "label": "map00590",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map00591",
+      "type": "Pathway",
+      "label": "map00591",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map01100",
+      "type": "Pathway",
+      "label": "map01100",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map03320",
+      "type": "Pathway",
+      "label": "map03320",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map04080",
+      "type": "Pathway",
+      "label": "map04080",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map04270",
+      "type": "Pathway",
+      "label": "map04270",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map04726",
+      "type": "Pathway",
+      "label": "map04726",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map04750",
+      "type": "Pathway",
+      "label": "map04750",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map04913",
+      "type": "Pathway",
+      "label": "map04913",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map04925",
+      "type": "Pathway",
+      "label": "map04925",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map04976",
+      "type": "Pathway",
+      "label": "map04976",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map05145",
+      "type": "Pathway",
+      "label": "map05145",
+      "is_seed": false
+    },
+    {
+      "id": "pathway_id:map07034",
+      "type": "Pathway",
+      "label": "map07034",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R03057",
+      "type": "Reaction",
+      "label": "R03057",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R03521",
+      "type": "Reaction",
+      "label": "R03521",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R03863",
+      "type": "Reaction",
+      "label": "R03863",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R03864",
+      "type": "Reaction",
+      "label": "R03864",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R03866",
+      "type": "Reaction",
+      "label": "R03866",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R05059",
+      "type": "Reaction",
+      "label": "R05059",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R07031",
+      "type": "Reaction",
+      "label": "R07031",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R07041",
+      "type": "Reaction",
+      "label": "R07041",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R07052",
+      "type": "Reaction",
+      "label": "R07052",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R07056",
+      "type": "Reaction",
+      "label": "R07056",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R07058",
+      "type": "Reaction",
+      "label": "R07058",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R07111",
+      "type": "Reaction",
+      "label": "R07111",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R07121",
+      "type": "Reaction",
+      "label": "R07121",
+      "is_seed": false
+    },
+    {
+      "id": "reaction_id:R13043",
+      "type": "Reaction",
+      "label": "R13043",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:A0N0X8",
+      "type": "Protein",
+      "label": "A0N0X8",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P05177",
+      "type": "Protein",
+      "label": "P05177",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P05181",
+      "type": "Protein",
+      "label": "P05181",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P08684",
+      "type": "Protein",
+      "label": "P08684",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P09960",
+      "type": "Protein",
+      "label": "P09960",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P10632",
+      "type": "Protein",
+      "label": "P10632",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P11509",
+      "type": "Protein",
+      "label": "P11509",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P11511",
+      "type": "Protein",
+      "label": "P11511",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P11712",
+      "type": "Protein",
+      "label": "P11712",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P13584",
+      "type": "Protein",
+      "label": "P13584",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P20813",
+      "type": "Protein",
+      "label": "P20813",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P20815",
+      "type": "Protein",
+      "label": "P20815",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P20853",
+      "type": "Protein",
+      "label": "P20853",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P24462",
+      "type": "Protein",
+      "label": "P24462",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P24903",
+      "type": "Protein",
+      "label": "P24903",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P33260",
+      "type": "Protein",
+      "label": "P33260",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P33261",
+      "type": "Protein",
+      "label": "P33261",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P34913",
+      "type": "Protein",
+      "label": "P34913",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P51589",
+      "type": "Protein",
+      "label": "P51589",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P78329",
+      "type": "Protein",
+      "label": "P78329",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:P98187",
+      "type": "Protein",
+      "label": "P98187",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q02928",
+      "type": "Protein",
+      "label": "Q02928",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q08477",
+      "type": "Protein",
+      "label": "Q08477",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q15722",
+      "type": "Protein",
+      "label": "Q15722",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q16678",
+      "type": "Protein",
+      "label": "Q16678",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q16696",
+      "type": "Protein",
+      "label": "Q16696",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q5TCH4",
+      "type": "Protein",
+      "label": "Q5TCH4",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q6NT55",
+      "type": "Protein",
+      "label": "Q6NT55",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q6NWU0",
+      "type": "Protein",
+      "label": "Q6NWU0",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q86W10",
+      "type": "Protein",
+      "label": "Q86W10",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q8N118",
+      "type": "Protein",
+      "label": "Q8N118",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q96SQ9",
+      "type": "Protein",
+      "label": "Q96SQ9",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q9HB55",
+      "type": "Protein",
+      "label": "Q9HB55",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q9HBI6",
+      "type": "Protein",
+      "label": "Q9HBI6",
+      "is_seed": false
+    },
+    {
+      "id": "uniprot_id:Q9NPC1",
+      "type": "Protein",
+      "label": "Q9NPC1",
+      "is_seed": false
+    }
+  ],
+  "edges": [
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00705"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00093"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00102"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00703"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00698"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00707"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00289"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00096"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00106"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00077"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00709"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00699"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00704"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00086"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00695"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00116"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00084"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00708"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00692"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00085"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00353"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00114"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00083"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00693"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00120"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00701"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00075"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00098"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00101"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00694"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00706"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00104"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00697"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00113"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00109"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00087"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00710"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00094"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00700"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00696"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:SMP00702"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map03320"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.14.14.-"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R03863"
+    },
+    {
+      "head": "compound_id:C06314",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map01100"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04750"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04080"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04976"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map01100"
+    },
+    {
+      "head": "compound_id:C14762",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00591"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R05059"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.3.1.48"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map01100"
+    },
+    {
+      "head": "compound_id:C14826",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.14.14.1"
+    },
+    {
+      "head": "compound_id:C06314",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R07031"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R03866"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04270"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R03057"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.14.14.94"
+    },
+    {
+      "head": "compound_id:C14767",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map03320"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04913"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R07041"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R07052"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.14.14.1"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R03521"
+    },
+    {
+      "head": "compound_id:C14762",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R07058"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:3.3.2.10"
+    },
+    {
+      "head": "compound_id:C05961",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map01100"
+    },
+    {
+      "head": "compound_id:C14826",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:3.3.2.-"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04726"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R13043"
+    },
+    {
+      "head": "compound_id:C06314",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map05145"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "compound_id:C06314",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:3.3.2.-"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04913"
+    },
+    {
+      "head": "compound_id:C14826",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R07056"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04726"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map01100"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map07034"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04270"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.11.1.12"
+    },
+    {
+      "head": "compound_id:C14767",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00591"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R03864"
+    },
+    {
+      "head": "compound_id:C14762",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map03320"
+    },
+    {
+      "head": "compound_id:C02165",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:3.3.2.6"
+    },
+    {
+      "head": "compound_id:C14826",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R07121"
+    },
+    {
+      "head": "compound_id:C14762",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.1.1.-"
+    },
+    {
+      "head": "compound_id:C14826",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.14.14.-"
+    },
+    {
+      "head": "compound_id:C14777",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04925"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_reaction",
+      "tail": "reaction_id:R07111"
+    },
+    {
+      "head": "compound_id:C14768",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04750"
+    },
+    {
+      "head": "compound_id:C14748",
+      "relation": "has_enzyme",
+      "tail": "enzyme_id:1.14.14.80"
+    },
+    {
+      "head": "compound_id:C14826",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map01100"
+    },
+    {
+      "head": "compound_id:C06314",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map04080"
+    },
+    {
+      "head": "compound_id:C06314",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "compound_id:C14826",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00591"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:SjГ¶gren-larsson syndrome"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q6NT55"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P10632"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20815"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "has_disease",
+      "tail": "disease:Health condition"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P24462"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:EPHX2"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP19A1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01561"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_disease",
+      "tail": "disease:Renovascular disease"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01553"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01557"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_disease",
+      "tail": "disease:Vascular disorders"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "has_disease",
+      "tail": "disease:Zellweger syndrome"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01554"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P08684"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A43"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A5"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C19"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P24903"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01565"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A6"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB06111"
+    },
+    {
+      "head": "hmdb_id:HMDB0002283",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB02283"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P10632"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_disease",
+      "tail": "disease:Hypertension"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP00401"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP19A1"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Hydrocephalus"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01566"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01841"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01549"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C8"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP09335"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0010409"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Health effect"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P13584"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C19"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01565"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Meningitis"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A6"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01018"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q9HB55"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01036"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:closed head injury"
+    },
+    {
+      "head": "hmdb_id:HMDB0004670",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0010223"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F11"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q6NWU0"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01790"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01558"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C18"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2D6"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11509"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P78329"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P05181"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP09335"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01014"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F3"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1A1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01544"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A7"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P33261"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01567"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q9HBI6"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q96SQ9"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Health effect"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01018"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q16696"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01559"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01563"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q8N118"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2E1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4Z1"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "has_disease",
+      "tail": "disease:Cerebral vasospasm"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F2"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11511"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:meningitis"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01545"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q08477"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20813"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2F1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2J2"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:A0N0X8"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P33261"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01567"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB03978"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4B1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01546"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01559"
+    },
+    {
+      "head": "hmdb_id:HMDB0004385",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB04385"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q8N118"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0003978"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01554"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A43"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2B6"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P98187"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q86W10"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A7"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:meningitis"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "has_disease",
+      "tail": "disease:Colorectal cancer"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB04698"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Cardiac disorders"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Health condition"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1A2"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A4"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01547"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01561"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01013"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:subarachnoid hemorrhage with cerebral vasospasm"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB61708"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1B1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01557"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01554"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20853"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A43"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP07787"
+    },
+    {
+      "head": "hmdb_id:HMDB0004385",
+      "relation": "has_disease",
+      "tail": "disease:Health effect"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "has_disease",
+      "tail": "disease:Peroxisomal biogenesis defect"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP07417"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01551"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q16678"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F22"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01552"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P10632"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20815"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB05998"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2D6"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P24462"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11509"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:hydrocephalus"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:subarachnoid hemorrhage without cerebral vasospasm"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F3"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C19"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP07417"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01565"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01036"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A6"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Glutathione synthetase deficiency"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB02190"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_disease",
+      "tail": "disease:Cerebral Vasospasm"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Spinal cord injuries (acute stage)"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "has_disease",
+      "tail": "disease:Health effect"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2D6"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11509"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01562"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Postoperative pulmonary hypertension"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01566"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01549"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP09335"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4A11"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1A1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004385",
+      "relation": "has_disease",
+      "tail": "disease:Health condition"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2J2"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A7"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01018"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q9HB55"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q9NPC1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q6NWU0"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4Z1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP07274"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4X1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C18"
+    },
+    {
+      "head": "hmdb_id:HMDB0010205",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB10205"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01562"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F2"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:LTA4H"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2J2"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P33261"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P24903"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01567"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P09960"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB01085"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4A11"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01559"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P51589"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01563"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q8N118"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4X1"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4A22"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP08640"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2B6"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_disease",
+      "tail": "disease:Health condition"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q16678"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P13584"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP07274"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11712"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q02928"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1A2"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01564"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P33260"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P51589"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1B1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01558"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20853"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P05181"
+    },
+    {
+      "head": "hmdb_id:HMDB0004670",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB10223"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q16678"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q6NT55"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P78329"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q86W10"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:gunshot wound"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01544"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11712"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F22"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP08640"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q96SQ9"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0112194"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20815"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01560"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P24462"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2S1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01556"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A4"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01547"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P33260"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q16696"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:LTB4R2"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q02928"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2E1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11511"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0061708"
+    },
+    {
+      "head": "hmdb_id:HMDB0006111",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0004698"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20813"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2F1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP07417"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01038"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01551"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P05177"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "has_disease",
+      "tail": "disease:Autosomal  dominant polycystic kidney disease"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Hydrocephalus"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:A0N0X8"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F8"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01552"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P34913"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01560"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:gunshot wound"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2S1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01546"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01566"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01549"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB04673"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Meningitis"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:closed head injury"
+    },
+    {
+      "head": "hmdb_id:HMDB0003733",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB03733"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB05072"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C9"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Cardiopulmonary resuscitation"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_disease",
+      "tail": "disease:Cerebral vasospasm"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01038"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A13"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P05177"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A7"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q9HB55"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q6NWU0"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB10409"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C18"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01561"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01014"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01553"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01562"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Health condition"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q9HBI6"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01013"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P08684"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A5"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_gene",
+      "tail": "gene_name:LTB4R"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C9"
+    },
+    {
+      "head": "hmdb_id:HMDB0004385",
+      "relation": "has_disease",
+      "tail": "disease:Coronary artery disease"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A13"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01015"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01545"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q08477"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01563"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:EPHX2"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4X1"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:glutathione synthetase deficiency, acute metabolic crisis"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C8"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01553"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P08684"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A5"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P24903"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:hydrocephalus"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01036"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01556"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Leukotriene C4-Synthesis Deficiency"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P98187"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P51589"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0005072"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP19A1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C8"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Hypoxia/Ischemia"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Cardiac disorders"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "has_disease",
+      "tail": "disease:Autosomal dominant polycystic kidney disease (ADPKD)"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q86W10"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1A1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P13584"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A7"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11712"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Cardiopulmonary bypass"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01556"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP3A4"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01547"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P33260"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01790"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Aseptic meningitis"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4Z1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01558"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P05181"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_disease",
+      "tail": "disease:Health effect"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01551"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01544"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01552"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4B1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P34913"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4A22"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Ischemia"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F8"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q96SQ9"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB0006939"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4F11"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB06939"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01560"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2S1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q16696"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q5TCH4"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2E1"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P11511"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2B6"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB04702"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20813"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2F1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004667",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB04667"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01038"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P05177"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:A0N0X8"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "has_disease",
+      "tail": "disease:Rheumatoid arthritis"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP4B1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1A2"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "has_disease",
+      "tail": "disease:Sjögren-Larsson syndrome"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01546"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01564"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP1B1"
+    },
+    {
+      "head": "hmdb_id:HMDB0004670",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB04670"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP01557"
+    },
+    {
+      "head": "hmdb_id:HMDB0001085",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q15722"
+    },
+    {
+      "head": "hmdb_id:HMDB0004702",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:P20853"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "has_pathway",
+      "tail": "pathway_id:map00590"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2C9"
+    },
+    {
+      "head": "hmdb_id:HMDB0005998",
+      "relation": "related_to_protein",
+      "tail": "uniprot_id:Q5TCH4"
+    },
+    {
+      "head": "hmdb_id:HMDB0004673",
+      "relation": "related_to_protein",
+      "tail": "hmdbp_id:HMDBP00401"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A13"
+    },
+    {
+      "head": "hmdb_id:HMDB0002886",
+      "relation": "same_as",
+      "tail": "hmdb_id:HMDB02886"
+    },
+    {
+      "head": "hmdb_id:HMDB0002190",
+      "relation": "related_to_gene",
+      "tail": "gene_name:CYP2A7"
+    }
+  ]
+}

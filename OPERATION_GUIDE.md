@@ -1,8 +1,8 @@
 # 代谢组学 Web 平台 — 操作指南
 
 > 适用范围：本地开发环境 / 答辩演示  
-> 数据集：1715 样本 × 1180 特征 × 7 batches（benchmark_merged 固定数据集）  
-> 最后更新：2026-04-08
+> 支持数据集：Benchmark（1715 样本 × 1180 特征 × 7 batches）/ BioHeart / MI / AMIDE  
+> 最后更新：2026-04-21（多数据集切换展示已全面实现）
 
 ---
 
@@ -102,9 +102,9 @@ npm run dev
 
 ## 4. 数据产物说明（首次使用必读）
 
-本项目采用**预计算产物**方式演示，所有分析结果已提前运行并缓存在 `backend/data/processed/benchmark_merged/` 下。**正常演示无需重跑管线**。
+本项目采用**预计算产物**方式演示，所有分析结果已提前运行并缓存在对应数据集目录下。**正常演示无需重跑管线**。
 
-### 4.1 产物目录结构
+### 4.1 Benchmark 产物目录
 
 ```
 backend/data/processed/benchmark_merged/
@@ -117,7 +117,8 @@ backend/data/processed/benchmark_merged/
     ├── batch_correction_metrics.json           # 校正前后指标对比
     ├── pca_before_vs_after_batch_correction.png
     ├── annotated_feature_meta.json             # 特征注释（1180个，100%覆盖）
-    ├── imputation_eval/
+    ├── metakg_subgraph.json                    # MetaKG 子图（7866节点/14173边）
+    ├── imputation_eval/                        # Benchmark 专有
     │   ├── imputation_eval_report.json         # 4方法RMSE对比，Autoencoder最优
     │   └── imputation_eval_feature.json        # per-feature RMSE
     ├── evaluation/
@@ -134,25 +135,56 @@ backend/data/processed/benchmark_merged/
         └── enrich_{params_hash}.json           # 通路富集结果（按参数缓存）
 ```
 
-### 4.2 重新运行管线（可选）
+### 4.2 BioHeart / MI 产物目录
+
+```
+backend/data/processed/{bioheart|mi}/
+├── merged_sample_meta.csv               # 样本元信息
+└── _pipeline/
+    ├── batch_corrected_sample_by_feature.csv
+    ├── batch_correction_metrics.json
+    ├── pca_before_vs_after_batch_correction.png
+    ├── pca_after_correction.json
+    ├── annotated_feature_meta.json      # 代谢物名→HMDB/KEGG 映射
+    ├── metakg_subgraph.json             # MetaKG 子图
+    ├── evaluation/
+    │   ├── evaluation_table.csv         # baseline vs mean 对比
+    │   ├── pca_before_vs_after.png
+    │   └── pca_{baseline,mean}.json
+    └── diff_analysis/                   # 差异分析缓存（按需生成）
+```
+
+### 4.3 重新运行管线（可选）
 
 **仅在需要重建产物时执行**（正常演示跳过此步）：
 
 ```bash
 cd backend
 
-# 完整重跑（含 Autoencoder 训练，约 5-10 分钟）
+# Benchmark 完整重跑（含 Autoencoder 训练，约 5-10 分钟）
 PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py
 
 # 跳过耗时步骤（仅重跑批次校正/评估）
 PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py \
     --skip-imputation-eval \
     --skip-evaluation
+
+# BioHeart / MI 基础 pipeline 产物
+PYTHONPATH=. python3 scripts/build_dataset_pipeline.py --dataset bioheart
+PYTHONPATH=. python3 scripts/build_dataset_pipeline.py --dataset mi
+
+# BioHeart / MI 特征注释
+PYTHONPATH=. python3 scripts/build_named_dataset_annotation.py --dataset bioheart
+PYTHONPATH=. python3 scripts/build_named_dataset_annotation.py --dataset mi
+
+# BioHeart / MI MetaKG 子图
+PYTHONPATH=. python3 scripts/build_metakg_subgraph_dataset.py --dataset bioheart
+PYTHONPATH=. python3 scripts/build_metakg_subgraph_dataset.py --dataset mi
 ```
 
 > **Autoencoder 填充**单次训练约 43 秒（CPU），若机器配置较低建议使用 `--skip-imputation-eval`。
 
-### 4.3 KEGG 缓存说明
+### 4.4 KEGG 缓存说明
 
 首次调用通路富集 API 时，系统会自动从 KEGG REST API 下载化合物-通路映射（约 10-30 秒，取决于网络），下载完成后缓存到 `kegg_cache/`，后续调用直接读本地缓存，秒级响应。
 
@@ -175,53 +207,65 @@ PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py \
 
 **访问** http://localhost:5173/result
 
-页面从上到下依次展示以下区块：
+页面顶部有**数据集选择器**，默认显示 **Benchmark**，可切换至 BioHeart / AMIDE / MI。切换后页面所有区块自动刷新为对应数据集的数据。
 
-#### ① KPI 统计卡
+#### Benchmark 数据集演示
+
+##### ① KPI 统计卡
 - 样本数：1715，特征数：1180，Batch 数：7，缺失率：0%
 
-#### ② PCA 可视化
+##### ② PCA 可视化
 - 四宫格图（校正前/后 × 按batch着色/按group着色）
 - 解释方差柱图（PC1-PC5 贡献比）
 
-#### ③ 批次校正指标对比
+##### ③ 批次校正指标对比
 - 校正前后 batch centroid separation、Silhouette 数值对比
 
-#### ④ 缺失值填充评估
+##### ④ 缺失值填充评估（仅 Benchmark）
 - 4 方法 RMSE 对比箱线图（Autoencoder 紫色标注为"深度学习"，RMSE=0.2249 最优）
 - 配置信息：mask_ratio=15%，重复次数=3，ae_epochs=200
 
-#### ⑤ 差异代谢物分析
+##### ⑤ 差异代谢物分析
 1. 在组别选择器中选择 **group1 = P1_AA_0001**，**group2 = P1_AA_1024**
 2. 点击"运行差异分析"
 3. 火山图加载（首次约 2-5 秒，结果缓存后秒级）
 4. 显著代谢物：538 个（|log2FC|≥1，q≤0.05）
 5. 火山图点可悬浮查看代谢物名、m/z、HMDB/KEGG 链接
 
-#### ⑥ 通路富集分析
+##### ⑥ 通路富集分析
 1. 在组别选择器中选择同上（P1_AA_0001 vs P1_AA_1024）
-2. 参数默认：FC阈值=1，p-value阈值=0.05，使用FDR，展示Top 20
-3. 点击"运行富集分析"
-4. 气泡图加载（首次调用含 KEGG 网络请求，约 10-30 秒；命中缓存秒级）
-5. 切换"网络图"Tab 查看力导向代谢物-通路网络图（可拖拽节点）
-6. 明细表：D-氨基酸代谢（map00470）RichFactor=0.968，q=0.0002
+2. 点击"运行富集分析"（首次含 KEGG 网络请求约 10-30 秒；命中缓存秒级）
+3. 气泡图：D-氨基酸代谢（map00470）RichFactor=0.968，q=0.0002
+4. 切换"网络图"Tab 查看力导向代谢物-通路网络图
 
-#### ⑦ MetaKG 知识图谱溯源
+##### ⑦ MetaKG 知识图谱溯源
 - 图表自动加载（2.6 MB 子图，首次约 1-2 秒）
 - 展示 977 个代谢物（蓝色圆点）与 7,866 个实体的关系网络
-- 控制面板：按节点类型（代谢物/通路/反应/酶）和关系类型过滤
 - 搜索框输入代谢物名（如 "Alanine"）可高亮定位节点（黄色）
-- 开启"仅展示代谢物直连节点"可聚焦代谢物-酶/通路直接关系
-- 拖拽节点 / 滚轮缩放交互
 
-#### ⑧ 特征注释
+##### ⑧ 特征注释
 - 分页表格：1180 个特征，全部含 HMDB ID，577 个含 KEGG ID
-- 支持代谢物名 / 分子式 / KEGG ID 关键词搜索
-- 点击 HMDB/KEGG 链接可跳转外部数据库
+- 支持代谢物名 / 分子式 / KEGG ID / HMDB ID 关键词搜索
 
-#### ⑧ 方法对比实验
+##### ⑨ 方法对比实验
 - 5 方法评估表（baseline/combat/knn/mean/median 的 Silhouette 和 centroid separation）
 - PCA 对比图
+
+#### 切换至 BioHeart / MI 数据集演示
+
+在数据集选择器中选择 **BioHeart** 或 **MI**，以下区块会同步切换：
+
+- KPI / PCA / 指标 → 该数据集的管线结果
+- 差异代谢物火山图 → 该数据集的组别（BioHeart 有实验组别）
+- 通路富集分析 → 基于 HMDB 名称匹配的 KEGG 富集（覆盖率 92%+）
+- MetaKG 知识图谱 → 该数据集的子图（BioHeart：6498节点/11927边）
+- 特征注释表 → 显示 HMDB ID / KEGG ID（支持多 ID 展示）
+- 方法对比 → baseline vs mean（无 ComBat/KNN/Median）
+
+#### 切换至 AMIDE 数据集
+
+AMIDE 含 6461 个匿名质谱特征（无代谢物名称），以下功能显示提示信息而非组件：
+- 特征注释、通路富集分析、MetaKG 知识图谱 → 显示"不支持"提示
 
 ### 5.3 数据导入流程（可选演示）
 
@@ -231,7 +275,7 @@ PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py \
 2. 系统解析 sheet 结构并返回 task_id
 3. 跳转配置页（`/config`）可选择预处理/填充/批次校正参数
 
-> 注意：通用任务链产物存储在 `backend/data/uploads/` 和 `backend/data/results/`，与 benchmark_merged 固定数据集相互独立。
+> 注意：通用任务链产物存储在 `backend/data/uploads/` 和 `backend/data/results/`，与固定数据集相互独立。
 
 ### 5.4 历史任务
 
@@ -245,7 +289,31 @@ PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py \
 
 后端启动后可通过 Swagger UI（http://127.0.0.1:8000/docs）交互调用，以下为常用端点速查：
 
-### 6.1 合并数据摘要
+### 6.1 多数据集通用（新）
+
+```bash
+# 数据集列表
+curl http://127.0.0.1:8000/api/dataset/list
+
+# 数据摘要
+curl http://127.0.0.1:8000/api/dataset/bioheart/summary
+
+# 差异分析（bioheart）
+curl "http://127.0.0.1:8000/api/dataset/bioheart/diff-analysis/run?\
+group1=CTRL&group2=CASE&fc_threshold=1.0&pvalue_threshold=0.05"
+
+# 通路富集（bioheart）
+curl "http://127.0.0.1:8000/api/dataset/bioheart/pathway-enrichment?\
+group1=CTRL&group2=CASE&fc_threshold=1.0&pvalue_threshold=0.05&use_fdr=true&top_n=20"
+
+# MetaKG 子图（mi）
+curl "http://127.0.0.1:8000/api/dataset/mi/metakg-subgraph"
+
+# 特征注释（bioheart）
+curl "http://127.0.0.1:8000/api/dataset/bioheart/annotation/features?offset=0&limit=50"
+```
+
+### 6.2 合并数据摘要（Benchmark）
 
 ```bash
 curl http://127.0.0.1:8000/api/benchmark/merged/summary
@@ -261,7 +329,7 @@ curl http://127.0.0.1:8000/api/benchmark/merged/summary
 }
 ```
 
-### 6.2 差异代谢物分析
+### 6.3 差异代谢物分析（Benchmark）
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/benchmark/merged/diff-analysis/run \
@@ -269,7 +337,7 @@ curl -X POST http://127.0.0.1:8000/api/benchmark/merged/diff-analysis/run \
   -d '{"group1": "P1_AA_0001", "group2": "P1_AA_1024", "fc_threshold": 1.0, "pvalue_threshold": 0.05}'
 ```
 
-### 6.3 通路富集分析
+### 6.4 通路富集分析（Benchmark）
 
 ```bash
 curl "http://127.0.0.1:8000/api/benchmark/merged/pathway-enrichment?\
@@ -290,22 +358,21 @@ group1=P1_AA_0001&group2=P1_AA_1024&fc_threshold=1.0&pvalue_threshold=0.05&use_f
       "qvalue": 0.0002
     }
   ],
-  "bubble_chart": { ... },
   "network": { "nodes": [...], "edges": [...] }
 }
 ```
 
-### 6.4 填充评估摘要
+### 6.5 填充评估摘要（Benchmark 专有）
 
 ```bash
 curl http://127.0.0.1:8000/api/benchmark/merged/imputation-eval/summary
 ```
 
-### 6.5 特征注释（分页）
+### 6.6 特征注释（Benchmark）
 
 ```bash
-# 第1页，每页20条，关键词搜索
-curl "http://127.0.0.1:8000/api/benchmark/merged/annotation/features?page=1&page_size=20&keyword=Alanine"
+# 第1页，每页50条，关键词搜索
+curl "http://127.0.0.1:8000/api/benchmark/merged/annotation/features?offset=0&limit=50&search=Alanine"
 ```
 
 ---
@@ -332,7 +399,7 @@ proxy: {
 
 **解决**：
 - 等待首次下载完成（页面 Loading 状态），之后命中本地缓存
-- 如网络不通，检查 `backend/data/processed/benchmark_merged/_pipeline/kegg_cache/` 目录是否有预缓存文件
+- 如网络不通，检查 `_pipeline/kegg_cache/` 目录是否有预缓存文件
 
 ### Q3：后端启动失败 / ModuleNotFoundError
 
@@ -364,14 +431,23 @@ rm backend/data/app.sqlite3
 
 ### Q6：差异分析返回 422 错误
 
-常见原因：group1 和 group2 相同，或输入的组名不在 60 个组中。
+常见原因：group1 和 group2 相同，或输入的组名不在数据集的分组中。
 
-有效组名示例：`P1_AA_0001`、`P1_AA_1024`、`P2_AICAR_0001`（格式：`P{n}_{物质}_{浓度}`）。
+Benchmark 有效组名示例：`P1_AA_0001`、`P1_AA_1024`、`P2_AICAR_0001`（格式：`P{n}_{物质}_{浓度}`）。
 
-可通过以下接口获取全部有效组名：
 ```bash
-curl http://127.0.0.1:8000/api/benchmark/merged/diff-analysis/groups
+# 查询 benchmark 全部有效组名
+curl http://127.0.0.1:8000/api/dataset/benchmark/diff-analysis/groups
+
+# 查询 bioheart 全部有效组名
+curl http://127.0.0.1:8000/api/dataset/bioheart/diff-analysis/groups
 ```
+
+### Q7：切换数据集后 MetaKG / 通路富集不更新
+
+**检查**：
+- bioheart/mi 的 `_pipeline/metakg_subgraph.json` 和 `_pipeline/annotated_feature_meta.json` 是否存在
+- 若不存在，需运行对应的构建脚本（见 4.3 节）
 
 ---
 
@@ -382,27 +458,34 @@ curl http://127.0.0.1:8000/api/benchmark/merged/diff-analysis/groups
 | 文件 | 说明 |
 |------|------|
 | `backend/app/main.py` | FastAPI 应用入口，挂载所有路由 |
-| `backend/app/api/routes/benchmark_merged.py` | Benchmark Merged 专用 20 个 REST 端点 |
-| `backend/app/services/benchmark_merged_read.py` | 只读数据聚合层（读取 _pipeline/ 各 JSON/CSV） |
-| `backend/app/services/differential_analysis_service.py` | Welch t-test + BH-FDR + log2FC |
-| `backend/app/services/annotation_service.py` | m/z 精确质量匹配注释 |
-| `backend/app/services/pathway_enrichment_service.py` | 超几何检验 + KEGG REST API 缓存 |
+| `backend/app/api/routes/benchmark_merged.py` | Benchmark 专用 20 个 REST 端点 |
+| `backend/app/api/routes/dataset.py` | 多数据集通用路由（新） |
+| `backend/app/services/benchmark_merged_read.py` | Benchmark 只读数据聚合层 |
+| `backend/app/services/dataset_read.py` | 多数据集只读聚合层（新） |
+| `backend/app/services/differential_analysis_service.py` | Welch t-test + BH-FDR + log2FC（全数据集） |
+| `backend/app/services/annotation_service.py` | m/z 精确质量匹配注释（Benchmark） |
+| `backend/app/services/pathway_enrichment_service.py` | 超几何检验 + KEGG REST API 缓存（全数据集） |
 | `backend/app/services/imputation_service.py` | mean/median/KNN/Autoencoder 填充 |
-| `backend/app/scripts/run_merged_benchmark_pipeline.py` | 一键重跑全分析管线 |
+| `backend/scripts/build_dataset_pipeline.py` | 非 benchmark 数据集基础管线 |
+| `backend/scripts/build_named_dataset_annotation.py` | 代谢物名 → HMDB/KEGG 映射（bioheart/mi） |
+| `backend/scripts/build_metakg_subgraph_dataset.py` | MetaKG 子图提取（支持 --dataset） |
 | `backend/requirements.txt` | Python 依赖列表 |
 
 ### 关键前端文件
 
 | 文件 | 说明 |
 |------|------|
-| `frontend/src/views/ResultDashboardView.vue` | 结果仪表盘主页面（组合所有子组件） |
+| `frontend/src/views/ResultDashboardView.vue` | 结果仪表盘主页面（数据集切换 + 所有子组件） |
 | `frontend/src/views/HomeView.vue` | 首页（9 张技术亮点卡） |
-| `frontend/src/components/PathwayEnrichmentCard.vue` | 通路富集气泡图 + 网络图 + 明细表 |
-| `frontend/src/components/VolcanoPlotCard.vue` | 差异分析火山图 |
-| `frontend/src/components/ImputationEvalCard.vue` | 填充评估 RMSE 对比箱线图 |
-| `frontend/src/components/AnnotationTableCard.vue` | 特征注释分页表格 |
-| `frontend/src/api/benchmark.ts` | 所有 benchmark 相关 API 请求函数 |
-| `frontend/src/stores/benchmark.ts` | Pinia 状态管理（数据缓存） |
+| `frontend/src/components/DatasetSelector.vue` | 数据集切换选择器（新） |
+| `frontend/src/components/PathwayEnrichmentCard.vue` | 通路富集气泡图+网络图（含 dataset prop） |
+| `frontend/src/components/MetaKGCard.vue` | MetaKG 知识图谱（含 dataset prop） |
+| `frontend/src/components/AnnotationTableCard.vue` | 特征注释分页表格（含 dataset prop） |
+| `frontend/src/components/VolcanoPlotCard.vue` | 差异分析火山图（含 dataset prop） |
+| `frontend/src/components/ImputationEvalCard.vue` | 填充评估 RMSE 对比箱线图（Benchmark 专用） |
+| `frontend/src/api/benchmark.ts` | Benchmark 专用 API 请求函数 |
+| `frontend/src/api/dataset.ts` | 多数据集通用 API 请求函数（新） |
+| `frontend/src/stores/benchmark.ts` | Pinia 状态管理（Benchmark 数据缓存） |
 | `frontend/vite.config.ts` | Vite 配置（含 /api 代理） |
 
 ---

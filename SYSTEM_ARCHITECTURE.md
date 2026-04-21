@@ -2,7 +2,7 @@
 
 > 面向代谢组学数据处理的 Web 系统架构与实现现状说明  
 > **本文档以当前仓库真实代码为准，所有指标均来自真实数据运行结果（1715 样本 × 1180 特征 × 7 batches）。**  
-> 最后更新：2026-04-08（MetaKG 知识图谱可视化已实现）
+> 最后更新：2026-04-21（多数据集切换展示已全面实现）
 
 ---
 
@@ -16,7 +16,10 @@
 - 批次效应校正（baseline + strict ComBat 双方法）
 - 多方法量化对比评估（Silhouette、batch centroid separation 等）
 - 差异代谢物分析（t-test + BH-FDR + log2FC + 交互火山图）
-- 特征注释（m/z 精确质量匹配，HMDB / KEGG 数据库链接）
+- 特征注释（m/z 精确质量匹配 / 代谢物名精确匹配，HMDB / KEGG 数据库链接）
+- **多数据集切换展示**（Benchmark / BioHeart / AMIDE / MI 四数据集）
+- **KEGG 通路富集分析**（超几何检验 + BH-FDR，气泡图 + 力导向网络图）
+- **MetaKG 知识图谱溯源**（整合 KEGG/HMDB/SMPDB，力导向交互图）
 - 任务记录与结果管理
 
 ---
@@ -49,7 +52,7 @@
 | Vue Router | 5 个页面路由 |
 | Pinia | 状态管理（benchmark store / task store） |
 | Element Plus | UI 组件库 |
-| ECharts | 火山图、PCA 解释方差柱图等交互可视化 |
+| ECharts | 火山图、通路富集气泡图/网络图、MetaKG 力导向图、PCA 解释方差柱图 |
 | axios | HTTP 请求，统一代理 `/api → :8000` |
 | SCSS | 全局样式变量 |
 
@@ -72,15 +75,16 @@
 ┌────────────────────▼────────────────────────────────┐
 │  接口层（FastAPI Routes）                              │
 │  /api/tasks/* · /api/datasets/* · /api/upload        │
-│  /api/benchmark/merged/* （20 个端点）                │
+│  /api/benchmark/merged/*（20 个端点）                 │
+│  /api/dataset/{dataset}/*（多数据集通用端点）          │
 └────────────────────┬────────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────────┐
 │  业务服务层（app/services/）                           │
-│  benchmark_merged_read · evaluation_service          │
-│  differential_analysis_service · annotation_service  │
-│  imputation_service · batch_correction_service       │
-│  pathway_enrichment_service                          │
+│  benchmark_merged_read · dataset_read                │
+│  evaluation_service · differential_analysis_service  │
+│  annotation_service · imputation_service             │
+│  batch_correction_service · pathway_enrichment_service│
 └────────────────────┬────────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────────┐
@@ -90,7 +94,7 @@
                      │
 ┌────────────────────▼────────────────────────────────┐
 │  数据存储层                                            │
-│  SQLite · data/processed/benchmark_merged/_pipeline/ │
+│  SQLite · data/processed/{dataset}/_pipeline/        │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -207,39 +211,34 @@ Input(1180) → Linear(256) → BatchNorm → Dropout(0.3)
 - `evaluation/evaluation_report.json`
 - `evaluation/evaluation_table.csv`
 - `evaluation/pca_before_vs_after.png`
-- `evaluation/pca_{method}.json`（5 个方法各自 PCA 坐标）
+- `evaluation/pca_{method}.json`（各方法 PCA 坐标）
 
 ---
 
-### 4.6 差异代谢物分析模块 ✅ 已实现
+### 4.6 差异代谢物分析模块 ✅ 已实现（全数据集支持）
 
-**职责**：对任意两组样本执行独立双样本 Welch t-test，BH-FDR 多重校正，计算 log2 Fold Change，识别显著差异代谢物，结果注入代谢物名称与数据库链接
+**职责**：对任意两组样本执行独立双样本 Welch t-test，BH-FDR 多重校正，计算 log2 Fold Change，识别显著差异代谢物
 
 **算法**：
 - 独立双样本 Welch t-test（`scipy.stats.ttest_ind`，`equal_var=False`）
 - BH-FDR 多重校正（`statsmodels.stats.multitest.multipletests`）
 - log2FC = log2(mean_group1 / mean_group2)
 
-**关键结果（P1_AA_0001 vs P1_AA_1024）**：
+**关键结果（Benchmark，P1_AA_0001 vs P1_AA_1024）**：
 - 总特征：1180 个
 - 显著特征（|log2FC|≥1，q-value≤0.05）：**538 个**（上调 226 个，下调 312 个）
 
+**数据集支持**：Benchmark / BioHeart / AMIDE / MI 全部支持，前端 `VolcanoPlotCard` 通过 `dataset` prop 切换 API。
+
 **缓存机制**：结果写入 `diff_analysis/diff_{g1}_vs_{g2}.json`，再次请求直接读缓存
-
-**前端**：交互式火山图（ECharts），tooltip 显示代谢物名 / m/z / HMDB / KEGG 链接，显著特征可点击跳转数据库，支持任意组对选择
-
-**产物**：
-- `diff_analysis/diff_{group1}_vs_{group2}.json`（含 annotation_injected 标记）
 
 ---
 
-### 4.7 特征注释模块 ✅ 已实现
+### 4.7 特征注释模块 ✅ 已实现（Benchmark 100% 覆盖，BioHeart/MI 名称匹配）
+
+#### Benchmark（m/z 精确质量匹配）
 
 **职责**：从各 batch 的 annotation sheet 中，按 |mz delta| 最小取最优候选，将 1180 个代谢特征全覆盖映射到代谢物名称、分子式、HMDB ID、KEGG ID
-
-**匹配策略**：同一 ionIdx 多候选时取 `|mz_measured - mz_theoretical|` 最小者
-
-**关键结果**：
 
 | 指标 | 数值 |
 |------|------|
@@ -248,10 +247,18 @@ Input(1180) → Linear(256) → BatchNorm → Dropout(0.3)
 | 含 HMDB ID | 1180 |
 | 含 KEGG ID | 577 |
 
-**前端**：分页注释表格，支持代谢物名 / 分子式 / KEGG ID / HMDB ID 关键词搜索，链接可直接跳转数据库
+#### BioHeart / MI（代谢物名称精确匹配）
 
-**产物**：
-- `_pipeline/annotated_feature_meta.json`（注释主文件）
+**职责**：基于 HMDB `hmdb_metabolites.json`，对代谢物名做精确匹配与自定义别名补全，映射 HMDB ID 与 KEGG Compound ID
+
+| 数据集 | 特征数 | 注释成功 | KEGG 覆盖 | 覆盖率 |
+|--------|--------|---------|-----------|--------|
+| BioHeart | 53 | 49 | 45 | 92.5% |
+| MI | 14 | 13 | 9 | 92.9% |
+
+**脚本**：`backend/scripts/build_named_dataset_annotation.py`
+
+**产物**：`_pipeline/annotated_feature_meta.json`（各数据集独立）
 
 ---
 
@@ -263,7 +270,7 @@ Input(1180) → Linear(256) → BatchNorm → Dropout(0.3)
 
 ---
 
-### 4.9 通路富集分析模块 ✅ 已实现
+### 4.9 通路富集分析模块 ✅ 已实现（Benchmark / BioHeart / MI 支持）
 
 **职责**：对差异显著代谢物（label ∈ {up, down}）的 KEGG Compound ID，以全体含注释特征为背景，执行超几何检验，筛选统计显著富集的 KEGG 代谢通路
 
@@ -274,7 +281,7 @@ Input(1180) → Linear(256) → BatchNorm → Dropout(0.3)
 - 通路名称：`GET https://rest.kegg.jp/list/pathway`
 - 两者均在首次调用后写入 `_pipeline/kegg_cache/`，后续从本地缓存读取
 
-**关键结果（P1_AA_0001 vs P1_AA_1024，FC≥1, FDR≤0.05）**：
+**关键结果（Benchmark，P1_AA_0001 vs P1_AA_1024，FC≥1, FDR≤0.05）**：
 
 | 通路 ID | 通路名称 | Hits | 通路大小 | RichFactor | q-value |
 |---------|----------|------|----------|------------|---------|
@@ -282,54 +289,59 @@ Input(1180) → Linear(256) → BatchNorm → Dropout(0.3)
 | map00310 | Lysine degradation | 16 | 17 | 0.941 | 0.149 |
 | map01060 | Biosynthesis of plant secondary metabolites | 35 | 44 | 0.796 | 0.156 |
 
-背景：577 个含 KEGG ID 特征，检验 254 条通路，FDR&lt;0.05 通路 3 条
+**数据集支持**：Benchmark / BioHeart / MI（AMIDE 因匿名特征不支持）
 
 **前端**：
 - 气泡图（Y=通路名，X=RichFactor，点大小=hits，颜色=-log10(q)，仿 clusterProfiler 风格）
 - 力导向网络图（蓝色=显著代谢物，橙色=KEGG 通路，可拖拽缩放）
 - 明细表（点击通路名可跳转 KEGG 网页）
 
-**产物**：
-- `_pipeline/kegg_cache/compound_pathway_map.json`
-- `_pipeline/kegg_cache/pathway_names.json`
-- `_pipeline/pathway_enrichment/enrich_{hash}.json`（按参数缓存）
-
 ---
 
-### 4.10 知识图谱溯源模块 ✅ 已实现
+### 4.10 知识图谱溯源模块 ✅ 已实现（Benchmark / BioHeart / MI 支持）
 
-**职责**：基于 MetaKG 多库整合知识图谱（KEGG / SMPDB / HMDB），以力导向网络图展示本项目 977 个代谢物与通路、生化反应、酶、药物等实体的一跳关系网络
+**职责**：基于 MetaKG 多库整合知识图谱（KEGG / SMPDB / HMDB），以力导向网络图展示本项目代谢物与通路、生化反应、酶、药物等实体的一跳关系网络
 
 **数据来源**：
 - 原始文件：`metakg_entities.csv`（500 MB）+ `metakg_triples.csv`（2.2 GB）
-- 预处理工具：`backend/app/scripts/build_metakg_subgraph.py`（一次性离线运行，约 30 秒）
-- 输出子图：`_pipeline/metakg_subgraph.json`（2.6 MB，进 Git）
+- 预处理工具：`backend/scripts/build_metakg_subgraph_dataset.py`（支持 `--dataset` 参数）
+- 输出子图：`_pipeline/metakg_subgraph.json`（各数据集独立）
 
-**子图规模**：
+**各数据集子图规模**：
 
-| 类型 | 数量 |
-|------|------|
-| 种子代谢物（Compound） | 977 |
-| 生化反应（Reaction） | 3,578 |
-| 酶（Enzyme，EC编号） | 1,891 |
-| 通路（Pathway，SMPDB） | 991 |
-| 药物（Drug） | 143 |
-| Module / Network | 286 |
-| **总节点** | **7,866** |
-| **总边** | **14,173** |
+| 数据集 | 种子代谢物 | 总节点 | 总边 | 文件大小 |
+|--------|-----------|--------|------|---------|
+| Benchmark | 977 | 7,866 | 14,173 | 2.6 MB |
+| BioHeart | 49 | 6,498 | 11,927 | 2.14 MB |
+| MI | 13 | 268 | 825 | 0.13 MB |
 
-**关系类型**：has_pathway（5,415）/ has_reaction（4,947）/ has_enzyme（3,068）/ has_module（490）/ has_network（106）/ is_a / same_as
+**数据集支持**：Benchmark / BioHeart / MI（AMIDE 因匿名特征不支持）
 
-**前端**：
-- 力导向网络图（ECharts graph + force layout）
-- 节点类型过滤（按 Compound/Pathway/Reaction/Enzyme/Drug 选择）
-- 关系类型过滤（多选）
-- 搜索高亮（按代谢物名 / ID，黄色高亮命中节点）
-- 种子专属模式（仅展示代谢物直连节点）
-- 最大节点数滑块（50~800，防卡顿）
-- 节点悬浮 tooltip（代谢物名 / 分子式 / m/z / 类型）
+**前端**：力导向网络图 + 节点类型/关系类型过滤 + 搜索高亮 + 种子专属模式 + 最大节点数滑块
 
-**API**：`GET /api/benchmark/merged/metakg-subgraph`（参数：node_types / relation_types / seed_only）
+---
+
+### 4.11 多数据集切换展示 ✅ 已实现
+
+**职责**：结果仪表盘支持 Benchmark / BioHeart / AMIDE / MI 四数据集切换，页面所有区块根据选中数据集实时切换数据源
+
+**实现方式**：
+- `DatasetSelector` 组件 + `selectedDataset` 响应式变量
+- 后端 `/api/dataset/{dataset}/*` 通用路由（代替旧有 benchmark 专用路由）
+- 各组件通过 `dataset` prop 切换 API 调用
+
+**各数据集功能支持矩阵**：
+
+| 功能模块 | Benchmark | BioHeart | MI | AMIDE |
+|---|:---:|:---:|:---:|:---:|
+| KPI / PCA / 指标 / 方法对比 | ✅ | ✅ | ✅ | ✅ |
+| 差异代谢物火山图 | ✅ | ✅ | ✅ | ✅ |
+| 特征注释表 | ✅ | ✅ | ✅ | ❌ |
+| 通路富集分析 | ✅ | ✅ | ✅ | ❌ |
+| MetaKG 知识图谱 | ✅ | ✅ | ✅ | ❌ |
+| 缺失值填充评估 | ✅ | ❌ | ❌ | ❌ |
+
+> AMIDE 有 6461 个匿名质谱特征，无代谢物名称，无法进行注释/富集/MetaKG 分析。
 
 ---
 
@@ -365,6 +377,13 @@ Input(1180) → Linear(256) → BatchNorm → Dropout(0.3)
                 │         └── FDR<0.05：3 条显著通路（map00470 q=0.0002）
                 │
                 └── 结果缓存至 _pipeline/ 各子目录
+
+BioHeart / MI（独立数据集管线）
+        │
+        ├── 代谢物名精确匹配（HMDB 数据库）→ annotated_feature_meta.json
+        ├── MetaKG 子图提取 → metakg_subgraph.json
+        ├── baseline 批次校正 + 方法对比评估
+        └── 差异分析 + 通路富集 + MetaKG 可视化
 ```
 
 ---
@@ -377,17 +396,19 @@ flowchart TB
 
     FE --> API[FastAPI REST API]
 
-    subgraph merged_pipeline[Benchmark Merged 管线 · 20 端点]
-        API --> BMR[benchmark_merged_read 只读聚合层]
-        BMR --> SUM[merge summary]
-        BMR --> BCR[批次校正 report & metrics]
-        BMR --> EVL[evaluation 方法对比]
-        BMR --> IMP[imputation eval · Autoencoder最优]
-        BMR --> DIFF[差异分析 & 火山图]
-        BMR --> ANN[特征注释 · 100% 覆盖]
-        BMR --> PE[pathway_enrichment_service]
-        PE --> KEGG[(KEGG REST API / 本地缓存)]
-        PE --> ENR[超几何检验 + BH-FDR]
+    subgraph multi_dataset[多数据集通用管线 /api/dataset/]
+        API --> DS[DatasetSelector]
+        DS -->|benchmark| BMR[benchmark_merged_read]
+        DS -->|bioheart/mi/amide| DR[dataset_read]
+        BMR & DR --> DIFF2[差异分析]
+        BMR & DR --> ANN2[特征注释]
+        BMR & DR --> PE2[通路富集分析]
+        BMR & DR --> MKG2[MetaKG 子图]
+    end
+
+    subgraph benchmark_only[Benchmark 专有]
+        BMR --> IMP[缺失值填充评估 · Autoencoder最优]
+        PE2 --> KEGG[(KEGG REST API / 本地缓存)]
     end
 
     subgraph task_pipeline[通用任务链]
@@ -397,7 +418,7 @@ flowchart TB
         TS --> BS[批次校正服务]
     end
 
-    BMR --> FILES[(文件系统 _pipeline/)]
+    BMR & DR --> FILES[(文件系统 _pipeline/)]
     TS --> DB[(SQLite)]
     TS --> FILES
 ```
@@ -411,12 +432,14 @@ flowchart TB
 | `/` | HomeView | 技术亮点（9 张卡）、系统流程（5 步）、快捷入口 |
 | `/import` | ImportView | 文件上传、sheet 校验、task_id 获取 |
 | `/config` | TaskConfigView | 预处理/填充/批次参数配置，6 步进度条 |
-| `/result` | ResultDashboardView | KPI + PCA + 指标 + 填充评估 + 差异分析火山图 + **通路富集分析** + 特征注释 + 方法对比 + 文件下载 |
+| `/result` | ResultDashboardView | **数据集选择器** + KPI + PCA + 指标 + 填充评估（benchmark）+ 差异分析火山图 + 通路富集分析 + MetaKG 知识图谱 + 特征注释 + 方法对比 + 文件下载 |
 | `/history` | HistoryView | 历史任务列表 |
 
 ### ResultDashboardView 区块结构
 
 ```
+数据集选择器（Benchmark / BioHeart / AMIDE / MI）
+  ↓
 KPI（样本数 / 特征数 / batch 数 / 缺失率）
   ↓
 PCA 四宫格图 + 解释方差柱图
@@ -425,13 +448,15 @@ batch_correction_metrics（before/after 指标对比卡）
   ↓
 结果解释段（引用 JSON 数值自动生成）
   ↓
-缺失值填充评估（Mask-then-Impute RMSE 对比，Autoencoder 最优）
+缺失值填充评估（仅 Benchmark：Mask-then-Impute RMSE 对比，Autoencoder 最优）
   ↓
-差异代谢物分析（组选择 + 交互火山图 + 显著特征表）
+差异代谢物分析（组选择 + 交互火山图 + 显著特征表）【全数据集】
   ↓
-通路富集分析（气泡图 + 力导向网络图 + 明细表，KEGG超几何检验）
+通路富集分析（气泡图 + 力导向网络图 + 明细表）【Benchmark/BioHeart/MI】
   ↓
-特征注释（统计条 + 分页表格 + 关键词搜索）
+MetaKG 知识图谱溯源（力导向图 + 过滤 + 搜索）【Benchmark/BioHeart/MI】
+  ↓
+特征注释（统计条 + 分页表格 + 关键词搜索）【Benchmark/BioHeart/MI】
   ↓
 方法对比实验（evaluation_table.csv + PCA 对比图 + 单方法 PCA JSON）
   ↓
@@ -450,47 +475,35 @@ backend/
 │   ├── main.py
 │   ├── core/config.py
 │   ├── api/routes/
-│   │   ├── benchmark_merged.py     # /api/benchmark/merged/* (10+ 端点)
+│   │   ├── benchmark_merged.py     # /api/benchmark/merged/* (20 个端点)
+│   │   ├── dataset.py              # /api/dataset/{dataset}/* 多数据集通用路由
 │   │   ├── tasks.py
 │   │   ├── upload.py
 │   │   └── ...
 │   ├── services/
-│   │   ├── benchmark_merged_read.py      # 只读数据聚合层
+│   │   ├── benchmark_merged_read.py      # Benchmark 只读数据聚合层
+│   │   ├── dataset_read.py               # 多数据集只读聚合层
 │   │   ├── evaluation_service.py         # PCA + Silhouette + centroid 评估
-│   │   ├── differential_analysis_service.py  # t-test + BH-FDR + log2FC
-│   │   ├── annotation_service.py         # m/z 精确质量匹配注释
+│   │   ├── differential_analysis_service.py  # t-test + BH-FDR + log2FC（支持所有数据集）
+│   │   ├── annotation_service.py         # m/z 精确质量匹配注释（Benchmark）
 │   │   ├── imputation_service.py         # mean/median/KNN/Autoencoder + Mask-then-Impute
 │   │   ├── batch_correction_service.py   # baseline + ComBat
-│   │   ├── pathway_enrichment_service.py # 超几何检验 + BH-FDR + KEGG缓存
-│   │   └── ...
-│   ├── scripts/
-│   │   └── run_merged_benchmark_pipeline.py  # 一键运行全管线
+│   │   └── pathway_enrichment_service.py # 超几何检验 + BH-FDR + KEGG缓存（含多数据集函数）
 │   └── ...
-└── data/processed/benchmark_merged/
-    ├── merge_report.json
-    ├── merged_sample_by_feature.csv
-    ├── merged_sample_meta.csv
-    └── _pipeline/
-        ├── batch_corrected_sample_by_feature.csv
-        ├── batch_correction_method_report.json
-        ├── batch_correction_metrics.json
-        ├── pca_before_vs_after_batch_correction.png
-        ├── annotated_feature_meta.json
-        ├── imputation_eval/
-        │   ├── imputation_eval_report.json
-        │   └── imputation_eval_feature.json
-        ├── evaluation/
-        │   ├── evaluation_report.json
-        │   ├── evaluation_table.csv
-        │   ├── pca_before_vs_after.png
-        │   └── pca_{mean,median,knn,baseline,combat}.json
-        ├── diff_analysis/
-        │   └── diff_{group1}_vs_{group2}.json
-        ├── kegg_cache/
-        │   ├── compound_pathway_map.json   # KEGG compound→pathway 映射（缓存）
-        │   └── pathway_names.json          # KEGG 通路名称（缓存）
-        └── pathway_enrichment/
-            └── enrich_{params_hash}.json   # 富集结果（按参数缓存）
+├── scripts/
+│   ├── build_dataset_pipeline.py         # 为非 benchmark 数据集生成 _pipeline/ 产物
+│   ├── build_named_dataset_annotation.py # 代谢物名 → HMDB/KEGG 映射（bioheart/mi）
+│   └── build_metakg_subgraph_dataset.py  # MetaKG 子图提取（支持 --dataset 参数）
+└── data/processed/
+    ├── benchmark_merged/                 # Benchmark 数据集
+    │   ├── _pipeline/                    # 含 imputation_eval/（benchmark 专有）
+    │   └── ...
+    ├── bioheart/
+    │   └── _pipeline/                    # annotated_feature_meta.json / metakg_subgraph.json
+    ├── mi/
+    │   └── _pipeline/
+    └── amide/
+        └── _pipeline/
 ```
 
 ### 前端
@@ -498,38 +511,38 @@ backend/
 ```text
 frontend/src/
 ├── api/
-│   ├── benchmark.ts    # fetchEvaluationSummary/Table/Pca, fetchAnnotation*,
-│   │                   # fetchDiff*, fetchPathwayEnrichment
+│   ├── benchmark.ts    # fetchDiffGroups, fetchPathwayEnrichment, fetchMetakgSubgraph 等
+│   ├── dataset.ts      # fetchDatasetDiff*, fetchDatasetAnnotation*, fetchDatasetPathwayEnrichment,
+│   │                   # fetchDatasetMetakgSubgraph 等（多数据集通用）
 │   ├── task.ts
 │   └── upload.ts
 ├── components/
-│   ├── AnnotationTableCard.vue     # 特征注释分页表格 + 搜索
-│   ├── VolcanoPlotCard.vue         # 交互火山图（ECharts）+ 显著特征表
-│   ├── ImputationEvalCard.vue      # 填充评估 RMSE 对比（含 Autoencoder 紫色）
-│   ├── PathwayEnrichmentCard.vue   # 气泡图 + 力导向网络图 + 富集明细表
-│   ├── MetaKGCard.vue              # MetaKG 知识图谱力导向图 + 搜索高亮 + 类型过滤
-│   ├── PipelineStepBar.vue         # 6 步进度条
-│   ├── MetricCompareCard.vue       # before/after 指标卡
+│   ├── DatasetSelector.vue             # 数据集切换选择器
+│   ├── AnnotationTableCard.vue         # 特征注释分页表格（含 dataset prop）
+│   ├── VolcanoPlotCard.vue             # 交互火山图（含 dataset prop）
+│   ├── PathwayEnrichmentCard.vue       # 通路富集气泡图+网络图（含 dataset prop）
+│   ├── MetaKGCard.vue                  # MetaKG 知识图谱（含 dataset prop）
+│   ├── ImputationEvalCard.vue          # 填充评估 RMSE 对比（Benchmark 专用）
+│   ├── PipelineStepBar.vue             # 6 步进度条
+│   ├── MetricCompareCard.vue           # before/after 指标卡
 │   ├── KpiCard.vue
 │   ├── MethodStatusCard.vue
 │   ├── PcaImagePanel.vue
 │   ├── EvRatioChart.vue
 │   └── DownloadFileCard.vue
 ├── stores/
-│   ├── benchmark.ts    # evaluationSummary/Table/Pcas, imputationEval,
-│   │                   # annotation, pathwayEnrichment
-│   └── task.ts         # 6 步流水线状态（后 3 步默认 success）
+│   ├── benchmark.ts    # Pinia 状态管理（benchmark 数据缓存）
+│   └── task.ts
 ├── types/
-│   ├── benchmark.ts    # DiffFeature / AnnotatedFeature / EvaluationSummary /
-│   │                   # PathwayItem / NetworkNode / NetworkEdge / PathwayEnrichmentResult
+│   ├── benchmark.ts    # DiffFeature / AnnotatedFeature / PathwayItem / MetaKGNode 等
 │   └── task.ts
 ├── views/
-│   ├── HomeView.vue           # 9 张技术亮点卡（3×3 grid）+ 5 步流程
-│   ├── ResultDashboardView.vue
+│   ├── HomeView.vue
+│   ├── ResultDashboardView.vue   # 核心：数据集切换 + 所有区块
 │   ├── TaskConfigView.vue
 │   ├── ImportView.vue
 │   └── HistoryView.vue
-└── utils/format.ts     # formatNumber / formatRatio / fmtEvalNum
+└── utils/format.ts
 ```
 
 ---
@@ -561,7 +574,7 @@ frontend/src/
 | GET | `/api/benchmark/merged/files` | 可下载文件列表 |
 | GET | `/api/benchmark/merged/download/{filename}` | 文件下载 |
 | GET | `/api/benchmark/merged/evaluation/summary` | 方法对比摘要 |
-| GET | `/api/benchmark/merged/evaluation/table` | 方法对比表（CSV → JSON） |
+| GET | `/api/benchmark/merged/evaluation/table` | 方法对比表 |
 | GET | `/api/benchmark/merged/evaluation/pca-image` | PCA 对比图 |
 | GET | `/api/benchmark/merged/evaluation/pca/{method}` | 单方法 PCA 坐标 |
 | GET | `/api/benchmark/merged/evaluation/files` | evaluation 产物下载列表 |
@@ -572,8 +585,29 @@ frontend/src/
 | GET | `/api/benchmark/merged/annotation/features` | 分页注释特征列表 |
 | GET | `/api/benchmark/merged/diff-analysis/groups` | 可用分组列表（60 组） |
 | POST | `/api/benchmark/merged/diff-analysis/run` | 运行/缓存读取差异分析 |
-| GET | `/api/benchmark/merged/pathway-enrichment` | KEGG 通路富集分析（超几何检验+BH-FDR，参数：group1/group2/fc_threshold/pvalue_threshold/use_fdr/top_n） |
-| GET | `/api/benchmark/merged/metakg-subgraph` | MetaKG 知识图谱子图（参数：node_types/relation_types/seed_only） |
+| GET | `/api/benchmark/merged/pathway-enrichment` | KEGG 通路富集分析 |
+| GET | `/api/benchmark/merged/metakg-subgraph` | MetaKG 知识图谱子图 |
+
+### 多数据集通用路由（新增）
+
+| 方法 | 路径 | 支持数据集 | 说明 |
+|------|------|-----------|------|
+| GET | `/api/dataset/list` | 全部 | 数据集列表及可用状态 |
+| GET | `/api/dataset/{dataset}/summary` | 全部 | 数据摘要 |
+| GET | `/api/dataset/{dataset}/batch-correction/metrics` | 全部 | 批次校正指标 |
+| GET | `/api/dataset/{dataset}/batch-correction/pca-after` | 全部 | 校正后 PCA |
+| GET | `/api/dataset/{dataset}/assets/pca_before_vs_after.png` | 全部 | PCA 图 |
+| GET | `/api/dataset/{dataset}/evaluation/summary` | 全部 | 方法对比摘要 |
+| GET | `/api/dataset/{dataset}/evaluation/table` | 全部 | 方法对比表 |
+| GET | `/api/dataset/{dataset}/evaluation/pca-image` | 全部 | PCA 对比图 |
+| GET | `/api/dataset/{dataset}/evaluation/pca/{method}` | 全部 | 单方法 PCA |
+| GET | `/api/dataset/{dataset}/diff-analysis/groups` | 全部 | 可用分组 |
+| GET | `/api/dataset/{dataset}/diff-analysis/run` | 全部 | 差异分析 |
+| GET | `/api/dataset/{dataset}/annotation/summary` | benchmark/bioheart/mi | 注释汇总 |
+| GET | `/api/dataset/{dataset}/annotation/features` | benchmark/bioheart/mi | 分页注释列表 |
+| GET | `/api/dataset/{dataset}/pathway-enrichment` | benchmark/bioheart/mi | 通路富集分析 |
+| GET | `/api/dataset/{dataset}/metakg-subgraph` | benchmark/bioheart/mi | MetaKG 子图 |
+| GET | `/api/dataset/{dataset}/download/{filename}` | 全部 | 产物文件下载 |
 
 ---
 
@@ -604,6 +638,24 @@ PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py
 # 可选参数：--skip-imputation-eval --skip-evaluation
 ```
 
+### 为非 benchmark 数据集生成产物
+
+```bash
+cd backend
+
+# 1. 生成基础 pipeline 产物（批次校正/PCA/评估）
+PYTHONPATH=. python3 scripts/build_dataset_pipeline.py --dataset bioheart
+PYTHONPATH=. python3 scripts/build_dataset_pipeline.py --dataset mi
+
+# 2. 生成特征注释
+PYTHONPATH=. python3 scripts/build_named_dataset_annotation.py --dataset bioheart
+PYTHONPATH=. python3 scripts/build_named_dataset_annotation.py --dataset mi
+
+# 3. 生成 MetaKG 子图
+PYTHONPATH=. python3 scripts/build_metakg_subgraph_dataset.py --dataset bioheart
+PYTHONPATH=. python3 scripts/build_metakg_subgraph_dataset.py --dataset mi
+```
+
 ---
 
 ## 11. 实施进度总结
@@ -619,6 +671,7 @@ PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py
 | **阶段七** | **Autoencoder 深度学习填充（PyTorch，RMSE=0.2249，最优）** | ✅ **完成** |
 | **阶段八** | **KEGG 通路富集分析（超几何检验+BH-FDR，气泡图+网络图）** | ✅ **完成** |
 | **阶段九** | **MetaKG 知识图谱溯源（7866节点/14173边，力导向图+搜索+过滤）** | ✅ **完成** |
+| **阶段十** | **多数据集切换展示（Benchmark/BioHeart/MI/AMIDE 四数据集）** | ✅ **完成** |
 
 ---
 
@@ -626,10 +679,10 @@ PYTHONPATH=. python3 app/scripts/run_merged_benchmark_pipeline.py
 
 本系统是典型的"算法驱动型代谢组学 Web 平台"：
 
-- **前端**（Vue3）：负责交互、可视化展示与用户操作
-- **FastAPI**：负责 REST 接口与流程编排，Python 3.9 兼容
+- **前端**（Vue3）：负责交互、可视化展示与用户操作，通过 `dataset` prop 实现多数据集组件复用
+- **FastAPI**：负责 REST 接口与流程编排，Python 3.9 兼容；多数据集路由通过 `/{dataset}/` 动态参数统一管理
 - **Python 算法模块**：neuroCombat / sklearn / scipy / statsmodels / **PyTorch** 驱动核心分析
-- **文件系统**：`data/processed/benchmark_merged/_pipeline/` 作为产物仓库，所有 JSON 产物为真实数据运行结果
+- **文件系统**：`data/processed/{dataset}/_pipeline/` 作为各数据集产物仓库，格式统一
 - **SQLite**：负责任务记录与参数持久化
 
 核心设计原则：**所有展示指标均来自真实数据运行，不手填。**

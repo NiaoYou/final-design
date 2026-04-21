@@ -1,0 +1,193 @@
+{
+  "schema": "annotated_feature_meta_v1",
+  "n_features": 14,
+  "n_annotated": 13,
+  "n_with_kegg": 9,
+  "annotation_source": "hmdb_metabolites.json（名称/同义词精确匹配）",
+  "features": [
+    {
+      "feature": "11,12-EET",
+      "metabolite_name": "11,12-Epoxyeicosatrienoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0004673"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0004673",
+      "kegg_url": null
+    },
+    {
+      "feature": "12(13)-DiHOME",
+      "metabolite_name": "12(13)-DiHOME",
+      "formula": null,
+      "ion_mz": null,
+      "hmdb_ids": [],
+      "kegg_ids": [],
+      "hmdb_url": null,
+      "kegg_url": null
+    },
+    {
+      "feature": "12,13-EpOME",
+      "metabolite_name": "12,13-EpOME",
+      "formula": "C18H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0004702"
+      ],
+      "kegg_ids": [
+        "C14826"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0004702",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C14826"
+    },
+    {
+      "feature": "12-HETE",
+      "metabolite_name": "12-HETE",
+      "formula": "C20H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0006111"
+      ],
+      "kegg_ids": [
+        "C14777"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0006111",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C14777"
+    },
+    {
+      "feature": "13(S)-HODE",
+      "metabolite_name": "13-HODE",
+      "formula": "C18H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0004667"
+      ],
+      "kegg_ids": [
+        "C14762"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0004667",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C14762"
+    },
+    {
+      "feature": "14(15)-EpETE",
+      "metabolite_name": "14,15-EpETE",
+      "formula": "C20H30O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0010205"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0010205",
+      "kegg_url": null
+    },
+    {
+      "feature": "14,15-EET",
+      "metabolite_name": "14R,15S-EpETrE",
+      "formula": "C20H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0002283"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0002283",
+      "kegg_url": null
+    },
+    {
+      "feature": "20-HETE",
+      "metabolite_name": "20-Hydroxyeicosatetraenoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0005998"
+      ],
+      "kegg_ids": [
+        "C14748"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0005998",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C14748"
+    },
+    {
+      "feature": "5,6-EET",
+      "metabolite_name": "5,6-Epoxy-8,11,14-eicosatrienoic acid",
+      "formula": "C20H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0002190"
+      ],
+      "kegg_ids": [
+        "C14768"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0002190",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C14768"
+    },
+    {
+      "feature": "6keto-PGF1",
+      "metabolite_name": "6-Keto-prostaglandin F1a",
+      "formula": "C20H34O6",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0002886"
+      ],
+      "kegg_ids": [
+        "C05961"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0002886",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C05961"
+    },
+    {
+      "feature": "9-HODE",
+      "metabolite_name": "alpha-Dimorphecolic acid",
+      "formula": "C18H32O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0004670"
+      ],
+      "kegg_ids": [
+        "C14767"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0004670",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C14767"
+    },
+    {
+      "feature": "LTB4",
+      "metabolite_name": "Leukotriene B4",
+      "formula": "C20H32O4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0001085"
+      ],
+      "kegg_ids": [
+        "C02165"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0001085",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C02165"
+    },
+    {
+      "feature": "LXA4",
+      "metabolite_name": "Lipoxin A4",
+      "formula": "C20H32O5",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0004385"
+      ],
+      "kegg_ids": [
+        "C06314"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0004385",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C06314"
+    },
+    {
+      "feature": "RvD1",
+      "metabolite_name": "Resolvin D1",
+      "formula": "C22H32O5",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0003733"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0003733",
+      "kegg_url": null
+    }
+  ]
+}

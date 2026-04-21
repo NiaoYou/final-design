@@ -1,0 +1,33 @@
+{
+  "merged_batch_count": 3,
+  "merged_sample_count": 598,
+  "merged_feature_count": 6461,
+  "feature_alignment_key": "column_name",
+  "merge_strategy": "single_file",
+  "per_batch_sample_count": {
+    "1": 204,
+    "3": 198,
+    "2": 196
+  },
+  "missing_ratio_after_merge": 0.0,
+  "batch_id_unique_values": [
+    "1",
+    "2",
+    "3"
+  ],
+  "sample_type_counts": {
+    "formal_or_unknown": 525,
+    "qc": 73
+  },
+  "group_label_counts": {
+    "1": 459,
+    "QC": 73,
+    "0": 66
+  },
+  "dataset_label": "AMIDE 数据集",
+  "description": "AMIDE 代谢组学数据集（598 样本，6462 代谢特征，3 批次）",
+  "notes": [
+    "数据集: amide",
+    "源文件: amide.csv"
+  ]
+}

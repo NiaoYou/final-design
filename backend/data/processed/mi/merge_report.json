@@ -1,0 +1,30 @@
+{
+  "merged_batch_count": 2,
+  "merged_sample_count": 902,
+  "merged_feature_count": 14,
+  "feature_alignment_key": "column_name",
+  "merge_strategy": "single_file",
+  "per_batch_sample_count": {
+    "0": 501,
+    "1": 401
+  },
+  "missing_ratio_after_merge": 0.0,
+  "batch_id_unique_values": [
+    "0",
+    "1"
+  ],
+  "sample_type_counts": {
+    "formal_or_unknown": 902,
+    "qc": 0
+  },
+  "group_label_counts": {
+    "non-MACE": 754,
+    "MACE": 148
+  },
+  "dataset_label": "MI（心肌梗死）数据集",
+  "description": "MI 心肌梗死预后代谢组学数据集（902 样本，15 代谢物，2 批次）",
+  "notes": [
+    "数据集: mi",
+    "源文件: mi.csv"
+  ]
+}

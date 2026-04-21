@@ -10,6 +10,7 @@ from fastapi.responses import RedirectResponse
 
 from app.api.routes.benchmark_merged import router as benchmark_merged_router
 from app.api.routes.benchmark_merged_ui import router as benchmark_merged_ui_router
+from app.api.routes.dataset import router as dataset_router
 from app.api.routes.tasks import router as tasks_router
 from app.api.routes.upload import router as upload_router
 from app.core.config import Settings
@@ -58,6 +59,7 @@ def create_app() -> FastAPI:
     app.include_router(tasks_router, prefix="/api")
     app.include_router(benchmark_merged_router)
     app.include_router(benchmark_merged_ui_router)
+    app.include_router(dataset_router)
     return app
 
 

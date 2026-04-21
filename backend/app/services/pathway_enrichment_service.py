@@ -503,3 +503,158 @@ def get_or_run_pathway_enrichment(
     logger.info("通路富集分析结果已写入缓存: %s", cache_path.name)
 
     return result
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 非 benchmark 数据集（bioheart / mi）专用富集入口
+# ──────────────────────────────────────────────────────────────────────────────
+
+def get_or_run_pathway_enrichment_for_dataset(
+    pipeline_dir: Path,
+    dataset_dir: Path,
+    group1: str,
+    group2: str,
+    fc_threshold: float = 1.0,
+    pvalue_threshold: float = 0.05,
+    use_fdr: bool = True,
+    top_n: int = 20,
+) -> Dict[str, Any]:
+    """
+    非 benchmark 数据集的通路富集入口。
+
+    与 get_or_run_pathway_enrichment 的区别：
+    1. 差异分析从 pipeline_dir/diff_analysis/ 读取缓存；若不存在则调用
+       run_differential_analysis_for_dataset()（dataset 路由层已缓存，此处作为兜底）。
+    2. annotated_feature_meta.json 中特征名字段使用 ``feature``（不是 ``feature_col``）。
+    3. 不依赖 benchmark_merged_read 模块。
+    """
+    # ---- 缓存键 ----
+    cache_key = f"{group1}_vs_{group2}_fc{fc_threshold}_pv{pvalue_threshold}_fdr{use_fdr}"
+    safe_key = hashlib.md5(cache_key.encode()).hexdigest()[:10]
+    cache_path = pipeline_dir / "pathway_enrichment" / f"enrich_{safe_key}.json"
+
+    if cache_path.is_file():
+        try:
+            data = json.loads(cache_path.read_text(encoding="utf-8"))
+            logger.info("通路富集分析从缓存加载: %s", cache_path.name)
+            return data
+        except Exception:
+            pass
+
+    # ---- 读取差异分析结果 ----
+    safe_g1 = group1.replace("/", "_").replace(" ", "_")
+    safe_g2 = group2.replace("/", "_").replace(" ", "_")
+    diff_path = pipeline_dir / "diff_analysis" / f"diff_{safe_g1}_vs_{safe_g2}.json"
+
+    if diff_path.is_file():
+        diff_result: Dict[str, Any] = json.loads(diff_path.read_text(encoding="utf-8"))
+    else:
+        # 兜底：触发差异分析并写缓存（复用 diff_analysis 服务层）
+        from app.services.differential_analysis_service import run_differential_analysis_for_dataset  # type: ignore
+        diff_result = run_differential_analysis_for_dataset(
+            pipeline_dir=pipeline_dir,
+            dataset_dir=dataset_dir,
+            group1=group1, group2=group2,
+            fc_threshold=fc_threshold,
+            pvalue_threshold=pvalue_threshold,
+            use_fdr=use_fdr,
+        )
+
+    # ---- 加载注释数据（新格式：feature 字段） ----
+    ann_path = pipeline_dir / "annotated_feature_meta.json"
+    if not ann_path.is_file():
+        raise FileNotFoundError(
+            f"annotated_feature_meta.json 不存在（{pipeline_dir}），"
+            "请先运行 build_named_dataset_annotation.py。"
+        )
+
+    ann_data: Dict[str, Any] = json.loads(ann_path.read_text(encoding="utf-8"))
+    ann_features: List[Dict[str, Any]] = ann_data.get("features", [])
+
+    # 特征名 -> [kegg_ids]（兼容 feature / feature_col 两种字段名）
+    feat_kegg: Dict[str, List[str]] = {}
+    cpd_ann_lookup: Dict[str, Dict[str, Any]] = {}
+    for f in ann_features:
+        feat_name = str(f.get("feature") or f.get("feature_col") or "")
+        kegg_ids: List[str] = f.get("kegg_ids") or []
+        if kegg_ids and feat_name:
+            feat_kegg[feat_name] = kegg_ids
+        for kid in kegg_ids:
+            cpd_ann_lookup[kid] = {
+                "metabolite_name": f.get("metabolite_name") or feat_name,
+                "formula": f.get("formula"),
+            }
+
+    # ---- 背景集与显著集 ----
+    bg_cpd_ids: Set[str] = set()
+    for kids in feat_kegg.values():
+        bg_cpd_ids.update(kids)
+
+    sig_labels = {"up", "down"}
+    sig_cpd_ids: Set[str] = set()
+    n_sig_total = 0
+    for feat in diff_result.get("features", []):
+        if feat.get("label") in sig_labels:
+            n_sig_total += 1
+            feat_name = str(feat.get("feature", ""))
+            for kid in feat_kegg.get(feat_name, []):
+                sig_cpd_ids.add(kid)
+
+    logger.info(
+        "通路富集（dataset）：显著特征 %d 个（其中含 KEGG ID %d 个），背景 %d 个",
+        n_sig_total, len(sig_cpd_ids), len(bg_cpd_ids),
+    )
+
+    if len(bg_cpd_ids) == 0:
+        return {
+            "available": False,
+            "reason": "背景集中无含 KEGG ID 的代谢物，无法进行通路富集。请确认 annotated_feature_meta.json 是否正确生成。",
+            "pathways": [],
+            "network": {"nodes": [], "edges": [], "categories": []},
+            "group1": group1,
+            "group2": group2,
+        }
+
+    # ---- KEGG 数据 ----
+    cpd_pathway_map = load_or_fetch_compound_pathway_map(pipeline_dir)
+    pathway_names = load_or_fetch_pathway_names(pipeline_dir)
+
+    if not cpd_pathway_map:
+        return {
+            "available": False,
+            "reason": "无法获取 KEGG 通路映射数据（请检查网络连接，或等待缓存就绪后重试）。",
+            "pathways": [],
+            "network": {"nodes": [], "edges": [], "categories": []},
+            "group1": group1,
+            "group2": group2,
+        }
+
+    # ---- 富集检验 ----
+    result = run_pathway_enrichment(
+        sig_cpd_ids=sig_cpd_ids,
+        bg_cpd_ids=bg_cpd_ids,
+        cpd_pathway_map=cpd_pathway_map,
+        pathway_names=pathway_names,
+        top_n=top_n,
+    )
+
+    # ---- ECharts 网络图 ----
+    network = build_network_data(result, cpd_ann_lookup, top_pathways=min(10, top_n))
+    result["network"] = network
+
+    # 元信息
+    result.update({
+        "group1": group1,
+        "group2": group2,
+        "fc_threshold": fc_threshold,
+        "pvalue_threshold": pvalue_threshold,
+        "use_fdr": use_fdr,
+        "n_sig_features_total": n_sig_total,
+    })
+
+    # ---- 写缓存 ----
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    logger.info("通路富集分析结果（dataset）已写入缓存: %s", cache_path.name)
+
+    return result

@@ -1,0 +1,3 @@
+method,display_name,silhouette_batch_id_pc12,batch_centroid_separation_pc12
+mean,Mean Imputation（对照）,0.706597333839165,84.40353432080973
+baseline,Baseline Correction,-0.001017001065096547,1.1740904191188705e-14

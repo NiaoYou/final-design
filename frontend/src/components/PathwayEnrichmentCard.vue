@@ -3,7 +3,12 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import { Loading } from '@element-plus/icons-vue'
 import { fetchDiffGroups, fetchPathwayEnrichment } from '@/api/benchmark'
+import { fetchDatasetDiffGroups, fetchDatasetPathwayEnrichment } from '@/api/dataset'
 import type { PathwayEnrichmentResult, PathwayItem } from '@/api/benchmark'
+
+// ---- Props ----
+const props = withDefaults(defineProps<{ dataset?: string }>(), { dataset: 'benchmark' })
+const isBenchmark = computed(() => props.dataset === 'benchmark')
 
 // ---- 组别选择 ----
 const groups = ref<string[]>([])
@@ -31,10 +36,17 @@ let bubbleChart: echarts.ECharts | null = null
 let networkChart: echarts.ECharts | null = null
 
 // ---- 加载组别 ----
-onMounted(async () => {
+async function loadGroups() {
   groupsLoading.value = true
+  // 切换数据集时重置状态
+  result.value = null
+  errorMsg.value = ''
+  selectedGroup1.value = ''
+  selectedGroup2.value = ''
   try {
-    const r = await fetchDiffGroups()
+    const r = isBenchmark.value
+      ? await fetchDiffGroups()
+      : await fetchDatasetDiffGroups(props.dataset)
     groups.value = r.groups ?? []
     if (groups.value.length >= 2) {
       selectedGroup1.value = groups.value[0]
@@ -45,7 +57,12 @@ onMounted(async () => {
   } finally {
     groupsLoading.value = false
   }
-})
+}
+
+onMounted(() => void loadGroups())
+
+// 数据集切换时重新加载组别
+watch(() => props.dataset, () => void loadGroups())
 
 onUnmounted(() => {
   bubbleChart?.dispose()
@@ -68,13 +85,22 @@ async function runEnrichment() {
   statusMsg.value = '正在运行差异分析并获取 KEGG 通路数据（首次运行需下载 KEGG 数据，约 15~30 秒）…'
 
   try {
-    const r = await fetchPathwayEnrichment(
-      selectedGroup1.value,
-      selectedGroup2.value,
-      fcThreshold.value,
-      pvalThreshold.value,
-      useFdr.value,
-    )
+    const r = isBenchmark.value
+      ? await fetchPathwayEnrichment(
+          selectedGroup1.value,
+          selectedGroup2.value,
+          fcThreshold.value,
+          pvalThreshold.value,
+          useFdr.value,
+        )
+      : await fetchDatasetPathwayEnrichment(
+          props.dataset,
+          selectedGroup1.value,
+          selectedGroup2.value,
+          fcThreshold.value,
+          pvalThreshold.value,
+          useFdr.value,
+        )
     result.value = r
     statusMsg.value = ''
     // 切回气泡图并渲染

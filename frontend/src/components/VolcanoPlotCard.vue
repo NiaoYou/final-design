@@ -2,7 +2,15 @@
 import { computed, onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import { fetchDiffGroups, fetchDiffAnalysis } from '@/api/benchmark'
+import { fetchDatasetDiffGroups, fetchDatasetDiffAnalysis } from '@/api/dataset'
 import type { DiffAnalysisResult, DiffFeature } from '@/types/benchmark'
+
+// ---- Props ----
+const props = withDefaults(defineProps<{
+  dataset?: string
+}>(), {
+  dataset: 'benchmark',
+})
 
 // ---- 状态 ----
 const groups = ref<string[]>([])
@@ -26,23 +34,35 @@ let chart: echarts.ECharts | null = null
 const COLOR = { up: '#ef4444', down: '#3b82f6', ns: '#cbd5e1' }
 const LABEL_ZH = { up: '上调', down: '下调', ns: '无显著' }
 
+// ---- 是否为 benchmark 数据集 ----
+const isBenchmark = computed(() => props.dataset === 'benchmark')
+
 // ---- 加载可用组 ----
-onMounted(async () => {
+async function loadGroups() {
   groupsLoading.value = true
+  result.value = null
+  selectedGroup1.value = ''
+  selectedGroup2.value = ''
   try {
-    const r = await fetchDiffGroups()
+    const r = isBenchmark.value
+      ? await fetchDiffGroups()
+      : await fetchDatasetDiffGroups(props.dataset)
     groups.value = r.groups ?? []
-    // 预设默认值
     if (groups.value.length >= 2) {
       selectedGroup1.value = groups.value[0]
       selectedGroup2.value = groups.value[1]
     }
   } catch {
-    // 无数据时保持空
+    groups.value = []
   } finally {
     groupsLoading.value = false
   }
-})
+}
+
+onMounted(loadGroups)
+
+// 数据集切换时重新加载组列表
+watch(() => props.dataset, loadGroups)
 
 onUnmounted(() => {
   chart?.dispose()
@@ -121,7 +141,7 @@ function renderChart() {
           if (!f) return ''
           const nameHtml = f.metabolite_name
             ? `<b>${f.metabolite_name}</b> <span style="color:#94a3b8;font-size:11px">(ion ${f.feature})</span>`
-            : `<b>Ion ${f.feature}</b>`
+            : `<b>${f.feature}</b>`
           const mzHtml = f.ion_mz != null
             ? `<br/><span style="color:#64748b;font-size:11px">m/z ${f.ion_mz.toFixed(4)}${f.formula ? '  ' + f.formula : ''}</span>`
             : ''
@@ -192,13 +212,22 @@ async function runAnalysis() {
   running.value = true
   result.value = null
   try {
-    result.value = await fetchDiffAnalysis(
-      selectedGroup1.value,
-      selectedGroup2.value,
-      fcThreshold.value,
-      pvalueThreshold.value,
-      useFdr.value,
-    )
+    result.value = isBenchmark.value
+      ? await fetchDiffAnalysis(
+          selectedGroup1.value,
+          selectedGroup2.value,
+          fcThreshold.value,
+          pvalueThreshold.value,
+          useFdr.value,
+        )
+      : await fetchDatasetDiffAnalysis(
+          props.dataset,
+          selectedGroup1.value,
+          selectedGroup2.value,
+          fcThreshold.value,
+          pvalueThreshold.value,
+          useFdr.value,
+        )
   } catch (e: any) {
     errorMsg.value = e?.response?.data?.detail ?? '差异分析请求失败，请检查后端连接。'
   } finally {
@@ -344,10 +373,10 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
               <span v-if="row.metabolite_name" class="volcano__met-name">
                 {{ row.metabolite_name }}
               </span>
-              <span v-else class="volcano__met-fallback">Ion {{ row.feature }}</span>
+              <span v-else class="volcano__met-fallback">{{ row.feature }}</span>
             </template>
           </el-table-column>
-          <!-- 分子式 -->
+          <!-- 分子式（仅 benchmark 有注释时才有值） -->
           <el-table-column label="分子式" min-width="90">
             <template #default="{ row }">
               <span class="volcano__formula">{{ row.formula ?? '—' }}</span>
@@ -377,7 +406,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
               </el-tag>
             </template>
           </el-table-column>
-          <!-- 数据库链接 -->
+          <!-- 数据库链接（仅 benchmark 有注释时才有） -->
           <el-table-column label="数据库" min-width="100">
             <template #default="{ row }">
               <a

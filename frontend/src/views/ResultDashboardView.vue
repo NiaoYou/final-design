@@ -13,24 +13,137 @@ import VolcanoPlotCard from '@/components/VolcanoPlotCard.vue'
 import AnnotationTableCard from '@/components/AnnotationTableCard.vue'
 import PathwayEnrichmentCard from '@/components/PathwayEnrichmentCard.vue'
 import MetaKGCard from '@/components/MetaKGCard.vue'
+import DatasetSelector from '@/components/DatasetSelector.vue'
 import { evaluationDownloadUrl, evaluationPcaImageUrl, pcaBeforeAfterImageUrl } from '@/api/benchmark'
+import {
+  fetchDatasetList,
+  fetchDatasetSummary,
+  fetchDatasetBatchCorrectionReport,
+  fetchDatasetBatchCorrectionMetrics,
+  fetchDatasetPcaAfterJson,
+  fetchDatasetEvaluationSummary,
+  fetchDatasetEvaluationTable,
+  fetchDatasetEvaluationMethodPca,
+  datasetPcaBeforeAfterImageUrl,
+  datasetEvaluationPcaImageUrl,
+} from '@/api/dataset'
+import type { DatasetInfo } from '@/api/dataset'
 import { formatNumber, formatRatio } from '@/utils/format'
 import type { BatchCorrectionMetrics } from '@/types/benchmark'
 
+// ──────────────────────────────────────────────────────────────────────────────
+// 数据集选择
+// ──────────────────────────────────────────────────────────────────────────────
+const datasets = ref<DatasetInfo[]>([])
+const selectedDataset = ref<string>('benchmark')
+
+// 非 benchmark 数据集的数据状态
+const dsLoading = ref(false)
+const dsError = ref<string | null>(null)
+const dsSummary = ref<any>(null)
+const dsReport = ref<any>(null)
+const dsMetrics = ref<any>(null)
+const dsPcaAfter = ref<any>(null)
+const dsEvalSummary = ref<any>(null)
+const dsEvalTable = ref<any>(null)
+const dsEvalPcas = ref<Record<string, any>>({})
+
+async function loadDatasetList() {
+  try {
+    const res = await fetchDatasetList()
+    datasets.value = res.datasets
+  } catch {
+    datasets.value = []
+  }
+}
+
+async function loadDataset(dataset: string) {
+  if (dataset === 'benchmark') {
+    void store.loadAll()
+    return
+  }
+  dsLoading.value = true
+  dsError.value = null
+  try {
+    const [sum, rep, met, pca, es, et] = await Promise.all([
+      fetchDatasetSummary(dataset).catch(() => null),
+      fetchDatasetBatchCorrectionReport(dataset).catch(() => null),
+      fetchDatasetBatchCorrectionMetrics(dataset).catch(() => null),
+      fetchDatasetPcaAfterJson(dataset).catch(() => null),
+      fetchDatasetEvaluationSummary(dataset).catch(() => null),
+      fetchDatasetEvaluationTable(dataset).catch(() => null),
+    ])
+    dsSummary.value = sum
+    dsReport.value = rep
+    dsMetrics.value = met
+    dsPcaAfter.value = pca
+    dsEvalSummary.value = es
+    dsEvalTable.value = et
+    dsEvalPcas.value = {}
+  } catch (e) {
+    dsError.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    dsLoading.value = false
+  }
+}
+
+async function loadDsEvalPca(dataset: string, method: string) {
+  if (dsEvalPcas.value[method] != null) return // 已缓存
+  const data = await fetchDatasetEvaluationMethodPca(dataset, method).catch(() => null)
+  if (data) {
+    dsEvalPcas.value = { ...dsEvalPcas.value, [method]: data }
+  }
+}
+
+watch(selectedDataset, (ds) => {
+  void loadDataset(ds)
+})
+
+// ──────────────────────────────────────────────────────────────────────────────
+// benchmark store（原逻辑保留）
+// ──────────────────────────────────────────────────────────────────────────────
 const store = useBenchmarkStore()
 const {
-  summary, report, metrics, files, pcaAfter,
-  evaluationSummary, evaluationTable, evaluationPcas, evaluationFiles,
+  summary: bmSummary, report: bmReport, metrics: bmMetrics, files: bmFiles, pcaAfter: bmPcaAfter,
+  evaluationSummary: bmEvalSummary, evaluationTable: bmEvalTable, evaluationPcas: bmEvalPcas, evaluationFiles: bmEvalFiles,
   imputationEvalSummary, imputationEvalFeatureRmse,
-  loading, error,
+  loading: bmLoading, error: bmError,
 } = storeToRefs(store)
 
 onMounted(() => {
+  void loadDatasetList()
   void store.loadAll()
 })
 
-const pcaUrl = computed(() => pcaBeforeAfterImageUrl(String(store.loadedAt || Date.now())))
-const evalPcaUrl = computed(() => evaluationPcaImageUrl(String(store.loadedAt || Date.now())))
+// ──────────────────────────────────────────────────────────────────────────────
+// 统一当前数据源（根据选中数据集切换）
+// ──────────────────────────────────────────────────────────────────────────────
+const isBenchmark = computed(() => selectedDataset.value === 'benchmark')
+
+const summary = computed(() => isBenchmark.value ? bmSummary.value : dsSummary.value)
+const report = computed(() => isBenchmark.value ? bmReport.value : dsReport.value)
+const metrics = computed(() => isBenchmark.value ? bmMetrics.value : dsMetrics.value)
+const files = computed(() => isBenchmark.value ? bmFiles.value : null)
+const pcaAfter = computed(() => isBenchmark.value ? bmPcaAfter.value : dsPcaAfter.value)
+const evaluationSummary = computed(() => isBenchmark.value ? bmEvalSummary.value : dsEvalSummary.value)
+const evaluationTable = computed(() => isBenchmark.value ? bmEvalTable.value : dsEvalTable.value)
+const evaluationPcas = computed(() => isBenchmark.value ? bmEvalPcas.value : dsEvalPcas.value)
+const evaluationFiles = computed(() => isBenchmark.value ? bmEvalFiles.value : null)
+const loading = computed(() => isBenchmark.value ? bmLoading.value : dsLoading.value)
+const error = computed(() => isBenchmark.value ? bmError.value : dsError.value)
+const loadedAt = computed(() => store.loadedAt)
+
+// PCA 图 URL（根据数据集切换）
+const pcaUrl = computed(() =>
+  isBenchmark.value
+    ? pcaBeforeAfterImageUrl(String(loadedAt.value || Date.now()))
+    : datasetPcaBeforeAfterImageUrl(selectedDataset.value, String(Date.now()))
+)
+const evalPcaUrl = computed(() =>
+  isBenchmark.value
+    ? evaluationPcaImageUrl(String(loadedAt.value || Date.now()))
+    : datasetEvaluationPcaImageUrl(selectedDataset.value, String(Date.now()))
+)
 
 const heuristicRows = computed(() => {
   const m = metrics.value as BatchCorrectionMetrics | null
@@ -120,7 +233,7 @@ const selectedEvalMethod = ref<string>('baseline')
 const evalMethodOptions = computed(() => {
   const es = evaluationSummary.value
   if (!es?.methods_order?.length) return []
-  return es.methods_order.map((internal) => ({
+  return (es.methods_order as string[]).map((internal: string) => ({
     internal,
     display: es.methods_display_names?.[internal] ?? internal,
   }))
@@ -130,10 +243,14 @@ watch(
   evalMethodOptions,
   (opts) => {
     if (!opts.length) return
-    if (!opts.find((o) => o.internal === selectedEvalMethod.value)) {
+    if (!opts.find((o: { internal: string }) => o.internal === selectedEvalMethod.value)) {
       selectedEvalMethod.value = opts[0].internal
     }
-    void store.loadEvaluationPca(selectedEvalMethod.value)
+    if (isBenchmark.value) {
+      void store.loadEvaluationPca(selectedEvalMethod.value)
+    } else {
+      void loadDsEvalPca(selectedDataset.value, selectedEvalMethod.value)
+    }
   },
   { immediate: true },
 )
@@ -141,7 +258,11 @@ watch(
 watch(
   selectedEvalMethod,
   (m) => {
-    void store.loadEvaluationPca(m)
+    if (isBenchmark.value) {
+      void store.loadEvaluationPca(m)
+    } else {
+      void loadDsEvalPca(selectedDataset.value, m)
+    }
   },
   { immediate: false },
 )
@@ -151,12 +272,18 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
 
 <template>
   <div class="page-container dash">
-    <p class="page-title">结果展示 · Benchmark Merged</p>
+    <p class="page-title">结果展示 · 代谢组学多数据集分析</p>
     <p class="page-sub" style="margin-bottom:1.25rem">
-      数据来自后端 <code>/api/benchmark/merged/*</code> 与产物目录 JSON；不做手填指标。
+      支持 Benchmark / BioHeart / AMIDE / MI 多数据集切换展示。
       主链路 KPI / PCA 展示 <strong>baseline</strong>（逐特征位置尺度对齐）批次校正结果；
-      <strong>ComBat-like 校正（neuroCombat）已实现</strong>，可在下方「方法对比实验」区块查看对比数据。
+      <strong>ComBat-like 校正（neuroCombat）</strong> 可在 Benchmark 数据集的「方法对比实验」区块查看。
     </p>
+
+    <!-- 数据集选择器 -->
+    <DatasetSelector
+      v-model="selectedDataset"
+      :datasets="datasets"
+    />
 
     <el-alert
       v-if="error"
@@ -167,8 +294,17 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     />
 
     <div class="dash__toolbar">
-      <el-button type="primary" :loading="loading" @click="store.loadAll()">刷新数据</el-button>
-      <el-tag v-if="summary && !summary.available" type="warning">merged 摘要不可用（请先产出 merge_report）</el-tag>
+      <el-button
+        type="primary"
+        :loading="loading"
+        @click="isBenchmark ? store.loadAll() : loadDataset(selectedDataset)"
+      >
+        刷新数据
+      </el-button>
+      <el-tag v-if="summary && !summary.available" type="warning">数据摘要不可用（请先运行 pipeline 脚本）</el-tag>
+      <el-tag v-if="!isBenchmark && !summary" type="info">
+        {{ selectedDataset }} 数据集尚未生成产物，请运行：<code>python scripts/build_dataset_pipeline.py --dataset {{ selectedDataset }}</code>
+      </el-tag>
     </div>
 
     <section class="kpi-row">
@@ -244,8 +380,8 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
       <p v-if="!interpretation.length" class="interp muted">加载报告与 metrics 后可自动生成解释句段。</p>
     </section>
 
-    <!-- ======== 缺失值填充评估区块 ======== -->
-    <section class="card-panel">
+    <!-- ======== 缺失值填充评估区块（仅 benchmark）======== -->
+    <section class="card-panel" v-if="isBenchmark">
       <h3 class="section-heading">缺失值填充方法评估（Mask-then-Impute）</h3>
       <p class="interp muted">
         在已填充矩阵上随机遮蔽
@@ -269,8 +405,11 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
         基于批次校正后矩阵，对任意两组样本执行独立双样本 <strong>t-test</strong>，
         并经 <strong>BH-FDR</strong> 多重校正，计算 <strong>log2 Fold Change</strong>。
         火山图中红色表示显著上调，蓝色表示显著下调，灰色为无显著差异特征。
+        <template v-if="!isBenchmark">
+          当前数据集（{{ selectedDataset }}）的特征名即为代谢物名称，无 HMDB/KEGG 外链注释。
+        </template>
       </p>
-      <VolcanoPlotCard />
+      <VolcanoPlotCard :dataset="selectedDataset" />
     </section>
 
     <!-- ======== 通路富集分析区块 ======== -->
@@ -282,8 +421,21 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
         经 <strong>BH-FDR</strong> 校正筛选富集通路；结果以气泡图与力导向网络图展示。
         KEGG 数据来自 <a href="https://rest.kegg.jp" target="_blank" style="color:#7c3aed">rest.kegg.jp</a>，
         首次运行自动下载并缓存。
+        <template v-if="selectedDataset === 'amide'">
+          AMIDE 数据集特征为匿名质谱信号，无代谢物名称，不支持通路富集。
+        </template>
       </p>
-      <PathwayEnrichmentCard />
+      <!-- benchmark / bioheart / mi 支持；amide 不支持 -->
+      <PathwayEnrichmentCard
+        v-if="selectedDataset !== 'amide'"
+        :dataset="selectedDataset"
+      />
+      <el-alert
+        v-else
+        type="warning"
+        :closable="false"
+        title="AMIDE 数据集包含 6461 个匿名质谱特征，无代谢物名称，无法做 KEGG 通路富集分析。"
+      />
     </section>
 
     <!-- ======== MetaKG 知识图谱溯源区块 ======== -->
@@ -293,19 +445,51 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
         基于 <strong>MetaKG</strong> 多库整合知识图谱（KEGG / SMPDB / HMDB），展示本项目代谢物
         与通路、反应、酶之间的一跳关联网络（节点数与边数见下方统计条）。
         节点可拖拽交互，支持关键词高亮搜索，可按节点类型与关系类型动态过滤。
+        <template v-if="selectedDataset === 'amide'">
+          AMIDE 数据集特征为匿名质谱信号，不支持 MetaKG 知识图谱。
+        </template>
       </p>
-      <MetaKGCard />
+      <!-- benchmark / bioheart / mi 支持；amide 不支持 -->
+      <MetaKGCard
+        v-if="selectedDataset !== 'amide'"
+        :dataset="selectedDataset"
+      />
+      <el-alert
+        v-else
+        type="warning"
+        :closable="false"
+        title="AMIDE 数据集包含 6461 个匿名质谱特征，无代谢物名称，无法构建 MetaKG 知识图谱子图。"
+      />
     </section>
 
     <!-- ======== 特征注释区块 ======== -->
     <section class="card-panel">
       <h3 class="section-heading">特征注释（Feature Annotation）</h3>
       <p class="interp muted">
-        基于各批次 <strong>annotation.csv</strong> 中的 m/z 精确质量匹配，
-        映射代谢物名称，并附 <strong>HMDB</strong> 与 <strong>KEGG</strong> 数据库链接，支持关键词搜索。
+        <template v-if="isBenchmark">
+          基于各批次 <strong>annotation.csv</strong> 中的 m/z 精确质量匹配，
+          映射代谢物名称，并附 <strong>HMDB</strong> 与 <strong>KEGG</strong> 数据库链接，支持关键词搜索。
+        </template>
+        <template v-else-if="selectedDataset !== 'amide'">
+          基于 <strong>HMDB 代谢物名称精确匹配</strong>与自定义别名补全，
+          为各代谢物映射 <strong>HMDB ID</strong> 与 <strong>KEGG Compound ID</strong>，支持关键词搜索。
+        </template>
+        <template v-else>
+          AMIDE 数据集特征为匿名质谱信号，无代谢物名称，不支持注释功能。
+        </template>
         （特征总数与覆盖率见下方统计条）
       </p>
-      <AnnotationTableCard />
+      <!-- benchmark / bioheart / mi 均支持；amide 不支持 -->
+      <AnnotationTableCard
+        v-if="selectedDataset !== 'amide'"
+        :dataset="selectedDataset"
+      />
+      <el-alert
+        v-else
+        type="warning"
+        :closable="false"
+        title="AMIDE 数据集包含 6461 个匿名质谱特征，无代谢物名称，不支持特征注释。"
+      />
     </section>
 
     <section class="card-panel">
@@ -319,9 +503,26 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
           :size-bytes="f.size_bytes"
         />
       </template>
-      <el-empty v-else description="暂无可下载文件列表" />
+      <el-empty v-else-if="isBenchmark" description="暂无可下载文件列表" />
+      <!-- 非 benchmark 数据集：使用通用下载接口 -->
+      <template v-if="!isBenchmark && summary?.available !== false">
+        <p class="interp muted">
+          当前数据集（{{ selectedDataset }}）通过通用路由提供下载，点击下方链接下载产物文件。
+        </p>
+        <div class="ds-download-links">
+          <a
+            v-for="fname in ['batch_corrected_sample_by_feature.csv', 'batch_correction_metrics.json', 'pca_after_correction.json', 'merge_report.json']"
+            :key="fname"
+            :href="`/api/dataset/${selectedDataset}/download/${encodeURIComponent(fname)}`"
+            class="ds-download-link"
+            target="_blank"
+          >
+            {{ fname }}
+          </a>
+        </div>
+      </template>
 
-      <div v-if="evaluationFiles?.files?.length" class="dl-split">
+      <div v-if="isBenchmark && evaluationFiles?.files?.length" class="dl-split">
         <div class="subhead">Evaluation 产物下载（方法对比实验）</div>
         <p class="interp muted">
           包含 mean / median / knn / baseline / <strong>combat-like</strong>（neuroCombat）各方法的 PCA 坐标 JSON 与评估汇总表。
@@ -340,11 +541,16 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
     <section class="card-panel">
       <h3 class="section-heading">方法对比实验（evaluation）</h3>
       <p class="interp muted">
-        本区块读取 <code>benchmark_merged/_pipeline/evaluation</code> 下的评估产物，
-        对比 <strong>mean / median / knn</strong>（仅填充，无批次校正）、
-        <strong>baseline</strong>（per-feature location-scale 逐特征位置尺度对齐）与
-        <strong>combat-like</strong>（neuroCombat，经验 Bayes 实现，参考 Johnson et al., 2007）三类方法的指标表现。
-        图中 "before" 对应 <strong>knn 填充未校正</strong>，"after" 对应 <strong>baseline 校正</strong>结果。
+        <template v-if="isBenchmark">
+          本区块读取 <code>benchmark_merged/_pipeline/evaluation</code> 下的评估产物，
+          对比 <strong>mean / median / knn</strong>（仅填充，无批次校正）、
+          <strong>baseline</strong>（per-feature location-scale 逐特征位置尺度对齐）与
+          <strong>combat-like</strong>（neuroCombat，经验 Bayes 实现，参考 Johnson et al., 2007）三类方法的指标表现。
+        </template>
+        <template v-else>
+          本区块对比 <strong>Mean Imputation</strong>（对照）与 <strong>Baseline Correction</strong>
+          （逐特征位置尺度对齐）在 {{ selectedDataset }} 数据集上的批次效应校正效果。
+        </template>
       </p>
 
       <el-alert
@@ -430,9 +636,9 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
       </div>
     </section>
 
-    <section v-if="summary?.raw_merge_report" class="card-panel card-panel--flat">
-      <h3 class="section-heading">合并报告摘要（raw_merge_report 节选）</h3>
-      <pre class="jsondump">{{ JSON.stringify(summary.raw_merge_report, null, 2).slice(0, 2500) }}{{ (JSON.stringify(summary.raw_merge_report).length > 2500) ? '\n…' : '' }}</pre>
+    <section v-if="summary?.raw_merge_report || summary?.available" class="card-panel card-panel--flat">
+      <h3 class="section-heading">数据集摘要报告</h3>
+      <pre class="jsondump">{{ JSON.stringify(summary, null, 2).slice(0, 2500) }}{{ (JSON.stringify(summary).length > 2500) ? '\n…' : '' }}</pre>
     </section>
   </div>
 </template>
@@ -568,5 +774,27 @@ const selectedEvalPca = computed(() => evaluationPcas.value[selectedEvalMethod.v
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--app-border);
+}
+
+.ds-download-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0.5rem;
+}
+
+.ds-download-link {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--primary-color, #6366f1);
+  border-radius: 6px;
+  color: var(--primary-color, #6366f1);
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--primary-50, #eef2ff);
+  }
 }
 </style>

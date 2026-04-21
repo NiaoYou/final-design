@@ -1,0 +1,727 @@
+{
+  "schema": "annotated_feature_meta_v1",
+  "n_features": 53,
+  "n_annotated": 49,
+  "n_with_kegg": 45,
+  "annotation_source": "hmdb_metabolites.json（名称/同义词精确匹配）",
+  "features": [
+    {
+      "feature": "1-methylhistamine",
+      "metabolite_name": "1-Methylhistamine",
+      "formula": "C6H11N3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000898"
+      ],
+      "kegg_ids": [
+        "C05127"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000898",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C05127"
+    },
+    {
+      "feature": "2-Arachidonyl glycerol",
+      "metabolite_name": "MG(0:0/20:4(5Z,8Z,11Z,14Z)/0:0)",
+      "formula": "C23H38O4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0004666"
+      ],
+      "kegg_ids": [
+        "C13856"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0004666",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C13856"
+    },
+    {
+      "feature": "2'-deoxyadenosine",
+      "metabolite_name": "Deoxyadenosine",
+      "formula": "C10H13N5O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000101"
+      ],
+      "kegg_ids": [
+        "C00559"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000101",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00559"
+    },
+    {
+      "feature": "3-deaazadenosine",
+      "metabolite_name": "3-deaazadenosine",
+      "formula": null,
+      "ion_mz": null,
+      "hmdb_ids": [],
+      "kegg_ids": [],
+      "hmdb_url": null,
+      "kegg_url": null
+    },
+    {
+      "feature": "3-IPA",
+      "metabolite_name": "Indole-3-propionic acid",
+      "formula": "C11H11NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0002302"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0002302",
+      "kegg_url": null
+    },
+    {
+      "feature": "3HK",
+      "metabolite_name": "Hydroxykynurenine",
+      "formula": "C10H12N2O4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000732"
+      ],
+      "kegg_ids": [
+        "C02794"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000732",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C02794"
+    },
+    {
+      "feature": "5-Aminolevulinic Acid",
+      "metabolite_name": "5-Aminolevulinic acid",
+      "formula": "C5H9NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0001149"
+      ],
+      "kegg_ids": [
+        "C00430"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0001149",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00430"
+    },
+    {
+      "feature": "Acetylcarnitine",
+      "metabolite_name": "L-Acetylcarnitine",
+      "formula": "C9H18NO4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000201"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000201",
+      "kegg_url": null
+    },
+    {
+      "feature": "Adenosine",
+      "metabolite_name": "Adenosine",
+      "formula": "C10H13N5O4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000050"
+      ],
+      "kegg_ids": [
+        "C00212"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000050",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00212"
+    },
+    {
+      "feature": "Alanine",
+      "metabolite_name": "L-Alanine",
+      "formula": "C3H7NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000161"
+      ],
+      "kegg_ids": [
+        "C00041"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000161",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00041"
+    },
+    {
+      "feature": "Anandamide",
+      "metabolite_name": "Anandamide",
+      "formula": "C22H37NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0004080"
+      ],
+      "kegg_ids": [
+        "C11695"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0004080",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C11695"
+    },
+    {
+      "feature": "Arachidonic acid",
+      "metabolite_name": "Arachidonic acid",
+      "formula": "C20H32O2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0001043"
+      ],
+      "kegg_ids": [
+        "C00219"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0001043",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00219"
+    },
+    {
+      "feature": "Arginine",
+      "metabolite_name": "L-Arginine",
+      "formula": "C6H14N4O2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000517"
+      ],
+      "kegg_ids": [
+        "C00062"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000517",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00062"
+    },
+    {
+      "feature": "Asparagine",
+      "metabolite_name": "L-Asparagine",
+      "formula": "C4H8N2O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000168"
+      ],
+      "kegg_ids": [
+        "C00152"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000168",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00152"
+    },
+    {
+      "feature": "Aspartate",
+      "metabolite_name": "L-Aspartic acid",
+      "formula": "C4H7NO4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000191"
+      ],
+      "kegg_ids": [
+        "C00049"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000191",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00049"
+    },
+    {
+      "feature": "Betaine",
+      "metabolite_name": "Betaine",
+      "formula": "C5H12NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000043"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000043",
+      "kegg_url": null
+    },
+    {
+      "feature": "Butyrylcarnitine",
+      "metabolite_name": "Butyrylcarnitine",
+      "formula": "C11H21NO4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0002013"
+      ],
+      "kegg_ids": [
+        "C02862"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0002013",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C02862"
+    },
+    {
+      "feature": "cAMP",
+      "metabolite_name": "Cyclic AMP",
+      "formula": "C10H12N5O6P",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000058"
+      ],
+      "kegg_ids": [
+        "C00575"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000058",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00575"
+    },
+    {
+      "feature": "Carnitine",
+      "metabolite_name": "L-Carnitine",
+      "formula": "C7H16NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000062"
+      ],
+      "kegg_ids": [
+        "C00318"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000062",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00318"
+    },
+    {
+      "feature": "Choline",
+      "metabolite_name": "Choline",
+      "formula": "C5H14NO",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000097"
+      ],
+      "kegg_ids": [
+        "C00114"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000097",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00114"
+    },
+    {
+      "feature": "Colchicine",
+      "metabolite_name": "Colchicine",
+      "formula": "C22H25NO6",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0015466"
+      ],
+      "kegg_ids": [
+        "C07592"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0015466",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C07592"
+    },
+    {
+      "feature": "Creatine",
+      "metabolite_name": "Creatine",
+      "formula": "C4H9N3O2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000064"
+      ],
+      "kegg_ids": [
+        "C00300"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000064",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00300"
+    },
+    {
+      "feature": "Cysteamine",
+      "metabolite_name": "Cysteamine",
+      "formula": "C2H7NS",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0002991"
+      ],
+      "kegg_ids": [
+        "C01678"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0002991",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C01678"
+    },
+    {
+      "feature": "Cysteine",
+      "metabolite_name": "L-Cysteine",
+      "formula": "C3H7NO2S",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000574"
+      ],
+      "kegg_ids": [
+        "C00097"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000574",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00097"
+    },
+    {
+      "feature": "Cytosine",
+      "metabolite_name": "Cytosine",
+      "formula": "C4H5N3O",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000630"
+      ],
+      "kegg_ids": [
+        "C00380"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000630",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00380"
+    },
+    {
+      "feature": "DMGV",
+      "metabolite_name": "Dimethylguanidino valeric acid",
+      "formula": "C8H15N3O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0240212"
+      ],
+      "kegg_ids": [],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0240212",
+      "kegg_url": null
+    },
+    {
+      "feature": "GlucosePos2",
+      "metabolite_name": "GlucosePos2",
+      "formula": null,
+      "ion_mz": null,
+      "hmdb_ids": [],
+      "kegg_ids": [],
+      "hmdb_url": null,
+      "kegg_url": null
+    },
+    {
+      "feature": "Glutamate",
+      "metabolite_name": "L-Glutamic acid",
+      "formula": "C5H9NO4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000148"
+      ],
+      "kegg_ids": [
+        "C00025"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000148",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00025"
+    },
+    {
+      "feature": "Glutamine",
+      "metabolite_name": "L-Glutamine",
+      "formula": "C5H10N2O3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000641"
+      ],
+      "kegg_ids": [
+        "C00064"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000641",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00064"
+    },
+    {
+      "feature": "Histidine",
+      "metabolite_name": "L-Histidine",
+      "formula": "C6H9N3O2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000177"
+      ],
+      "kegg_ids": [
+        "C00135"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000177",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00135"
+    },
+    {
+      "feature": "Î±-keto-Î²-methylvaleric acid.1",
+      "metabolite_name": "Î±-keto-Î²-methylvaleric acid.1",
+      "formula": null,
+      "ion_mz": null,
+      "hmdb_ids": [],
+      "kegg_ids": [],
+      "hmdb_url": null,
+      "kegg_url": null
+    },
+    {
+      "feature": "Î±-keto-Î²-methylvaleric acid.2",
+      "metabolite_name": "Î±-keto-Î²-methylvaleric acid.2",
+      "formula": null,
+      "ion_mz": null,
+      "hmdb_ids": [],
+      "kegg_ids": [],
+      "hmdb_url": null,
+      "kegg_url": null
+    },
+    {
+      "feature": "Isoleucine_Leucine",
+      "metabolite_name": "L-Isoleucine",
+      "formula": "C6H13NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000172"
+      ],
+      "kegg_ids": [
+        "C00407"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000172",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00407"
+    },
+    {
+      "feature": "Kynurenic acid",
+      "metabolite_name": "Kynurenic acid",
+      "formula": "C10H7NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000715"
+      ],
+      "kegg_ids": [
+        "C01717"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000715",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C01717"
+    },
+    {
+      "feature": "L-Homoserine",
+      "metabolite_name": "L-Homoserine",
+      "formula": "C4H9NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000719"
+      ],
+      "kegg_ids": [
+        "C00263"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000719",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00263"
+    },
+    {
+      "feature": "Methionine",
+      "metabolite_name": "L-Methionine",
+      "formula": "C5H11NO2S",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000696"
+      ],
+      "kegg_ids": [
+        "C00073"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000696",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00073"
+    },
+    {
+      "feature": "Phenylalanine",
+      "metabolite_name": "L-Phenylalanine",
+      "formula": "C9H11NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000159"
+      ],
+      "kegg_ids": [
+        "C00079"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000159",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00079"
+    },
+    {
+      "feature": "Phosphocholine",
+      "metabolite_name": "Phosphorylcholine",
+      "formula": "C5H15NO4P",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0001565"
+      ],
+      "kegg_ids": [
+        "C00588"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0001565",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00588"
+    },
+    {
+      "feature": "Proline",
+      "metabolite_name": "L-Proline",
+      "formula": "C5H9NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000162"
+      ],
+      "kegg_ids": [
+        "C00148"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000162",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00148"
+    },
+    {
+      "feature": "Riboflavin",
+      "metabolite_name": "Riboflavin",
+      "formula": "C17H20N4O6",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000244"
+      ],
+      "kegg_ids": [
+        "C00255"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000244",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00255"
+    },
+    {
+      "feature": "Serine",
+      "metabolite_name": "L-Serine",
+      "formula": "C3H7NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000187"
+      ],
+      "kegg_ids": [
+        "C00065"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000187",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00065"
+    },
+    {
+      "feature": "Serotonin",
+      "metabolite_name": "Serotonin",
+      "formula": "C10H12N2O",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000259"
+      ],
+      "kegg_ids": [
+        "C00780"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000259",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00780"
+    },
+    {
+      "feature": "Spermine",
+      "metabolite_name": "Spermine",
+      "formula": "C10H26N4",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0001256"
+      ],
+      "kegg_ids": [
+        "C00750"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0001256",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00750"
+    },
+    {
+      "feature": "Taurine",
+      "metabolite_name": "Taurine",
+      "formula": "C2H7NO3S",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000251"
+      ],
+      "kegg_ids": [
+        "C00245"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000251",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00245"
+    },
+    {
+      "feature": "Thiamine",
+      "metabolite_name": "Thiamine",
+      "formula": "C12H17N4OS",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000235"
+      ],
+      "kegg_ids": [
+        "C00378"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000235",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00378"
+    },
+    {
+      "feature": "Threonine",
+      "metabolite_name": "L-Threonine",
+      "formula": "C4H9NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000167"
+      ],
+      "kegg_ids": [
+        "C00188"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000167",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00188"
+    },
+    {
+      "feature": "Thymidine",
+      "metabolite_name": "Thymidine",
+      "formula": "C10H14N2O5",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000273"
+      ],
+      "kegg_ids": [
+        "C00214"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000273",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00214"
+    },
+    {
+      "feature": "TMNO",
+      "metabolite_name": "Trimethylamine N-oxide",
+      "formula": "C3H9NO",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000925"
+      ],
+      "kegg_ids": [
+        "C01104"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000925",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C01104"
+    },
+    {
+      "feature": "trans-HYP",
+      "metabolite_name": "4-Hydroxyproline",
+      "formula": "C5H9NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000725"
+      ],
+      "kegg_ids": [
+        "C01157"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000725",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C01157"
+    },
+    {
+      "feature": "Tyrosine",
+      "metabolite_name": "L-Tyrosine",
+      "formula": "C9H11NO3",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000158"
+      ],
+      "kegg_ids": [
+        "C00082"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000158",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00082"
+    },
+    {
+      "feature": "Uridine",
+      "metabolite_name": "Uridine",
+      "formula": "C9H12N2O6",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000296"
+      ],
+      "kegg_ids": [
+        "C00299"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000296",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00299"
+    },
+    {
+      "feature": "Valine",
+      "metabolite_name": "L-Valine",
+      "formula": "C5H11NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000883"
+      ],
+      "kegg_ids": [
+        "C00183"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000883",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00183"
+    },
+    {
+      "feature": "Valine-d8",
+      "metabolite_name": "L-Valine",
+      "formula": "C5H11NO2",
+      "ion_mz": null,
+      "hmdb_ids": [
+        "HMDB0000883"
+      ],
+      "kegg_ids": [
+        "C00183"
+      ],
+      "hmdb_url": "https://hmdb.ca/metabolites/HMDB0000883",
+      "kegg_url": "https://www.genome.jp/dbget-bin/www_bget?cpd:C00183"
+    }
+  ]
+}

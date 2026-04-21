@@ -2,8 +2,13 @@
 import { ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import { fetchMetakgSubgraph } from '@/api/benchmark'
+import { fetchDatasetMetakgSubgraph } from '@/api/dataset'
 import type { MetaKGNode, MetaKGEdge } from '@/api/benchmark'
 import { Search, Loading } from '@element-plus/icons-vue'
+
+// ---- Props ----
+const props = withDefaults(defineProps<{ dataset?: string }>(), { dataset: 'benchmark' })
+const isBenchmark = computed(() => props.dataset === 'benchmark')
 
 // ─── 节点类型配色 ───────────────────────────────────────────
 const TYPE_COLOR: Record<string, string> = {
@@ -133,8 +138,14 @@ const filteredData = computed(() => {
 async function loadData() {
   loading.value = true
   errorMsg.value = ''
+  // 切换数据集时清空旧数据
+  allNodes.value = []
+  allEdges.value = []
+  metaInfo.value = {}
   try {
-    const sg = await fetchMetakgSubgraph()
+    const sg = isBenchmark.value
+      ? await fetchMetakgSubgraph()
+      : await fetchDatasetMetakgSubgraph(props.dataset)
     allNodes.value  = sg.nodes
     allEdges.value  = sg.edges
     metaInfo.value  = sg.meta
@@ -149,6 +160,9 @@ async function loadData() {
     loading.value = false
   }
 }
+
+// 数据集切换时重新加载
+watch(() => props.dataset, () => void loadData())
 
 // ─── 渲染图表 ────────────────────────────────────────────────
 function renderGraph() {

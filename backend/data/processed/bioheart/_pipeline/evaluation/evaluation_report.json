@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "dataset": "BioHeart 数据集",
+  "methods_order": [
+    "mean",
+    "baseline"
+  ],
+  "methods_display_order": [
+    "mean",
+    "baseline"
+  ],
+  "inputs": {
+    "methods_display_names": {
+      "mean": "Mean Imputation（对照）",
+      "baseline": "Baseline Correction"
+    },
+    "before_method_for_plot": "mean",
+    "after_method_for_plot": "baseline",
+    "before_method_for_plot_display": "Mean Imputation（对照）",
+    "after_method_for_plot_display": "Baseline Correction"
+  },
+  "methods": {
+    "mean": {
+      "method": "mean",
+      "display_name": "Mean Imputation（对照）",
+      "silhouette_batch": 0.05675975521588098,
+      "batch_centroid_dist": 8.680970850594806
+    },
+    "baseline": {
+      "method": "baseline",
+      "display_name": "Baseline Correction",
+      "silhouette_batch": -0.1169872074324107,
+      "batch_centroid_dist": 1.0851305421403373e-14
+    }
+  },
+  "note": "方法对比实验产物（BioHeart 数据集）。"
+}

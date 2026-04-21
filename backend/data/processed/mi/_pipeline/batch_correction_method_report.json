@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "baseline_batch_correction": {
+    "method_id": "per_feature_batch_location_scale_baseline",
+    "method_display_name": "Per-Feature Batch Location–Scale Alignment to Global (Baseline)",
+    "assumptions": [
+      "批次效应近似为逐特征位置与尺度偏移",
+      "各批次内样本分布近似正态"
+    ],
+    "limitations": [
+      "不处理批次×生物学交互效应",
+      "不等同于 empirical Bayes ComBat"
+    ]
+  },
+  "strict_combat": {
+    "status": "not_implemented",
+    "note": "strict ComBat（empirical Bayes）尚未在本项目中实现。"
+  },
+  "dataset": "mi",
+  "dataset_label": "MI（心肌梗死）数据集"
+}

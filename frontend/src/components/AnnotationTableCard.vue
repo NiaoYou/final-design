@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { fetchAnnotationSummary, fetchAnnotationFeatures } from '@/api/benchmark'
+import { fetchDatasetAnnotationSummary, fetchDatasetAnnotationFeatures } from '@/api/dataset'
 import type { AnnotatedFeature, AnnotationSummary } from '@/types/benchmark'
 
+// ---- Props ----
+const props = withDefaults(defineProps<{ dataset?: string }>(), { dataset: 'benchmark' })
+const isBenchmark = computed(() => props.dataset === 'benchmark')
+
 // ---- 状态 ----
-const summary = ref<AnnotationSummary | null>(null)
+const summary = ref<(AnnotationSummary & { annotation_source?: string }) | null>(null)
 const features = ref<AnnotatedFeature[]>([])
 const total = ref(0)
 const loading = ref(false)
@@ -15,25 +20,40 @@ const currentPage = ref(1)
 const pageSize = ref(50)
 
 // ---- 初始加载 ----
-onMounted(async () => {
+async function loadSummary() {
   loading.value = true
   errorMsg.value = null
+  // 切换数据集时重置
+  summary.value = null
+  features.value = []
+  total.value = 0
+  currentPage.value = 1
+  searchText.value = ''
   try {
-    summary.value = await fetchAnnotationSummary()
+    summary.value = isBenchmark.value
+      ? await fetchAnnotationSummary()
+      : await fetchDatasetAnnotationSummary(props.dataset)
     await loadPage()
   } catch (e: any) {
     errorMsg.value = e?.response?.data?.detail ?? '注释数据加载失败，请刷新重试。'
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(() => void loadSummary())
+
+// 数据集切换时重新加载
+watch(() => props.dataset, () => void loadSummary())
 
 async function loadPage() {
   pageLoading.value = true
   errorMsg.value = null
   try {
     const offset = (currentPage.value - 1) * pageSize.value
-    const resp = await fetchAnnotationFeatures(offset, pageSize.value, searchText.value || undefined)
+    const resp = isBenchmark.value
+      ? await fetchAnnotationFeatures(offset, pageSize.value, searchText.value || undefined)
+      : await fetchDatasetAnnotationFeatures(props.dataset, offset, pageSize.value, searchText.value || undefined)
     if (resp) {
       features.value = resp.features
       total.value = resp.total
@@ -53,6 +73,19 @@ async function onSearch() {
 // 监听分页切换
 watch(currentPage, loadPage)
 // searchText 通过 @clear / @keyup.enter / 搜索按钮触发 onSearch，无需额外 watch
+
+// bioheart/mi 的字段名：用 feature 代替 feature_col，且无 ion_mz / ion_mode
+// 统一从 row 中取合适的显示值
+function getFeatureName(row: any): string {
+  return row.feature_col ?? row.feature ?? '—'
+}
+
+// 是否需要"注释名称"列（仅当 bioheart/mi 中 metabolite_name 与 feature 不同时才显示）
+const showAnnotationNameColumn = computed(() =>
+  !isBenchmark.value && features.value.some(
+    (f: any) => f.metabolite_name && f.metabolite_name !== f.feature
+  )
+)
 </script>
 
 <template>
@@ -74,13 +107,16 @@ watch(currentPage, loadPage)
       </span>
       <span class="ann__stat ann__stat--ok">
         已注释 <strong>{{ summary.n_annotated }}</strong>
-        （{{ summary.coverage_pct }}%）
+        （{{ summary.coverage_pct != null ? summary.coverage_pct + '%' : (summary.n_features ? ((summary.n_annotated / summary.n_features * 100).toFixed(1) + '%') : '—') }}）
       </span>
       <span class="ann__stat">
-        HMDB <strong>{{ summary.n_with_hmdb }}</strong>
+        HMDB <strong>{{ summary.n_with_hmdb ?? '—' }}</strong>
       </span>
       <span class="ann__stat">
         KEGG <strong>{{ summary.n_with_kegg }}</strong>
+      </span>
+      <span v-if="summary.annotation_source" class="ann__stat ann__stat--src">
+        来源：{{ summary.annotation_source }}
       </span>
     </div>
 
@@ -111,21 +147,33 @@ watch(currentPage, loadPage)
       border
       max-height="480"
     >
-      <!-- Ion -->
-      <el-table-column label="Ion" prop="feature_col" width="60" align="center" />
+      <!-- 特征标识：benchmark 显示 Ion 编号，bioheart/mi 显示代谢物名 -->
+      <el-table-column :label="isBenchmark ? 'Ion' : '代谢物名称'" :min-width="isBenchmark ? 60 : 160">
+        <template #default="{ row }">
+          <span class="ann__name">{{ getFeatureName(row) }}</span>
+        </template>
+      </el-table-column>
 
-      <!-- m/z -->
-      <el-table-column label="m/z" width="100">
+      <!-- m/z（仅 benchmark 有） -->
+      <el-table-column v-if="isBenchmark" label="m/z" width="100">
         <template #default="{ row }">
           <span class="ann__mz">{{ row.ion_mz != null ? row.ion_mz.toFixed(4) : '—' }}</span>
         </template>
       </el-table-column>
 
-      <!-- 代谢物名 -->
-      <el-table-column label="代谢物名称" min-width="160">
+      <!-- 代谢物名（仅 benchmark 显示，bioheart/mi 已在第一列） -->
+      <el-table-column v-if="isBenchmark" label="代谢物名称" min-width="160">
         <template #default="{ row }">
           <span v-if="row.metabolite_name" class="ann__name">{{ row.metabolite_name }}</span>
           <span v-else class="ann__na">未注释</span>
+        </template>
+      </el-table-column>
+
+      <!-- bioheart/mi 的注释名（若有独立 metabolite_name 字段则展示） -->
+      <el-table-column v-if="showAnnotationNameColumn" label="注释名称" min-width="160">
+        <template #default="{ row }">
+          <span v-if="(row as any).metabolite_name && (row as any).metabolite_name !== (row as any).feature" class="ann__name">{{ (row as any).metabolite_name }}</span>
+          <span v-else class="ann__na">—</span>
         </template>
       </el-table-column>
 
@@ -136,8 +184,8 @@ watch(currentPage, loadPage)
         </template>
       </el-table-column>
 
-      <!-- 离子模式 -->
-      <el-table-column label="离子模式" width="90" align="center">
+      <!-- 离子模式（仅 benchmark 有） -->
+      <el-table-column v-if="isBenchmark" label="离子模式" width="90" align="center">
         <template #default="{ row }">
           <el-tag v-if="row.ion_mode" size="small" type="info" effect="plain">
             {{ row.ion_mode }}
@@ -146,8 +194,46 @@ watch(currentPage, loadPage)
         </template>
       </el-table-column>
 
-      <!-- 数据库链接 -->
-      <el-table-column label="数据库" min-width="120">
+      <!-- HMDB IDs（bioheart/mi 可能有多个） -->
+      <el-table-column v-if="!isBenchmark" label="HMDB" min-width="130">
+        <template #default="{ row }">
+          <div class="ann__links">
+            <template v-if="(row as any).hmdb_ids?.length">
+              <a
+                v-for="hid in (row as any).hmdb_ids.slice(0, 2)"
+                :key="hid"
+                :href="`https://hmdb.ca/metabolites/${hid}`"
+                target="_blank"
+                class="ann__link ann__link--hmdb"
+              >{{ hid }}</a>
+              <span v-if="(row as any).hmdb_ids.length > 2" class="ann__na">+{{ (row as any).hmdb_ids.length - 2 }}</span>
+            </template>
+            <span v-else class="ann__na">—</span>
+          </div>
+        </template>
+      </el-table-column>
+
+      <!-- KEGG IDs（bioheart/mi 可能有多个） -->
+      <el-table-column v-if="!isBenchmark" label="KEGG" min-width="120">
+        <template #default="{ row }">
+          <div class="ann__links">
+            <template v-if="(row as any).kegg_ids?.length">
+              <a
+                v-for="kid in (row as any).kegg_ids.slice(0, 2)"
+                :key="kid"
+                :href="`https://www.kegg.jp/entry/${kid}`"
+                target="_blank"
+                class="ann__link ann__link--kegg"
+              >{{ kid }}</a>
+              <span v-if="(row as any).kegg_ids.length > 2" class="ann__na">+{{ (row as any).kegg_ids.length - 2 }}</span>
+            </template>
+            <span v-else class="ann__na">—</span>
+          </div>
+        </template>
+      </el-table-column>
+
+      <!-- 数据库链接（仅 benchmark，已有 hmdb_url / kegg_url 字段） -->
+      <el-table-column v-if="isBenchmark" label="数据库" min-width="120">
         <template #default="{ row }">
           <div class="ann__links">
             <a
@@ -207,6 +293,11 @@ watch(currentPage, loadPage)
 
 .ann__stat--ok strong {
   color: #059669;
+}
+
+.ann__stat--src {
+  color: #7c3aed;
+  font-style: italic;
 }
 
 .ann__search-row {

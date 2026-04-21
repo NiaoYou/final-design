@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "dataset": "MI（心肌梗死）数据集",
+  "methods_order": [
+    "mean",
+    "baseline"
+  ],
+  "methods_display_order": [
+    "mean",
+    "baseline"
+  ],
+  "inputs": {
+    "methods_display_names": {
+      "mean": "Mean Imputation（对照）",
+      "baseline": "Baseline Correction"
+    },
+    "before_method_for_plot": "mean",
+    "after_method_for_plot": "baseline",
+    "before_method_for_plot_display": "Mean Imputation（对照）",
+    "after_method_for_plot_display": "Baseline Correction"
+  },
+  "methods": {
+    "mean": {
+      "method": "mean",
+      "display_name": "Mean Imputation（对照）",
+      "silhouette_batch": 0.9582061732678688,
+      "batch_centroid_dist": 55.16788547455537
+    },
+    "baseline": {
+      "method": "baseline",
+      "display_name": "Baseline Correction",
+      "silhouette_batch": 0.05925722532825196,
+      "batch_centroid_dist": 1.6251291149273336e-14
+    }
+  },
+  "note": "方法对比实验产物（MI（心肌梗死）数据集）。"
+}

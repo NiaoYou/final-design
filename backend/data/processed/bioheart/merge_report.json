@@ -1,0 +1,57 @@
+{
+  "merged_batch_count": 15,
+  "merged_sample_count": 1300,
+  "merged_feature_count": 53,
+  "feature_alignment_key": "column_name",
+  "merge_strategy": "single_file",
+  "per_batch_sample_count": {
+    "4": 95,
+    "2": 91,
+    "5": 90,
+    "10": 90,
+    "11": 90,
+    "12": 90,
+    "6": 89,
+    "7": 89,
+    "8": 88,
+    "9": 88,
+    "15": 88,
+    "14": 87,
+    "3": 86,
+    "1": 78,
+    "13": 61
+  },
+  "missing_ratio_after_merge": 0.0,
+  "batch_id_unique_values": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15"
+  ],
+  "sample_type_counts": {
+    "formal_or_unknown": 1146,
+    "qc": 154
+  },
+  "group_label_counts": {
+    "0": 706,
+    "1": 440,
+    "QC": 154
+  },
+  "dataset_label": "BioHeart 数据集",
+  "description": "BioHeart 心脏生物标志物代谢组学数据集（1300 样本，56 代谢物，15 批次）",
+  "notes": [
+    "数据集: bioheart",
+    "源文件: bioheart.csv"
+  ]
+}

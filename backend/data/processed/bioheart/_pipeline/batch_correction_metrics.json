@@ -1,0 +1,33 @@
+{
+  "baseline_method_id": "per_feature_batch_location_scale_baseline",
+  "strict_combat": {
+    "status": "not_implemented",
+    "note": "strict ComBat 尚未实现。"
+  },
+  "pca_components": 2,
+  "explained_variance_ratio_before_pc": [
+    0.7058248956669761,
+    0.07110918854038388
+  ],
+  "explained_variance_ratio_after_pc": [
+    0.39429069645992615,
+    0.09553610111360321
+  ],
+  "silhouette_batch_id_pc12_before": 0.05675975521588098,
+  "silhouette_batch_id_pc12_after": -0.1169872074324107,
+  "delta_silhouette_batch_id": -0.17374696264829168,
+  "silhouette_group_label_pc12_before": -0.009276108004095602,
+  "silhouette_group_label_pc12_after": -0.004855114766898458,
+  "delta_silhouette_group_label": 0.0044209932371971445,
+  "batch_centroid_separation_pc12_before": 8.680970850594806,
+  "batch_centroid_separation_pc12_after": 1.0851305421403373e-14,
+  "delta_batch_centroid_separation": -8.680970850594795,
+  "heuristic_mixing_improved_by_centroid": true,
+  "heuristic_mixing_improved_by_silhouette": true,
+  "heuristic_mixing_improved": true,
+  "heuristic_mixing_notes": [
+    "以 batch 质心距离为主判据评估批次混合改善情况。"
+  ],
+  "heuristic_group_overdistorted": false,
+  "baseline_suitability_summary": "逐特征位置尺度对齐到全局分布（baseline）。"
+}

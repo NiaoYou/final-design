@@ -343,3 +343,85 @@ def run_differential_analysis_for_benchmark(
 
     logger.info("差异分析结果已写入: %s", out_path)
     return result
+
+
+def run_differential_analysis_for_dataset(
+    dataset_dir: Path,
+    pipeline_dir: Path,
+    group1: str,
+    group2: str,
+    fc_threshold: float = 1.0,
+    pvalue_threshold: float = 0.05,
+    use_fdr: bool = True,
+) -> Dict[str, Any]:
+    """
+    通用数据集差异分析入口（amide / bioheart / mi）。
+    从 dataset_dir/merged_sample_meta.csv 和
+       pipeline_dir/batch_corrected_sample_by_feature.csv 读取数据，
+    对 group1 vs group2 做差异分析，结果写入 pipeline_dir/diff_analysis/。
+    """
+    import re
+
+    # ---- 缓存路径 ----
+    out_dir = pipeline_dir / "diff_analysis"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    safe_g1 = re.sub(r"[^\w\-]", "_", group1)
+    safe_g2 = re.sub(r"[^\w\-]", "_", group2)
+    cache_path = out_dir / f"diff_{safe_g1}_vs_{safe_g2}.json"
+
+    # 读缓存
+    if cache_path.is_file():
+        try:
+            cached = json.loads(cache_path.read_text(encoding="utf-8"))
+            if (
+                cached.get("group1") == group1
+                and cached.get("group2") == group2
+                and abs(cached.get("fc_threshold", -999) - fc_threshold) < 1e-9
+                and abs(cached.get("pvalue_threshold", -999) - pvalue_threshold) < 1e-9
+                and cached.get("use_fdr") == use_fdr
+            ):
+                return cached
+        except Exception:
+            pass
+
+    # ---- 读取矩阵 ----
+    matrix_path = pipeline_dir / "batch_corrected_sample_by_feature.csv"
+    if not matrix_path.is_file():
+        raise FileNotFoundError(f"找不到批次校正矩阵: {matrix_path}")
+
+    meta_path = dataset_dir / "merged_sample_meta.csv"
+    if not meta_path.is_file():
+        raise FileNotFoundError(f"找不到样本元数据: {meta_path}")
+
+    matrix = pd.read_csv(matrix_path, index_col=0)
+    matrix.index = matrix.index.astype(str)
+
+    # 矩阵完整性过滤
+    all_nan_rows = matrix.isna().all(axis=1)
+    if all_nan_rows.any():
+        matrix = matrix.loc[~all_nan_rows]
+    all_nan_cols = matrix.isna().all(axis=0)
+    if all_nan_cols.any():
+        matrix = matrix.loc[:, ~all_nan_cols]
+    if matrix.empty:
+        raise ValueError("过滤全 NaN 行/列后矩阵为空，请检查输入文件。")
+
+    sample_meta = pd.read_csv(meta_path)
+
+    result = run_differential_analysis(
+        matrix=matrix,
+        sample_meta=sample_meta,
+        group1=group1,
+        group2=group2,
+        fc_threshold=fc_threshold,
+        pvalue_threshold=pvalue_threshold,
+        use_fdr=use_fdr,
+    )
+    result["input_matrix"] = str(matrix_path)
+
+    # 写缓存
+    with cache_path.open("w", encoding="utf-8") as fp:
+        json.dump(result, fp, ensure_ascii=False, indent=2)
+
+    logger.info("通用数据集差异分析完成并写入: %s", cache_path)
+    return result
