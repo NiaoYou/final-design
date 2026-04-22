@@ -70,7 +70,7 @@ const enabledTypes = ref<string[]>(Object.keys(TYPE_COLOR))
 const enabledRels  = ref<string[]>(['has_pathway', 'has_reaction', 'has_enzyme', 'has_module'])
 const seedOnly     = ref(false)
 const searchKeyword = ref('')
-const maxNodes     = ref(600)   // 节点数上限（种子 Compound 977 个，设低了会把其他类型挤出去）
+const maxNodes     = ref(300)   // 节点数上限，300 以内力导向图渲染流畅且边不会太稀疏
 
 // ─── 派生数据 ────────────────────────────────────────────────
 const availableRelations = computed(() => {
@@ -176,79 +176,67 @@ watch(() => props.dataset, () => void loadData())
 // ─── 渲染图表 ────────────────────────────────────────────────
 function renderGraph() {
   if (!chartRef.value) return
-  // P3: filteredData 防御性 null 检查
   const filtered = filteredData.value
   if (!filtered) return
 
-  // 确保容器已有实际尺寸，若宽高为 0 则延迟到下一帧
+  // 确保容器已有实际尺寸，若宽高为 0 则延迟重试
   const el = chartRef.value
   if (el.clientWidth === 0 || el.clientHeight === 0) {
-    setTimeout(() => renderGraph(), 100)
+    setTimeout(() => renderGraph(), 150)
     return
   }
 
   if (!chart) {
     chart = echarts.init(el, undefined, { renderer: 'canvas' })
-  } else {
-    // 容器尺寸可能因页面滚动/展开而变化，强制同步
-    chart.resize()
   }
+  chart.resize()
 
   const { nodes, edges, highlightIds } = filtered
   const kw = searchKeyword.value.trim()
 
-  // 为每个节点分配随机初始位置，避免节点全部堆叠在原点导致空白
-  const W = el.clientWidth
-  const H = el.clientHeight
-  const rand = (range: number) => (Math.random() - 0.5) * range
-
   // 构建 ECharts 节点
-  // 注意：node_label 用于保存原始 ID 字符串，不能与 ECharts 内置 label 配置对象同名
+  // ECharts force 布局坐标系以画布中心为原点，不需要手动设置 x/y
   const eNodes = nodes.map(n => {
     const color  = TYPE_COLOR[n.type] ?? TYPE_COLOR.Other
     const isSeed = n.is_seed
     const isHit  = highlightIds.has(n.id)
     const name   = n.metabolite_name || n.label
     return {
-      id:          n.id,
+      id:         n.id,
       name,
-      node_id:     n.id,       // 用 node_id 保存原始 ID，避免与 ECharts label 字段冲突
-      node_label:  n.label,    // 用 node_label 保存原始标签字符串
-      node_type:   n.type,
-      is_seed:     isSeed,
-      formula:     n.formula,
-      ion_mz:      n.ion_mz,
-      // 给节点分配随机初始坐标，力导向图据此展开布局
-      x:           W / 2 + rand(W * 0.7),
-      y:           H / 2 + rand(H * 0.7),
-      symbolSize:  isSeed ? (isHit ? 18 : 10) : 7,
+      node_id:    n.id,
+      node_label: n.label,
+      node_type:  n.type,
+      is_seed:    isSeed,
+      formula:    n.formula,
+      ion_mz:     n.ion_mz,
+      symbolSize: isSeed ? (isHit ? 20 : 12) : 8,
       itemStyle: {
         color:       isHit ? '#fbbf24' : color,
         borderColor: isSeed ? '#1e40af' : 'transparent',
-        borderWidth: isSeed ? 1.5 : 0,
-        opacity:     kw && !isHit ? 0.25 : 1,
+        borderWidth: isSeed ? 2 : 0,
+        opacity:     kw && !isHit ? 0.3 : 1,
         shadowBlur:  isHit ? 12 : 0,
         shadowColor: '#fbbf24',
       },
       label: {
-        show:      isSeed && nodes.length < 200,
+        show:      isSeed && nodes.length < 150,
         formatter: name.length > 12 ? name.slice(0, 12) + '…' : name,
         fontSize:  9,
         color:     '#334155',
-        overflow:  'truncate',
       },
     }
   })
 
   // 构建 ECharts 边
   const eEdges = edges.map(e => ({
-    source:    e.head,
-    target:    e.tail,
-    relation:  e.relation,
+    source:   e.head,
+    target:   e.tail,
+    relation: e.relation,
     lineStyle: {
-      color:   '#94a3b8',
-      width:   0.8,
-      opacity: kw ? 0.15 : 0.4,
+      color:     '#94a3b8',
+      width:     1,
+      opacity:   kw ? 0.15 : 0.5,
       curveness: 0.1,
     },
   }))
@@ -278,34 +266,37 @@ function renderGraph() {
     },
     series: [
       {
-        type:          'graph',
-        layout:        'force',
-        animation:     true,
-        animationDuration: 2000,
-        data:          eNodes,
-        edges:         eEdges,
-        roam:          true,
-        draggable:     true,
+        type:      'graph',
+        layout:    'force',
+        animation: true,
+        animationDuration: 1500,
+        data:      eNodes,
+        edges:     eEdges,
+        roam:      true,
+        draggable: true,
+        // 关键：使用 center + zoom 确保节点在视口内可见
+        center:    ['50%', '50%'],
+        zoom:      1,
         force: {
-          repulsion:    nodes.length > 300 ? 80 : 150,
-          edgeLength:   [30, 100],
-          gravity:      0.1,
-          friction:     0.65,
-          layoutAnimation: true,   // 始终开启布局动画，确保节点从初始位置展开可见
+          initLayout:      'circular',   // 先圆形排列，再力导向展开，避免节点全堆中心
+          repulsion:       nodes.length > 200 ? 60 : 120,
+          edgeLength:      [20, 80],
+          gravity:         0.05,
+          friction:        0.6,
+          layoutAnimation: true,
         },
         emphasis: {
-          focus:   'adjacency',
-          scale:   true,
+          focus:     'adjacency',
+          scale:     true,
           lineStyle: { width: 2, opacity: 0.9 },
         },
-        edgeSymbol: ['none', 'arrow'],
+        edgeSymbol:     ['none', 'arrow'],
         edgeSymbolSize: 5,
-        lineStyle:  { curveness: 0.1 },
+        lineStyle:      { curveness: 0.1 },
       },
     ],
   }
 
-  // notMerge=true：每次完全替换配置，避免力导向图节点残留
   chart.setOption(option, { notMerge: true, lazyUpdate: false })
 }
 
@@ -409,9 +400,9 @@ onBeforeUnmount(() => {
           <div class="mkg-ctrl-label" style="margin-left:16px">最大节点数：</div>
           <el-slider
             v-model="maxNodes"
-            :min="100" :max="1200" :step="100"
+            :min="50" :max="800" :step="50"
             style="width:160px;margin-left:8px"
-            :marks="{ 400: '400', 600: '600', 1000: '1000' }"
+            :marks="{ 100: '100', 300: '300', 500: '500' }"
           />
           <span class="mkg-count-badge">{{ maxNodes }}</span>
         </div>
