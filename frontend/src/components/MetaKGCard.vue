@@ -180,12 +180,27 @@ function renderGraph() {
   const filtered = filteredData.value
   if (!filtered) return
 
+  // 确保容器已有实际尺寸，若宽高为 0 则延迟到下一帧
+  const el = chartRef.value
+  if (el.clientWidth === 0 || el.clientHeight === 0) {
+    setTimeout(() => renderGraph(), 100)
+    return
+  }
+
   if (!chart) {
-    chart = echarts.init(chartRef.value, undefined, { renderer: 'canvas' })
+    chart = echarts.init(el, undefined, { renderer: 'canvas' })
+  } else {
+    // 容器尺寸可能因页面滚动/展开而变化，强制同步
+    chart.resize()
   }
 
   const { nodes, edges, highlightIds } = filtered
   const kw = searchKeyword.value.trim()
+
+  // 为每个节点分配随机初始位置，避免节点全部堆叠在原点导致空白
+  const W = el.clientWidth
+  const H = el.clientHeight
+  const rand = (range: number) => (Math.random() - 0.5) * range
 
   // 构建 ECharts 节点
   // 注意：node_label 用于保存原始 ID 字符串，不能与 ECharts 内置 label 配置对象同名
@@ -203,6 +218,9 @@ function renderGraph() {
       is_seed:     isSeed,
       formula:     n.formula,
       ion_mz:      n.ion_mz,
+      // 给节点分配随机初始坐标，力导向图据此展开布局
+      x:           W / 2 + rand(W * 0.7),
+      y:           H / 2 + rand(H * 0.7),
       symbolSize:  isSeed ? (isHit ? 18 : 10) : 7,
       itemStyle: {
         color:       isHit ? '#fbbf24' : color,
@@ -263,17 +281,17 @@ function renderGraph() {
         type:          'graph',
         layout:        'force',
         animation:     true,
-        animationDuration: 1500,
+        animationDuration: 2000,
         data:          eNodes,
         edges:         eEdges,
         roam:          true,
         draggable:     true,
         force: {
-          repulsion:    nodes.length > 200 ? 120 : 200,
-          edgeLength:   [40, 120],
-          gravity:      0.08,
-          friction:     0.6,
-          layoutAnimation: nodes.length < 500,
+          repulsion:    nodes.length > 300 ? 80 : 150,
+          edgeLength:   [30, 100],
+          gravity:      0.1,
+          friction:     0.65,
+          layoutAnimation: true,   // 始终开启布局动画，确保节点从初始位置展开可见
         },
         emphasis: {
           focus:   'adjacency',
