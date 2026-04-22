@@ -12,17 +12,17 @@ const isBenchmark = computed(() => props.dataset === 'benchmark')
 
 // ─── 节点类型配色 ───────────────────────────────────────────
 const TYPE_COLOR: Record<string, string> = {
-  Compound: '#3b82f6',   // 蓝：本项目代谢物（种子）
-  Pathway:  '#f97316',   // 橙：通路
-  Reaction: '#8b5cf6',   // 紫：生化反应
-  Enzyme:   '#10b981',   // 绿：酶
-  Drug:     '#ef4444',   // 红：药物
-  Module:   '#f59e0b',   // 黄：KEGG Module
-  Network:  '#6366f1',   // 靛：KEGG Network
-  Gene:     '#06b6d4',   // 青：基因（bioheart/mi 子图含有）
-  Protein:  '#ec4899',   // 粉：蛋白质
-  Disease:  '#78716c',   // 棕灰：疾病
-  Other:    '#94a3b8',   // 灰
+  Compound: '#3b82f6',
+  Pathway:  '#f97316',
+  Reaction: '#8b5cf6',
+  Enzyme:   '#10b981',
+  Drug:     '#ef4444',
+  Module:   '#f59e0b',
+  Network:  '#6366f1',
+  Gene:     '#06b6d4',
+  Protein:  '#ec4899',
+  Disease:  '#78716c',
+  Other:    '#94a3b8',
 }
 
 const TYPE_LABEL: Record<string, string> = {
@@ -55,6 +55,7 @@ const RELATION_LABEL: Record<string, string> = {
 }
 
 // ─── 组件状态 ────────────────────────────────────────────────
+// chartRef 不受 v-if 控制，始终存在于 DOM，彻底避免挂载时序问题
 const chartRef = ref<HTMLDivElement | null>(null)
 let chart: echarts.ECharts | null = null
 
@@ -70,7 +71,7 @@ const enabledTypes = ref<string[]>(Object.keys(TYPE_COLOR))
 const enabledRels  = ref<string[]>(['has_pathway', 'has_reaction', 'has_enzyme', 'has_module'])
 const seedOnly     = ref(false)
 const searchKeyword = ref('')
-const maxNodes     = ref(300)   // 节点数上限，300 以内力导向图渲染流畅且边不会太稀疏
+const maxNodes     = ref(300)
 
 // ─── 派生数据 ────────────────────────────────────────────────
 const availableRelations = computed(() => {
@@ -82,15 +83,12 @@ const filteredData = computed(() => {
   const typeSet = new Set(enabledTypes.value)
   const relSet  = new Set(enabledRels.value)
 
-  // 1. 过滤节点类型
   let nodes = allNodes.value.filter(n => typeSet.has(n.type))
 
-  // 2. seed_only 模式
   if (seedOnly.value) {
     nodes = nodes.filter(n => n.is_seed)
   }
 
-  // 3. 搜索高亮（匹配代谢物名称或 ID）
   const kw = searchKeyword.value.trim().toLowerCase()
   let highlightIds = new Set<string>()
   if (kw) {
@@ -101,22 +99,12 @@ const filteredData = computed(() => {
     }
   }
 
-  // 4. 过滤边（只保留两端节点都在当前节点集中、且关系类型被选中的边）
   const nodeIds = new Set(nodes.map(n => n.id))
   let edges = allEdges.value.filter(
     e => relSet.has(e.relation) && nodeIds.has(e.head) && nodeIds.has(e.tail)
   )
 
-  // 5. 裁剪到 maxNodes
-  // 关键修复：种子 Compound 节点可能超过 maxNodes 上限，导致非 Compound 类型节点
-  // （Pathway/Reaction/Enzyme 等）全部被挤出，只剩蓝色节点。
-  // 新策略：先按 "有边参与" 计算每个节点的连接度，优先保留：
-  //   a. 搜索命中节点
-  //   b. 非 Compound 邻居节点（Pathway/Reaction/Enzyme 等，保证多颜色可见）
-  //   c. 有边的 Compound 种子节点
-  //   d. 其余节点
   if (nodes.length > maxNodes.value) {
-    // 计算每个节点的边数
     const edgeCount = new Map<string, number>()
     for (const e of edges) {
       edgeCount.set(e.head, (edgeCount.get(e.head) ?? 0) + 1)
@@ -129,7 +117,6 @@ const filteredData = computed(() => {
     const rest         = nodes.filter(n => !highlightIds.has(n.id) && n.type === 'Compound' && !n.is_seed)
     const seedNoEdge   = nodes.filter(n => !highlightIds.has(n.id) && n.type === 'Compound' && n.is_seed && (edgeCount.get(n.id) ?? 0) === 0)
 
-    // 非 Compound 节点按连接度降序排列，优先展示高连接度节点（如大通路）
     nonCompound.sort((a, b) => (edgeCount.get(b.id) ?? 0) - (edgeCount.get(a.id) ?? 0))
     seedWithEdge.sort((a, b) => (edgeCount.get(b.id) ?? 0) - (edgeCount.get(a.id) ?? 0))
 
@@ -147,7 +134,6 @@ const filteredData = computed(() => {
 async function loadData() {
   loading.value = true
   errorMsg.value = ''
-  // 切换数据集时清空旧数据
   allNodes.value = []
   allEdges.value = []
   metaInfo.value = {}
@@ -158,18 +144,15 @@ async function loadData() {
     allNodes.value  = sg.nodes
     allEdges.value  = sg.edges
     metaInfo.value  = sg.meta
-    // 初始化可用关系选择（默认选前4种）
     const rels = Object.keys(sg.meta?.relation_counts ?? {})
     enabledRels.value = rels.slice(0, 4)
-    // ⚠️ 关键修复：必须先 loading=false，让 v-else 中的 chartRef 挂载到 DOM，
-    // 再 nextTick 等待 DOM 更新，最后才能调用 renderGraph()。
-    // 否则 chartRef.value 始终为 null，ECharts 无法初始化。
-    loading.value = false
-    await nextTick()
-    renderGraph()
   } catch (e: any) {
     errorMsg.value = e?.response?.data?.detail ?? e?.message ?? '加载失败'
+  } finally {
     loading.value = false
+    // 等 DOM 更新后渲染（chartRef 始终在 DOM 里，无需担心 null）
+    await nextTick()
+    renderGraph()
   }
 }
 
@@ -179,26 +162,19 @@ watch(() => props.dataset, () => void loadData())
 // ─── 渲染图表 ────────────────────────────────────────────────
 function renderGraph() {
   if (!chartRef.value) return
-  const filtered = filteredData.value
-  if (!filtered) return
+  if (loading.value) return          // 加载中不渲染
+  if (!allNodes.value.length) return // 无数据不渲染
 
-  // 确保容器已有实际尺寸，若宽高为 0 则延迟重试
   const el = chartRef.value
-  if (el.clientWidth === 0 || el.clientHeight === 0) {
-    setTimeout(() => renderGraph(), 150)
-    return
-  }
 
   if (!chart) {
     chart = echarts.init(el, undefined, { renderer: 'canvas' })
   }
   chart.resize()
 
-  const { nodes, edges, highlightIds } = filtered
+  const { nodes, edges, highlightIds } = filteredData.value
   const kw = searchKeyword.value.trim()
 
-  // 构建 ECharts 节点
-  // ECharts force 布局坐标系以画布中心为原点，不需要手动设置 x/y
   const eNodes = nodes.map(n => {
     const color  = TYPE_COLOR[n.type] ?? TYPE_COLOR.Other
     const isSeed = n.is_seed
@@ -231,7 +207,6 @@ function renderGraph() {
     }
   })
 
-  // 构建 ECharts 边
   const eEdges = edges.map(e => ({
     source:   e.head,
     target:   e.tail,
@@ -277,11 +252,10 @@ function renderGraph() {
         edges:     eEdges,
         roam:      true,
         draggable: true,
-        // 关键：使用 center + zoom 确保节点在视口内可见
         center:    ['50%', '50%'],
         zoom:      1,
         force: {
-          initLayout:      'circular',   // 先圆形排列，再力导向展开，避免节点全堆中心
+          initLayout:      'circular',
           repulsion:       nodes.length > 200 ? 60 : 120,
           edgeLength:      [20, 80],
           gravity:         0.05,
@@ -303,9 +277,10 @@ function renderGraph() {
   chart.setOption(option, { notMerge: true, lazyUpdate: false })
 }
 
-// ─── 监听过滤条件变化 ─────────────────────────────────────────
-// filteredData 是 computed，不需要 deep: true，computed 自动追踪依赖
-watch(filteredData, () => renderGraph())
+// 过滤条件变化时重新渲染（数据已加载完成时）
+watch(filteredData, () => {
+  if (!loading.value && allNodes.value.length > 0) renderGraph()
+})
 
 // ─── 节点数统计 ─────────────────────────────────────────────
 const stats = computed(() => {
@@ -316,14 +291,14 @@ const stats = computed(() => {
 })
 
 // ─── resize ──────────────────────────────────────────────────
-// P0: ResizeObserver 浏览器兼容性检查
 const ro = typeof ResizeObserver !== 'undefined'
   ? new ResizeObserver(() => chart?.resize())
   : null
 
 onMounted(() => {
-  void loadData()
+  // chartRef 始终在 DOM 中，可以立即 observe
   if (chartRef.value && ro) ro.observe(chartRef.value)
+  void loadData()
 })
 
 onBeforeUnmount(() => {
@@ -348,15 +323,15 @@ onBeforeUnmount(() => {
       </p>
     </div>
 
-    <!-- 加载 / 错误 -->
+    <!-- 加载提示（覆盖在图表上方，不从 DOM 移除 chartRef） -->
     <div v-if="loading" class="mkg-card__loading">
       <el-icon class="is-loading" :size="24"><Loading /></el-icon>
       <span>正在加载子图数据…</span>
     </div>
     <el-alert v-else-if="errorMsg" type="error" :title="errorMsg" :closable="false" />
 
-    <template v-else>
-      <!-- 控制面板 -->
+    <!-- 控制面板：数据加载完才显示 -->
+    <template v-if="!loading && !errorMsg && allNodes.length > 0">
       <div class="mkg-card__controls">
         <!-- 搜索 -->
         <el-input
@@ -428,26 +403,30 @@ onBeforeUnmount(() => {
           命中 {{ filteredData.highlightIds.size }} 个节点
         </span>
       </div>
-
-      <!-- 图表 -->
-      <div ref="chartRef" class="mkg-chart" />
-
-      <!-- 图例说明 -->
-      <div class="mkg-legend">
-        <div v-for="(color, t) in TYPE_COLOR" :key="t" class="mkg-legend__item">
-          <span class="type-dot lg" :style="{ background: color }" />
-          <span>{{ TYPE_LABEL[t] ?? t }}</span>
-        </div>
-        <div class="mkg-legend__item">
-          <span class="type-dot lg" style="background:#3b82f6;outline:2px solid #1e40af;outline-offset:1px" />
-          <span>本项目代谢物（蓝框）</span>
-        </div>
-        <div class="mkg-legend__item">
-          <span class="type-dot lg" style="background:#fbbf24" />
-          <span>搜索命中</span>
-        </div>
-      </div>
     </template>
+
+    <!-- 图表容器：始终保留在 DOM 中，用 visibility 控制显示 -->
+    <div
+      ref="chartRef"
+      class="mkg-chart"
+      :style="{ visibility: (!loading && !errorMsg && allNodes.length > 0) ? 'visible' : 'hidden' }"
+    />
+
+    <!-- 图例说明 -->
+    <div v-if="!loading && !errorMsg && allNodes.length > 0" class="mkg-legend">
+      <div v-for="(color, t) in TYPE_COLOR" :key="t" class="mkg-legend__item">
+        <span class="type-dot lg" :style="{ background: color }" />
+        <span>{{ TYPE_LABEL[t] ?? t }}</span>
+      </div>
+      <div class="mkg-legend__item">
+        <span class="type-dot lg" style="background:#3b82f6;outline:2px solid #1e40af;outline-offset:1px" />
+        <span>本项目代谢物（蓝框）</span>
+      </div>
+      <div class="mkg-legend__item">
+        <span class="type-dot lg" style="background:#fbbf24" />
+        <span>搜索命中</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -531,7 +510,7 @@ onBeforeUnmount(() => {
   margin-left: 4px;
 }
 
-/* 图表 */
+/* 图表：始终占据高度，用 visibility 控制是否可见 */
 .mkg-chart {
   width: 100%;
   height: 560px;
