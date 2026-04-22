@@ -161,11 +161,14 @@ async function loadData() {
     // 初始化可用关系选择（默认选前4种）
     const rels = Object.keys(sg.meta?.relation_counts ?? {})
     enabledRels.value = rels.slice(0, 4)
+    // ⚠️ 关键修复：必须先 loading=false，让 v-else 中的 chartRef 挂载到 DOM，
+    // 再 nextTick 等待 DOM 更新，最后才能调用 renderGraph()。
+    // 否则 chartRef.value 始终为 null，ECharts 无法初始化。
+    loading.value = false
     await nextTick()
     renderGraph()
   } catch (e: any) {
     errorMsg.value = e?.response?.data?.detail ?? e?.message ?? '加载失败'
-  } finally {
     loading.value = false
   }
 }
