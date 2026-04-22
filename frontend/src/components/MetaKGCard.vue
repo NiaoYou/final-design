@@ -19,6 +19,9 @@ const TYPE_COLOR: Record<string, string> = {
   Drug:     '#ef4444',   // 红：药物
   Module:   '#f59e0b',   // 黄：KEGG Module
   Network:  '#6366f1',   // 靛：KEGG Network
+  Gene:     '#06b6d4',   // 青：基因（bioheart/mi 子图含有）
+  Protein:  '#ec4899',   // 粉：蛋白质
+  Disease:  '#78716c',   // 棕灰：疾病
   Other:    '#94a3b8',   // 灰
 }
 
@@ -30,19 +33,25 @@ const TYPE_LABEL: Record<string, string> = {
   Drug:     '药物',
   Module:   '模块',
   Network:  '网络',
+  Gene:     '基因',
+  Protein:  '蛋白质',
+  Disease:  '疾病',
   Other:    '其他',
 }
 
 const RELATION_LABEL: Record<string, string> = {
-  has_pathway:  '参与通路',
-  has_reaction: '参与反应',
-  has_enzyme:   '被酶催化',
-  has_module:   '属于模块',
-  has_network:  '属于网络',
-  'is a':       '是',
-  'is_a':       '是',
-  'same as':    '等同于',
-  'same_as':    '等同于',
+  has_pathway:        '参与通路',
+  has_reaction:       '参与反应',
+  has_enzyme:         '被酶催化',
+  has_module:         '属于模块',
+  has_network:        '属于网络',
+  related_to_protein: '关联蛋白',
+  related_to_gene:    '关联基因',
+  has_disease:        '关联疾病',
+  'is a':             '是',
+  'is_a':             '是',
+  'same as':          '等同于',
+  'same_as':          '等同于',
 }
 
 // ─── 组件状态 ────────────────────────────────────────────────

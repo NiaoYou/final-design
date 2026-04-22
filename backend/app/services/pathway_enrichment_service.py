@@ -509,6 +509,17 @@ def get_or_run_pathway_enrichment(
 # 非 benchmark 数据集（bioheart / mi）专用富集入口
 # ──────────────────────────────────────────────────────────────────────────────
 
+# benchmark 的 KEGG 缓存目录（供非 benchmark 数据集复用，避免重复下载）
+def _benchmark_pipeline_dir() -> Optional[Path]:
+    """返回 benchmark_merged/_pipeline/ 路径（若存在）。"""
+    try:
+        from app.services.benchmark_merged_read import pipeline_dir as _bm_pipeline_dir  # type: ignore
+        p = _bm_pipeline_dir()
+        return p if p.is_dir() else None
+    except Exception:
+        return None
+
+
 def get_or_run_pathway_enrichment_for_dataset(
     pipeline_dir: Path,
     dataset_dir: Path,
@@ -527,6 +538,7 @@ def get_or_run_pathway_enrichment_for_dataset(
        run_differential_analysis_for_dataset()（dataset 路由层已缓存，此处作为兜底）。
     2. annotated_feature_meta.json 中特征名字段使用 ``feature``（不是 ``feature_col``）。
     3. 不依赖 benchmark_merged_read 模块。
+    4. KEGG 缓存优先复用 benchmark 的 kegg_cache/，避免重复下载。
     """
     # ---- 缓存键 ----
     cache_key = f"{group1}_vs_{group2}_fc{fc_threshold}_pv{pvalue_threshold}_fdr{use_fdr}"
@@ -615,9 +627,11 @@ def get_or_run_pathway_enrichment_for_dataset(
             "group2": group2,
         }
 
-    # ---- KEGG 数据 ----
-    cpd_pathway_map = load_or_fetch_compound_pathway_map(pipeline_dir)
-    pathway_names = load_or_fetch_pathway_names(pipeline_dir)
+    # ---- KEGG 数据（优先复用 benchmark 缓存，避免重复下载）----
+    bm_pipeline = _benchmark_pipeline_dir()
+    kegg_cache_dir = bm_pipeline if (bm_pipeline and (bm_pipeline / KEGG_CACHE_DIR / "compound_pathway_map.json").is_file()) else pipeline_dir
+    cpd_pathway_map = load_or_fetch_compound_pathway_map(kegg_cache_dir)
+    pathway_names = load_or_fetch_pathway_names(kegg_cache_dir)
 
     if not cpd_pathway_map:
         return {
