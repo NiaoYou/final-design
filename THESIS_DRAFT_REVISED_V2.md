@@ -215,7 +215,7 @@ $$x_{ijb} = \alpha_j + \mathbf{d}_{ib}^T \boldsymbol{\beta}_j + \gamma_{jb} + \d
 
 ComBat 的关键在于经验 Bayes 估计策略：首先利用所有特征 $j = 1, \ldots, p$ 上的批次效应估计值构建先验分布，再通过 Bayes 收缩将各特征的批次参数估计值向先验均值"收缩"，从而在小样本场景下获得更稳定的参数估计。校正后的数据为：
 
-$$x'_{ijb} = \frac{x_{ijb} - \alpha_j - \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j - \hat{\gamma}^*_{jb}}{\hat{\delta}^*_{jb}} \cdot \sigma_j + \alpha_j + \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j \tag{2-5}$$
+$$x'_{ijb} = \frac{x_{ijb} - \alpha_j - \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j - \hat{\gamma}^*_{jb}}{\hat{\delta}^*_{jb}} \cdot \sigma_j + \alpha_j + \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j \quad (2\text{-}5)$$
 
 其中 $\hat{\gamma}^*_{jb}$ 和 $\hat{\delta}^*_{jb}$ 为经验 Bayes 收缩后的批次效应估计值。ComBat 通过经验 Bayes 收缩利用跨特征信息改善小批次估计稳定性，并可显式传入生物学协变量保护真实生物学差异，是目前代谢组学领域应用最广泛的批次校正方法之一。
 
@@ -471,7 +471,7 @@ $$\text{NRMSE} = \frac{1}{p}\sum_{j=1}^{p} \frac{\text{RMSE}_j}{\text{std}(x_{\c
 
 Baseline 方法的设计思想是：假设批次效应主要为各批次在每个特征上的位置（均值）和尺度（标准差）系统性偏移，通过将各批次分布对齐到全局分布消除偏差。对于特征 $j$，设全局均值 $\mu_j$、全局标准差 $\sigma_j$，批次 $b$ 内均值 $\mu_{bj}$、批次内标准差 $\sigma_{bj}$，则属于批次 $b$ 的样本 $i$ 的校正公式为：
 
-$$x'_{ij} = \frac{x_{ij} - \mu_{bj}}{\max(\sigma_{bj},\ \epsilon)} \cdot \sigma_j + \mu_j \tag{4-9}$$
+$$x'_{ij} = \frac{x_{ij} - \mu_{bj}}{\max(\sigma_{bj},\ \epsilon)} \cdot \sigma_j + \mu_j \quad (4\text{-}9)$$
 
 其中 $\epsilon = 10^{-8}$ 为防除零的数值稳定下界。该公式先对批次内分布执行标准化（减去批次均值、除以批次标准差），再将其缩放还原为全局分布的均值与尺度，从而实现所有批次在该特征上的位置和尺度对齐。
 

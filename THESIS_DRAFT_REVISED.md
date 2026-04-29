@@ -261,7 +261,7 @@ $$\text{NRMSE} = \frac{1}{p}\sum_{j=1}^{p}\frac{\text{RMSE}_j}{\text{std}(x_{\cd
 
 对于特征 $j$，设全局均值为 $\mu_j = \frac{1}{n}\sum_{i=1}^{n}x_{ij}$，全局标准差为 $\sigma_j = \text{std}(x_{\cdot j})$；对于属于批次 $b$ 的样本子集，设批次内均值为 $\mu_{bj}$，批次内标准差为 $\sigma_{bj}$。则对样本 $i$（$i$ 属于批次 $b$）的校正公式为：
 
-$$x'_{ij} = \frac{x_{ij} - \mu_{bj}}{\max(\sigma_{bj}, \epsilon)} \cdot \sigma_j + \mu_j \tag{2-9}$$
+$$x'_{ij} = \frac{x_{ij} - \mu_{bj}}{\max(\sigma_{bj}, \epsilon)} \cdot \sigma_j + \mu_j \quad (2\text{-}9)$$
 
 其中 $\epsilon > 0$ 为防止除零的数值稳定下界（本文取 $\epsilon = 10^{-8}$）。该公式先将批次内分布标准化（减去批次均值、除以批次标准差），再缩放还原为全局分布的均值与尺度，实现批次间分布的对齐。
 
@@ -279,7 +279,7 @@ $$x_{ijb} = \alpha_j + \mathbf{d}_{ib}^T \boldsymbol{\beta}_j + \gamma_{jb} + \d
 
 ComBat 的关键在于经验 Bayes 估计策略：首先利用所有特征 $j = 1, \ldots, p$ 上的批次效应估计值构建先验分布，再通过 Bayes 收缩将各特征的批次参数估计值向先验均值"收缩"，从而在小样本场景下获得更稳定的参数估计。校正后的数据为：
 
-$$x'_{ijb} = \frac{x_{ijb} - \alpha_j - \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j - \hat{\gamma}^*_{jb}}{\hat{\delta}^*_{jb}} \cdot \sigma_j + \alpha_j + \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j \tag{2-11}$$
+$$x'_{ijb} = \frac{x_{ijb} - \alpha_j - \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j - \hat{\gamma}^*_{jb}}{\hat{\delta}^*_{jb}} \cdot \sigma_j + \alpha_j + \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j \quad (2\text{-}11)$$
 
 其中 $\hat{\gamma}^*_{jb}$ 和 $\hat{\delta}^*_{jb}$ 为经验 Bayes 收缩后的批次效应估计值。
 
