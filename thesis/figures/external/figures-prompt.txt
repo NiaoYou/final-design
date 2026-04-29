@@ -1,0 +1,164 @@
+================================================================================
+论文外部图绘制指引（共 8 张外部图 + 7 张截图说明）
+================================================================================
+
+说明：本文件记录所有需要"外部 AI 绘图工具 / 流程图工具 / 用户截图"完成的图。
+推荐工具：
+  - 概念示意图 / 网络结构图：ChatGPT / GPT-4o 画图、draw.io
+  - 流程图 / 状态机：draw.io、Mermaid、PlantUML
+  - 架构图：draw.io（推荐）
+完成后请按 figures-manifest.md 表中的命名将图片放入对应目录。
+
+================================================================================
+【图 3-1】Autoencoder 网络结构示意图
+目标路径：thesis/figures/external/fig_3_1_autoencoder_arch.png
+绘制要点：
+  - 横向流式结构：输入层(1180) → 编码层1(512, ReLU+BN) → 编码层2(256, ReLU+BN)
+    → 瓶颈层 latent(64) → 解码层1(256, ReLU+BN) → 解码层2(512, ReLU+BN)
+    → 输出层(1180, Sigmoid)
+  - 在每层下方标注神经元数量
+  - 编码端用蓝色渐变（深→浅），解码端用橙色渐变（浅→深），瓶颈层用绿色突出
+  - 在输入层左侧标 "Z-score 归一化代谢物矩阵"
+  - 在输出层右侧标 "重构矩阵 X̂"
+  - 上方加损失函数说明：Loss = MSE(X_obs, X̂_obs)（仅观测位点参与）
+推荐 Prompt（粘贴给 ChatGPT 画图）：
+  "Draw a horizontal autoencoder neural network architecture diagram for missing
+   value imputation. Layers from left to right: input(1180) → dense(512, BN+ReLU)
+   → dense(256, BN+ReLU) → bottleneck latent(64, green highlight) → dense(256,
+   BN+ReLU) → dense(512, BN+ReLU) → output(1180, Sigmoid). Use blue gradient for
+   encoder and orange gradient for decoder. Annotate neuron counts under each
+   layer. Add label 'Z-score normalized metabolite matrix' on the input side and
+   'Reconstructed matrix X̂' on the output side. Add a top arrow with text
+   'Loss = MSE on observed entries only'. Clean academic style, white background,
+   high resolution."
+
+================================================================================
+【图 3-2】ComBat 安全封装异常降级流程图
+目标路径：thesis/figures/external/fig_3_2_combat_fallback_flow.png
+绘制要点：流程图（draw.io 或 Mermaid 均可）
+  开始 → 校验输入(矩阵/批次/分组) →
+    [分支1] 单批次? ── 是 → 跳过校正，原样返回 → 标记 status="single_batch_skip" → 结束
+    [分支1] 否
+      → [分支2] 每批次样本 < 2? ── 是 → 触发 fallback：均值中心化 → 标记 status="fallback_mean_centering" → 结束
+      [分支2] 否
+        → 调用 pyComBat 主流程
+          → [try/except] 异常? ── 是 → 触发 fallback：均值中心化 → 标记 status="combat_exception_fallback" → 结束
+          → 无异常 → 返回校正矩阵 → 标记 status="combat_success" → 结束
+  使用菱形表示判断、矩形表示动作、不同颜色区分主流程/降级路径（主路径蓝、降级路径橙）
+Mermaid 模板：
+  flowchart TD
+    A[输入: X, batch, group] --> B{单批次?}
+    B -- 是 --> S1[原样返回\nstatus=single_batch_skip]
+    B -- 否 --> C{每批次样本<2?}
+    C -- 是 --> F1[均值中心化降级\nstatus=fallback_mean_centering]
+    C -- 否 --> D[调用 pyComBat]
+    D --> E{异常?}
+    E -- 是 --> F2[均值中心化降级\nstatus=combat_exception_fallback]
+    E -- 否 --> G[返回校正矩阵\nstatus=combat_success]
+
+================================================================================
+【图 5-1】系统总体架构图（前后端分离）
+目标路径：thesis/figures/external/fig_5_1_system_architecture.png
+绘制要点：draw.io 三栏架构图
+  顶层：用户浏览器（Vue3 SPA）
+  中层：前端层（Vue3 + Element Plus + Pinia + ECharts/Plotly + D3-force）
+  下方接 HTTP/JSON 通信箭头 → 后端层
+  后端层：FastAPI（Uvicorn）→ 路由层 → 服务层 → Pipeline 层 → 模型/算法层
+  底层：存储层（SQLite + 文件系统 data/processed/）
+  右侧：异步任务执行池（ThreadPoolExecutor）
+  各模块用不同色块，模块间用箭头标注通信方式（REST / 异步任务 / 文件读写）
+
+================================================================================
+【图 5-2】后端四层分层架构图
+目标路径：thesis/figures/external/fig_5_2_backend_layers.png
+绘制要点：draw.io 自顶向下四层
+  Layer 1 - API 路由层：FastAPI Router（/api/datasets, /api/runs, /api/diff, ...）
+  Layer 2 - 服务层：DatasetService / RunService / AnalysisService / KGService
+  Layer 3 - Pipeline 层：ImputationStep → CorrectionStep → EvaluationStep → DiffStep → EnrichStep
+  Layer 4 - 算法/模型层：Autoencoder / ComBatSafe / TTest / KEGG Enrichment
+  右侧贴一列：数据访问层 DAO（SQLite + 文件 IO）
+  各层之间用单向箭头表示依赖
+
+================================================================================
+【图 5-3】前端组件树与状态管理关系图
+目标路径：thesis/figures/external/fig_5_3_frontend_component_tree.png
+绘制要点：组件树 + Pinia store 关系
+  根：App.vue → 路由 router-view
+  路由页面：DashboardView / DatasetsView / RunsView / DiffView / EnrichView / GraphView
+  公共组件：UploadDialog / RunStatusCard / PCAChart / VolcanoChart / BubbleChart / ForceGraph
+  右侧：Pinia stores - datasetStore / runStore / analysisStore / graphStore
+  虚线连接组件 ↔ store，实线表示父子组件包含
+
+================================================================================
+【图 5-4】数据库 E-R 图
+目标路径：thesis/figures/external/fig_5_4_database_er.png
+绘制要点：draw.io E-R 图，至少 5 个实体
+  Dataset(id, name, source, n_samples, n_features, batch_col, group_col, created_at)
+  Run(id, dataset_id, status, started_at, finished_at, params_json, error_msg)
+  Result(id, run_id, step_name, output_path, metrics_json)
+  DiffTask(id, run_id, group1, group2, fc_threshold, p_threshold, n_sig)
+  EnrichTask(id, diff_task_id, db, n_pathways, output_path)
+  关系：Dataset 1—N Run；Run 1—N Result；Run 1—N DiffTask；DiffTask 1—N EnrichTask
+  主键加下划线，外键加 [FK] 标记
+
+================================================================================
+【图 5-5】系统数据流 Pipeline 示意图
+目标路径：thesis/figures/external/fig_5_5_pipeline_dataflow.png
+绘制要点：横向数据流
+  原始 CSV 上传 → 列名映射 → 矩阵装载 → 缺失值填充(Autoencoder) → 批次校正(ComBat-safe)
+  → 评估(PCA / 质心距离 / Silhouette) → 差异分析(t-test + BH) → 通路富集(KEGG)
+  → 知识图谱构建(MetaKG) → 前端可视化
+  每个节点下方标注产物文件名（imputed.csv / corrected.csv / pca.png / diff.json / enrich.json / graph.json）
+
+================================================================================
+【图 5-6】任务状态机示意图
+目标路径：thesis/figures/external/fig_5_6_task_state_machine.png
+绘制要点：状态机图（PlantUML 或 draw.io）
+  状态：PENDING → RUNNING → SUCCESS / FAILED / CANCELED
+  转移：
+    创建 → PENDING
+    PENDING → RUNNING（线程池调度）
+    RUNNING → SUCCESS（正常完成）
+    RUNNING → FAILED（异常捕获）
+    PENDING / RUNNING → CANCELED（用户取消）
+  每个状态附带描述和可执行操作
+
+================================================================================
+【图 4-6】MetaKG 知识图谱代谢物-通路-酶力导向子图（待截图）
+目标路径：thesis/figures/screenshots/fig_4_6_metakg_subgraph.png
+截图位置：前端启动后访问 /graph 页面 → 选择 Benchmark 数据集 → 节点过滤选 "代谢物 + 通路 + 酶"
+        → 力导向布局稳定后截全屏（建议 1600×1000）
+要点：节点带不同颜色（代谢物蓝、通路橙、酶绿），保留 1-2 个高富集通路的局部子图
+
+================================================================================
+【图 6-1】首页 KPI 概览界面
+目标路径：thesis/figures/screenshots/fig_6_1_dashboard.png
+截图位置：访问 / 首页 → 截图包含 KPI 卡片（数据集数、任务数、最新运行）和趋势图
+
+【图 6-2】数据导入与列名映射配置界面
+目标路径：thesis/figures/screenshots/fig_6_2_import_mapping.png
+截图位置：/datasets 页 → 点击"上传" → 上传 Benchmark CSV → 截图列名映射对话框
+
+【图 6-3】PCA 校正前后对比可视化界面
+目标路径：thesis/figures/screenshots/fig_6_3_pca_compare.png
+截图位置：/runs/:id 页 → 选择已完成运行 → PCA 对比 Tab → 截两个 PCA 图并排展示
+
+【图 6-4】差异代谢物火山图与表格界面
+目标路径：thesis/figures/screenshots/fig_6_4_volcano_table.png
+截图位置：/diff 页 → 选择两组（如 P1_AA_0001 vs P1_AA_1024） → 截火山图 + 下方差异表格
+
+【图 6-5】KEGG 通路富集气泡图界面
+目标路径：thesis/figures/screenshots/fig_6_5_kegg_bubble.png
+截图位置：/enrich 页 → 选择差异任务 → 截气泡图 + 通路明细表
+
+【图 6-6】MetaKG 力导向知识图谱与节点过滤面板
+目标路径：thesis/figures/screenshots/fig_6_6_metakg_force.png
+截图位置：/graph 页 → 截图包含力导向画布 + 左侧节点过滤面板 + 右侧节点详情卡片
+
+================================================================================
+完成顺序建议：
+  1. 先用 draw.io / Mermaid 完成 5 张架构类图（5-1 ~ 5-6 中的简单流程）
+  2. 用 ChatGPT 画图 / 在线 AI 绘图完成 3-1（Autoencoder 网络）
+  3. 启动系统后批量截图 6-1 ~ 6-6 + 4-6
+  4. 完成后核对 figures-manifest.md 中的状态列
+================================================================================
