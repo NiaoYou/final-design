@@ -155,17 +155,44 @@ def fig_4_4_volcano() -> None:
     ax.axvline(-fc_thr, color="grey", linestyle="--", linewidth=0.7)
     ax.axhline(-np.log10(p_thr), color="grey", linestyle="--", linewidth=0.7)
 
-    # top-N 标注
+    # 先确定坐标范围（避免标注超出右边界）
+    x_max = float(np.nanmax(np.abs(log2fc))) * 1.05
+    ax.set_xlim(-x_max, x_max)
+    ax.set_ylim(0, float(neg_log_q.max()) * 1.08)
+
+    # top-N 标注：用 adjustText 库做迭代避让
     sig_idx = np.where(up_mask | down_mask)[0]
     if len(sig_idx):
-        # 按 |log2fc| × neg_log_q 取最显著的 8 个
         score = np.abs(log2fc[sig_idx]) * neg_log_q[sig_idx]
-        top_local = sig_idx[np.argsort(score)[-8:]]
+        top_local = sig_idx[np.argsort(score)[-6:]]  # 限制 6 个，避免过密
+
+        def _short(name: str, n: int = 18) -> str:
+            return name if len(name) <= n else name[: n - 1] + "…"
+
+        try:
+            from adjustText import adjust_text
+        except ImportError:
+            adjust_text = None  # type: ignore
+
+        texts = []
         for i in top_local:
             name = feats[i].get("metabolite_name") or feats[i].get("feature")
-            if name:
-                ax.annotate(str(name), (log2fc[i], neg_log_q[i]),
-                            xytext=(4, 4), textcoords="offset points", fontsize=8)
+            if not name:
+                continue
+            t = ax.text(log2fc[i], neg_log_q[i], _short(str(name)),
+                        fontsize=8, ha="center", va="center",
+                        bbox=dict(boxstyle="round,pad=0.2", fc="white",
+                                  ec="none", alpha=0.7))
+            texts.append(t)
+
+        if adjust_text is not None and texts:
+            adjust_text(
+                texts, ax=ax,
+                expand=(1.2, 1.4),
+                arrowprops=dict(arrowstyle="-", color="grey",
+                                lw=0.5, alpha=0.7),
+                only_move={"texts": "xy", "static": "xy", "explode": "xy"},
+            )
 
     ax.set_xlabel("log2 Fold Change（P1_AA_1024 / P1_AA_0001）", fontsize=11)
     ax.set_ylabel(r"$-\log_{10}(q)$", fontsize=11)
@@ -203,10 +230,12 @@ def fig_4_5_kegg_bubble() -> None:
     qvals = np.where(qvals <= 0, 1e-300, qvals)
     neg_log_q = -np.log10(qvals)
 
-    sizes = [max(40, h * 25) for h in hits]
+    # 缩小气泡 size，避免遮挡坐标
+    sizes = [max(60, h * 8) for h in hits]
     y_pos = np.arange(len(names))[::-1]
 
-    fig, ax = plt.subplots(figsize=(8.5, max(3.5, 0.5 * len(names) + 1.5)))
+    n = len(names)
+    fig, ax = plt.subplots(figsize=(9, max(3.2, 0.7 * n + 2.0)))
     sc = ax.scatter(rich, y_pos, s=sizes, c=neg_log_q, cmap="viridis",
                     edgecolor="black", linewidth=0.5, alpha=0.9)
 
@@ -215,16 +244,26 @@ def fig_4_5_kegg_bubble() -> None:
     ax.set_xlabel("Rich Factor", fontsize=11)
     ax.set_title("图 4-5  KEGG 通路富集气泡图（P1_AA_0001 vs P1_AA_1024）", fontsize=12)
     ax.grid(axis="x", linestyle="--", linewidth=0.4, alpha=0.5)
-    ax.set_xlim(0, max(1.0, max(rich) * 1.1))
+
+    # 给 x 轴两端留出充足 margin，确保气泡不溢出
+    rich_min, rich_max = float(min(rich)), float(max(rich))
+    span = max(0.3, rich_max - rich_min)
+    ax.set_xlim(max(0.0, rich_min - span * 0.4), min(1.05, rich_max + span * 0.25))
+
+    # 给 y 轴顶部和底部留出空隙，避免气泡贴边
+    ax.set_ylim(-0.8, n - 1 + 0.8)
 
     cb = fig.colorbar(sc, ax=ax, fraction=0.04, pad=0.02)
     cb.set_label(r"$-\log_{10}(q)$", fontsize=10)
 
-    # 命中数图例
-    for h_demo in [10, 30]:
-        ax.scatter([], [], s=max(40, h_demo * 25), c="lightgrey",
+    # 命中数图例（用实际数据范围内的代表值）
+    h_min, h_max = int(min(hits)), int(max(hits))
+    legend_hits = sorted(set([h_min, (h_min + h_max) // 2, h_max]))
+    for h_demo in legend_hits:
+        ax.scatter([], [], s=max(60, h_demo * 8), c="lightgrey",
                    edgecolor="black", label=f"hits = {h_demo}")
-    ax.legend(loc="lower right", frameon=False, fontsize=9, scatterpoints=1)
+    ax.legend(loc="upper left", frameon=True, fontsize=9, scatterpoints=1,
+              labelspacing=1.2, framealpha=0.85)
 
     out = OUT / "fig_4_5_kegg_enrichment_bubble.png"
     fig.tight_layout()
@@ -237,50 +276,58 @@ def fig_4_5_kegg_bubble() -> None:
 # 图 4-7：BioHeart / MI / AMIDE 三数据集 PCA 校正前后拼图
 # -----------------------------------------------------------------------------
 def fig_4_7_three_datasets_pca() -> None:
-    """直接将三张已存在的 PCA 图横向拼接（保留原图风格）。"""
-    from PIL import Image
+    """裁掉原图顶部含中文乱码的标题条，再用 matplotlib 拼接并加自有标题。"""
+    import matplotlib.image as mpimg
 
     src_paths = [
         ("BioHeart", DATA / "bioheart" / "_pipeline" / "pca_before_vs_after_batch_correction.png"),
         ("MI", DATA / "mi" / "_pipeline" / "pca_before_vs_after_batch_correction.png"),
         ("AMIDE", DATA / "amide" / "_pipeline" / "pca_before_vs_after_batch_correction.png"),
     ]
-    images = []
+    items = []
+    # 经测量原图为 1320×1680，顶部约前 145px 含 "PCA before vs after..." 与 "(XX 数据集)" 两行标题
+    crop_top_ratio = 0.115
     for label, path in src_paths:
         if not path.exists():
             print(f"[warn] missing source: {path}")
             continue
-        images.append((label, Image.open(path).convert("RGB")))
-    if not images:
+        img = mpimg.imread(path)
+        h = img.shape[0]
+        cropped = img[int(h * crop_top_ratio):, :]
+        items.append((label, cropped))
+    if not items:
         return
 
-    # 统一高度后纵向拼接
-    target_w = max(img.width for _, img in images)
-    resized = []
-    title_h = 36
-    for label, img in images:
-        ratio = target_w / img.width
-        new_h = int(img.height * ratio)
-        resized.append((label, img.resize((target_w, new_h), Image.LANCZOS)))
+    target_w = 12  # inches
+    panel_heights = []
+    for _, img in items:
+        h, w = img.shape[:2]
+        panel_heights.append(target_w * h / w)
+    total_h = sum(panel_heights) + 0.4 * len(items)
 
-    total_h = sum(img.height for _, img in resized) + title_h * len(resized)
-    canvas = Image.new("RGB", (target_w, total_h), "white")
+    fig, axes = plt.subplots(
+        nrows=len(items), ncols=1,
+        figsize=(target_w, total_h),
+        gridspec_kw={"height_ratios": panel_heights, "hspace": 0.20},
+    )
+    if len(items) == 1:
+        axes = [axes]
 
-    from PIL import ImageDraw, ImageFont
-    try:
-        font = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 22)
-    except IOError:
-        font = ImageFont.load_default()
+    for ax, (label, img) in zip(axes, items):
+        ax.imshow(img)
+        ax.set_title(f"{label} 数据集：校正前 vs 校正后（左：按批次着色；右：按分组着色）",
+                     fontsize=13, pad=8)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
 
-    y = 0
-    for label, img in resized:
-        draw = ImageDraw.Draw(canvas)
-        draw.text((20, y + 5), f"{label} —— 校正前 vs 校正后", fill="black", font=font)
-        canvas.paste(img, (0, y + title_h))
-        y += title_h + img.height
+    fig.suptitle("图 4-7  BioHeart / MI / AMIDE 三数据集批次校正前后 PCA 对比",
+                 fontsize=15, y=0.997)
 
     out = OUT / "fig_4_7_three_datasets_pca.png"
-    canvas.save(out, dpi=(200, 200))
+    fig.savefig(out, dpi=180, bbox_inches="tight")
+    plt.close(fig)
     print(f"[saved] {out}")
 
 
