@@ -54,8 +54,8 @@ flowchart TD
 ```
 
 ================================================================================
-【图 5-1】Overall System Architecture
-路径：external/fig_5_1_system_architecture.png  | 工具：draw.io
+【图 4-1】Overall System Architecture
+路径：external/fig_4_1_system_architecture.png  | 工具：draw.io
 ================================================================================
 绘制学术风格三层架构图，扁平矢量、纯白背景、淡色调、英文标签，每层用浅色泳道。
 
@@ -74,8 +74,8 @@ Tier 3 - Persistence (bottom): SQLite (metadata) + Local FS
 Server↔FS 用 "File IO"。顶部加 User stick-figure 图标。
 
 ================================================================================
-【图 5-2】Backend Four-Layer Architecture
-路径：external/fig_5_2_backend_layers.png  | 工具：draw.io
+【图 4-2】Backend Four-Layer Architecture
+路径：external/fig_4_2_backend_layers.png  | 工具：draw.io
 ================================================================================
 绘制学术风格四层堆叠架构图，扁平矢量、纯白背景、淡色调、英文标签。
 四层从上到下，箭头单向向下；右侧加一条贯穿四层的纵向 DAO 带（用冷灰色区分）。
@@ -97,8 +97,8 @@ DAO 带（右侧纵向）: DatasetRepository, RunRepository, ResultRepository,
 每层用一个圆角矩形，内放 2-4 个模块芯片。
 
 ================================================================================
-【图 5-3】Frontend Component Tree & Pinia Stores
-路径：external/fig_5_3_frontend_component_tree.png  | 工具：draw.io / Mermaid
+【图 4-3】Frontend Component Tree & Pinia Stores
+路径：external/fig_4_3_frontend_component_tree.png  | 工具：draw.io / Mermaid
 ================================================================================
 绘制学术风格前端组件树图，扁平矢量、纯白背景、淡色调、英文标签。
 左 2/3 画组件树，右 1/3 画 Pinia stores 列。
@@ -116,8 +116,8 @@ Pinia stores: datasetStore, runStore, analysisStore, graphStore。每个 store
 按域配色：data ingestion=蓝、analysis=橙、visualization=绿、layout=灰。
 
 ================================================================================
-【图 5-4】Database E-R Diagram
-路径：external/fig_5_4_database_er.png  | 工具：draw.io
+【图 4-4】Database E-R Diagram
+路径：external/fig_4_4_database_er.png  | 工具：draw.io
 ================================================================================
 绘制学术风格 E-R 图，扁平矢量、纯白背景、淡色调、英文标签。
 使用标准 ER 标记（crow's foot 或 1..N），主键加下划线，外键加斜体并标 [FK]。
@@ -138,8 +138,8 @@ Pinia stores: datasetStore, runStore, analysisStore, graphStore。每个 store
 带 _json 后缀的字段加 JSON 小图标。
 
 ================================================================================
-【图 5-5】End-to-End Pipeline Data Flow
-路径：external/fig_5_5_pipeline_dataflow.png  | 工具：draw.io
+【图 4-5】End-to-End Pipeline Data Flow
+路径：external/fig_4_5_pipeline_dataflow.png  | 工具：draw.io
 ================================================================================
 绘制学术风格水平数据流图，扁平矢量、纯白背景、淡色调、英文标签。
 单条横向主箭头链；每个 stage 是圆角矩形+顶部小图标；副箭头向下连到产物文件名。
@@ -160,8 +160,8 @@ diff.json | enrich.json | graph.json。
 visualization=灰。底部加一条虚线 lane 标 "Persistence layer"。
 
 ================================================================================
-【图 5-6】Async Task State Machine
-路径：external/fig_5_6_task_state_machine.png  | 工具：draw.io / PlantUML
+【图 4-6】Async Task State Machine
+路径：external/fig_4_6_task_state_machine.png  | 工具：draw.io / PlantUML
 ================================================================================
 绘制学术风格状态机图，扁平矢量、纯白背景、淡色调、英文标签。
 圆形=状态，带标签箭头=转移；终态用颜色区分（SUCCESS=绿，FAILED=红，CANCELED=灰）。
@@ -182,33 +182,33 @@ visualization=灰。底部加一条虚线 lane 标 "Persistence layer"。
 推荐分辨率 1600×1000；裁剪保留 Header + 主内容；隐藏个人敏感信息。
 以下为截图路径与操作步骤，无需 AI prompt。
 
-【图 4-6】screenshots/fig_4_6_metakg_subgraph.png
+【图 3-8】screenshots/fig_3_8_metakg_subgraph.png
   /graph 页 → 选 Benchmark 数据集 → 节点过滤勾 "Metabolite + Pathway + Enzyme"
   → 等力导向收敛后全屏截图。配色：代谢物=蓝、通路=橙、酶=绿。
 
-【图 6-1】screenshots/fig_6_1_dashboard.png
+【图 4-7】screenshots/fig_4_7_dashboard.png
   / 首页 → 截 KPI 卡片（数据集数 / 任务数 / 最新运行）+ 趋势图。
 
-【图 6-2】screenshots/fig_6_2_import_mapping.png
+【图 4-8】screenshots/fig_4_8_import_mapping.png
   /datasets → 点 "上传" → 上传 Benchmark CSV → 截列名映射对话框 + 样本预览。
 
-【图 6-3】screenshots/fig_6_3_pca_compare.png
+【图 4-9】screenshots/fig_4_9_pca_compare.png
   /runs/:id → "PCA 对比" Tab → 截两个 PCA 图（按批次着色 + 按分组着色）。
 
-【图 6-4】screenshots/fig_6_4_volcano_table.png
+【图 4-10】screenshots/fig_4_10_volcano_table.png
   /diff → 选 P1_AA_0001 vs P1_AA_1024 → 截火山图 + 下方差异代谢物表（前 10 行）。
 
-【图 6-5】screenshots/fig_6_5_kegg_bubble.png
+【图 4-11】screenshots/fig_4_11_kegg_bubble.png
   /enrich → 选差异任务 → 截气泡图 + 通路明细表（按 q-value 排序）。
 
-【图 6-6】screenshots/fig_6_6_metakg_force.png
+【图 4-12】screenshots/fig_4_12_metakg_force.png
   /graph → 截力导向画布 + 左侧过滤面板 + 右侧节点详情卡片
   → 推荐选中一个高富集通路节点。
 
 ================================================================================
 完成顺序建议：
-  1. draw.io / Mermaid / PlantUML 完成 6 张架构图（5-1 ~ 5-6）+ 流程图 3-2
+  1. draw.io / Mermaid / PlantUML 完成 6 张架构图（4-1 ~ 4-6）+ 流程图 3-2
   2. ChatGPT 4o 画图生成网络结构图 3-1
-  3. 启动系统截图 4-6 + 6-1 ~ 6-6
+  3. 启动系统截图 3-8 + 4-7 ~ 4-12
   4. 更新 figures-manifest.md 状态列
 ================================================================================

@@ -1,0 +1,31 @@
+# ── Node（根目录临时安装，如 playwright 截图脚本依赖） ──
+node_modules/
+package.json
+package-lock.json
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# ── 系统文件 ──
+.DS_Store
+Thumbs.db
+
+# ── 编辑器 ──
+.vscode/
+.idea/
+
+# ── 论文中间产物（Word 文档，保留 .md 源文件即可） ──
+thesis/*.docx
+
+# ── 后端运行时产生的临时/缓存文件 ──
+backend/data/processed/**/_pipeline/diff_analysis/diff_*.json
+backend/data/processed/**/_pipeline/pathway_enrichment/enrich_*.json
+backend/data/uploads/
+backend/data/results/
+backend/data/*.sqlite3

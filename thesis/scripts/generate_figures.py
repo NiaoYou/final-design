@@ -1,12 +1,12 @@
 """
 generate_figures.py
 ====================
-生成论文 V4 第四章所需的系统图：
-  - 图 4-1 缺失值填充方法 RMSE / MAE / NRMSE 对比柱状图
-  - 图 4-3 Benchmark 数据集批次质心距离校正前后对比柱状图
-  - 图 4-4 P1_AA_0001 vs P1_AA_1024 差异代谢物火山图
-  - 图 4-5 KEGG 通路富集气泡图
-  - 图 4-7 BioHeart / MI / AMIDE 三数据集校正前后 PCA 拼图
+生成论文 V5 第三章所需的系统图：
+  - 图 3-3 缺失值填充方法 RMSE / MAE / NRMSE 对比柱状图
+  - 图 3-5 Benchmark 数据集批次质心距离校正前后对比柱状图
+  - 图 3-6 P1_AA_0001 vs P1_AA_1024 差异代谢物火山图
+  - 图 3-7 KEGG 通路富集气泡图
+  - 图 3-9 BioHeart / MI / AMIDE 三数据集校正前后 PCA 拼图
 
 输入数据均取自 backend/data/processed/.../_pipeline/ 下系统离线 Pipeline 产物。
 输出图片统一写入 thesis/figures/system-generated/。
@@ -40,9 +40,9 @@ plt.rcParams["axes.spines.right"] = False
 
 
 # -----------------------------------------------------------------------------
-# 图 4-1：缺失值填充方法对比柱状图
+# 图 3-3：缺失值填充方法对比柱状图
 # -----------------------------------------------------------------------------
-def fig_4_1_imputation_metrics_bar() -> None:
+def fig_3_3_imputation_metrics_bar() -> None:
     src = DATA / "benchmark_merged" / "_pipeline" / "imputation_eval" / "imputation_eval_report.json"
     report = json.loads(src.read_text(encoding="utf-8"))
     methods_order = ["autoencoder", "knn", "mean", "median"]
@@ -71,13 +71,13 @@ def fig_4_1_imputation_metrics_bar() -> None:
     ax.set_xticks(x)
     ax.set_xticklabels(metric_labels, fontsize=11)
     ax.set_ylabel("误差值（越低越好）", fontsize=11)
-    ax.set_title("图 4-1  缺失值填充方法定量评估对比（Benchmark, mask=15%, n_repeats=3）",
+    ax.set_title("图 3-3  缺失值填充方法定量评估对比（Benchmark, mask=15%, n_repeats=3）",
                  fontsize=12)
     ax.legend(loc="upper left", frameon=False, fontsize=10)
     ax.set_ylim(0, max(1.15, means.max() * 1.2))
     ax.grid(axis="y", linestyle="--", linewidth=0.5, alpha=0.6)
 
-    out = OUT / "fig_4_1_imputation_metrics_bar.png"
+    out = OUT / "fig_3_3_imputation_metrics_bar.png"
     fig.tight_layout()
     fig.savefig(out, dpi=200)
     plt.close(fig)
@@ -85,9 +85,9 @@ def fig_4_1_imputation_metrics_bar() -> None:
 
 
 # -----------------------------------------------------------------------------
-# 图 4-3：批次质心距离校正前后对比
+# 图 3-5：批次质心距离校正前后对比
 # -----------------------------------------------------------------------------
-def fig_4_3_centroid_distance_bar() -> None:
+def fig_3_5_centroid_distance_bar() -> None:
     src = DATA / "benchmark_merged" / "_pipeline" / "evaluation" / "evaluation_report.json"
     report = json.loads(src.read_text(encoding="utf-8"))
 
@@ -113,11 +113,11 @@ def fig_4_3_centroid_distance_bar() -> None:
                 text, ha="center", va="bottom", fontsize=10, fontweight="bold")
 
     ax.set_ylabel("批次质心平均成对距离（PC1-PC2 空间，越低越好）", fontsize=11)
-    ax.set_title("图 4-3  Benchmark 批次质心距离：填充方法（无校正）vs 批次校正方法", fontsize=12)
+    ax.set_title("图 3-5  Benchmark 批次质心距离：填充方法（无校正）vs 批次校正方法", fontsize=12)
     ax.set_ylim(0, max(values) * 1.2)
     ax.grid(axis="y", linestyle="--", linewidth=0.5, alpha=0.6)
 
-    out = OUT / "fig_4_3_benchmark_centroid_distance.png"
+    out = OUT / "fig_3_5_benchmark_centroid_distance.png"
     fig.tight_layout()
     fig.savefig(out, dpi=200)
     plt.close(fig)
@@ -125,9 +125,9 @@ def fig_4_3_centroid_distance_bar() -> None:
 
 
 # -----------------------------------------------------------------------------
-# 图 4-4：差异代谢物火山图
+# 图 3-6：差异代谢物火山图
 # -----------------------------------------------------------------------------
-def fig_4_4_volcano() -> None:
+def fig_3_6_volcano() -> None:
     src = DATA / "benchmark_merged" / "_pipeline" / "diff_analysis" / "diff_P1_AA_0001_vs_P1_AA_1024.json"
     diff = json.loads(src.read_text(encoding="utf-8"))
     feats = diff["features"]
@@ -196,11 +196,11 @@ def fig_4_4_volcano() -> None:
 
     ax.set_xlabel("log2 Fold Change（P1_AA_1024 / P1_AA_0001）", fontsize=11)
     ax.set_ylabel(r"$-\log_{10}(q)$", fontsize=11)
-    ax.set_title("图 4-4  P1_AA_0001 vs P1_AA_1024 差异代谢物火山图", fontsize=12)
+    ax.set_title("图 3-6  P1_AA_0001 vs P1_AA_1024 差异代谢物火山图", fontsize=12)
     ax.legend(loc="upper left", frameon=False, fontsize=10)
     ax.grid(linestyle="--", linewidth=0.4, alpha=0.5)
 
-    out = OUT / "fig_4_4_volcano_aa.png"
+    out = OUT / "fig_3_6_volcano_aa.png"
     fig.tight_layout()
     fig.savefig(out, dpi=200)
     plt.close(fig)
@@ -208,9 +208,9 @@ def fig_4_4_volcano() -> None:
 
 
 # -----------------------------------------------------------------------------
-# 图 4-5：KEGG 通路富集气泡图
+# 图 3-7：KEGG 通路富集气泡图
 # -----------------------------------------------------------------------------
-def fig_4_5_kegg_bubble() -> None:
+def fig_3_7_kegg_bubble() -> None:
     enrich_dir = DATA / "benchmark_merged" / "_pipeline" / "pathway_enrichment"
     candidates = sorted(enrich_dir.glob("enrich_*.json"))
     if not candidates:
@@ -242,7 +242,7 @@ def fig_4_5_kegg_bubble() -> None:
     ax.set_yticks(y_pos)
     ax.set_yticklabels(names, fontsize=10)
     ax.set_xlabel("Rich Factor", fontsize=11)
-    ax.set_title("图 4-5  KEGG 通路富集气泡图（P1_AA_0001 vs P1_AA_1024）", fontsize=12)
+    ax.set_title("图 3-7  KEGG 通路富集气泡图（P1_AA_0001 vs P1_AA_1024）", fontsize=12)
     ax.grid(axis="x", linestyle="--", linewidth=0.4, alpha=0.5)
 
     # 给 x 轴两端留出充足 margin，确保气泡不溢出
@@ -265,7 +265,7 @@ def fig_4_5_kegg_bubble() -> None:
     ax.legend(loc="upper left", frameon=True, fontsize=9, scatterpoints=1,
               labelspacing=1.2, framealpha=0.85)
 
-    out = OUT / "fig_4_5_kegg_enrichment_bubble.png"
+    out = OUT / "fig_3_7_kegg_enrichment_bubble.png"
     fig.tight_layout()
     fig.savefig(out, dpi=200)
     plt.close(fig)
@@ -273,9 +273,9 @@ def fig_4_5_kegg_bubble() -> None:
 
 
 # -----------------------------------------------------------------------------
-# 图 4-7：BioHeart / MI / AMIDE 三数据集 PCA 校正前后拼图
+# 图 3-9：BioHeart / MI / AMIDE 三数据集 PCA 校正前后拼图
 # -----------------------------------------------------------------------------
-def fig_4_7_three_datasets_pca() -> None:
+def fig_3_9_three_datasets_pca() -> None:
     """裁掉原图顶部含中文乱码的标题条，再用 matplotlib 拼接并加自有标题。"""
     import matplotlib.image as mpimg
 
@@ -322,10 +322,10 @@ def fig_4_7_three_datasets_pca() -> None:
         for spine in ax.spines.values():
             spine.set_visible(False)
 
-    fig.suptitle("图 4-7  BioHeart / MI / AMIDE 三数据集批次校正前后 PCA 对比",
+    fig.suptitle("图 3-9  BioHeart / MI / AMIDE 三数据集批次校正前后 PCA 对比",
                  fontsize=15, y=0.997)
 
-    out = OUT / "fig_4_7_three_datasets_pca.png"
+    out = OUT / "fig_3_9_three_datasets_pca.png"
     fig.savefig(out, dpi=180, bbox_inches="tight")
     plt.close(fig)
     print(f"[saved] {out}")
@@ -335,11 +335,11 @@ def fig_4_7_three_datasets_pca() -> None:
 # Entry
 # -----------------------------------------------------------------------------
 def main() -> None:
-    fig_4_1_imputation_metrics_bar()
-    fig_4_3_centroid_distance_bar()
-    fig_4_4_volcano()
-    fig_4_5_kegg_bubble()
-    fig_4_7_three_datasets_pca()
+    fig_3_3_imputation_metrics_bar()
+    fig_3_5_centroid_distance_bar()
+    fig_3_6_volcano()
+    fig_3_7_kegg_bubble()
+    fig_3_9_three_datasets_pca()
     print("\nAll figures generated under:", OUT)
 
 
