@@ -122,19 +122,19 @@ Keywords: Metabolomics; Batch Effect; Missing Value Imputation; Deep Learning; A
 
 均值填充（Mean Imputation）对每个特征 $j$，计算所有已观测值的算术均值，并将该列所有缺失位置统一赋值为该均值：
 
-$$\hat{x}_{ij} = \bar{x}_j = \frac{1}{|\mathcal{O}_j|} \sum_{i \in \mathcal{O}_j} x_{ij} \tag{2-1}$$
+$$\hat{x}_{ij} = \bar{x}_j = \frac{1}{|\mathcal{O}_j|} \sum_{i \in \mathcal{O}_j} x_{ij} \qquad (2-1)$$
 
 其中 $\mathcal{O}_j$ 为第 $j$ 列中已观测值的样本下标集合。该方法计算复杂度为 $O(np)$，实现简单、运行速度快；缺点是将所有缺失位置设置为同一值，完全忽略了样本间的个体差异，会人为压缩特征的方差，可能引入系统性偏差。
 
 中位数填充（Median Imputation）将每个特征的缺失位置赋值为该列已观测值的中位数：
 
-$$\hat{x}_{ij} = \text{med}(x_{ij},\ i \in \mathcal{O}_j) \tag{2-2}$$
+$$\hat{x}_{ij} = \text{med}(x_{ij},\ i \in \mathcal{O}_j) \qquad (2-2)$$
 
 与均值相比，中位数对异常值（Outlier）具有更强的鲁棒性，适合于分布存在较强偏斜或含有离群样本的数据集。然而中位数填充同样忽略了样本间的相关结构，且对双峰分布等复杂情形也无法有效估计。
 
 K 近邻填充（KNN Imputation）的核心思想是：对于待填充的缺失位置 $(i, j)$，从其余已观测该特征的样本中找出与样本 $i$ 最相似的 $K$ 个近邻，将这 $K$ 个近邻在特征 $j$ 上的值加权平均作为填充估计：
 
-$$\hat{x}_{ij} = \frac{\sum_{k \in \mathcal{N}(i,j)} w_{ik} \cdot x_{kj}}{\sum_{k \in \mathcal{N}(i,j)} w_{ik}} \tag{2-3}$$
+$$\hat{x}_{ij} = \frac{\sum_{k \in \mathcal{N}(i,j)} w_{ik} \cdot x_{kj}}{\sum_{k \in \mathcal{N}(i,j)} w_{ik}} \qquad (2-3)$$
 
 其中 $\mathcal{N}(i,j)$ 为在特征 $j$ 上有观测值且与样本 $i$ 欧氏距离最近的 $K$ 个样本集合，$w_{ik}$ 为距离的倒数权重。KNN 填充能够利用数据集内样本间的相似性结构，相比简单统计方法通常具有更高的填充精度，但计算复杂度为 $O(n^2 p)$，且依赖于"相似样本在特征空间中邻近"这一局部平滑假设，对全局非线性关联的捕获能力有限。
 
@@ -158,13 +158,13 @@ DM-RN（Distribution-Matching Residual Network）由 Shaham 等（2017）针对�
 
 ComBat 方法由 Johnson 等人于 2007 年最初为基因表达数据（微阵列）设计[12]，后被广泛应用于转录组学、蛋白质组学和代谢组学领域。该方法将特征 $j$ 在样本 $i$（属于批次 $b$）上的观测值建模为：
 
-$$x_{ijb} = \alpha_j + \mathbf{d}_{ib}^T \boldsymbol{\beta}_j + \gamma_{jb} + \delta_{jb} \cdot \varepsilon_{ijb} \tag{2-4}$$
+$$x_{ijb} = \alpha_j + \mathbf{d}_{ib}^T \boldsymbol{\beta}_j + \gamma_{jb} + \delta_{jb} \cdot \varepsilon_{ijb} \qquad (2-4)$$
 
 其中 $\alpha_j$ 为特征 $j$ 的全局均值，$\mathbf{d}_{ib}$ 为生物学协变量设计矩阵（如分组标签），$\boldsymbol{\beta}_j$ 为协变量效应，$\gamma_{jb}$ 和 $\delta_{jb}$ 分别为批次 $b$ 对特征 $j$ 施加的加性和乘性批次效应，$\varepsilon_{ijb}$ 为误差项。
 
 ComBat 的关键在于经验 Bayes 估计策略：首先利用所有特征 $j = 1, \ldots, p$ 上的批次效应估计值构建先验分布，再通过 Bayes 收缩将各特征的批次参数估计值向先验均值"收缩"，从而在小样本场景下获得更稳定的参数估计。校正后的数据为：
 
-$$x'_{ijb} = \frac{x_{ijb} - \alpha_j - \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j - \hat{\gamma}^*_{jb}}{\hat{\delta}^*_{jb}} \cdot \sigma_j + \alpha_j + \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j \quad (2\text{-}5)$$
+$$x'_{ijb} = \frac{x_{ijb} - \alpha_j - \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j - \hat{\gamma}^*_{jb}}{\hat{\delta}^*_{jb}} \cdot \sigma_j + \alpha_j + \mathbf{d}_{ib}^T\hat{\boldsymbol{\beta}}_j{} \qquad (2-5)$$
 
 其中 $\hat{\gamma}^*_{jb}$ 和 $\hat{\delta}^*_{jb}$ 为经验 Bayes 收缩后的批次效应估计值。ComBat 通过经验 Bayes 收缩利用跨特征信息改善小批次估计稳定性，并可显式传入生物学协变量保护真实生物学差异，是目前代谢组学领域应用最广泛的批次校正方法之一。
 
@@ -217,7 +217,7 @@ MetaboAnalyst 等主流系统主要支持 ComBat 等少数几种经典统计学�
 ### 2.5.4 评估体系单一
 
 对于批次效应校正结果的优劣评估，现有平台普遍过度依赖 PCA 散点图等降维可视化手段进行主观的定性观察。它们缺乏一套严谨、可量化的多维度综合评估指标体系（例如同时衡量批次混合程度与生物学信号保留程度的统计学客观指标），从而难以为校正算法的横向比对、模型调参以及最佳处理路径的筛选提供强有力的客观证据支持。
-\n
+
 # 第三章 核心算法设计与实验分析
 
 本章在第二章方法综述的基础上，针对本系统所涉及的四类核心算法——数据预处理、缺失值填充、批次效应校正与下游分析——给出完整的算法设计、关键公式推导、超参数选择以及工程实现策略，着重阐述对开源算法的自研封装与对小数据规模、异常输入等边界情况的降级处理；并在多个公开数据集上进行定量对比实验，验证各方法的有效性与系统的通用性。
@@ -230,7 +230,7 @@ MetaboAnalyst 等主流系统主要支持 ComBat 等少数几种经典统计学�
 
 对于输入矩阵 $\mathbf{X} \in \mathbb{R}^{n \times p}$，按列统计缺失率 $r_j$，仅保留缺失率不超过阈值 $\tau_{\text{miss}}$（默认 $\tau_{\text{miss}} = 0.5$）的特征：
 
-$$r_j = \frac{1}{n}\sum_{i=1}^{n}\mathbb{I}(x_{ij} = \text{NaN}),\quad \mathcal{F}_{\text{keep}} = \{j : r_j \leq \tau_{\text{miss}}\} \tag{3-1}$$
+$$r_j = \frac{1}{n}\sum_{i=1}^{n}\mathbb{I}(x_{ij} = \text{NaN}),\quad \mathcal{F}_{\text{keep}} = \{j : r_j \leq \tau_{\text{miss}}\} \qquad (3-1)$$
 
 其中 $\mathbb{I}(\cdot)$ 为指示函数。该步骤剔除了缺失过于严重、信息量不足的特征，避免后续填充结果不可靠。
 
@@ -238,7 +238,7 @@ $$r_j = \frac{1}{n}\sum_{i=1}^{n}\mathbb{I}(x_{ij} = \text{NaN}),\quad \mathcal{
 
 LC-MS 信号强度通常呈右偏分布，且存在零值（仪器检出阈值以下的真实零信号），直接取对数会出现 $-\infty$。本系统采用 log1p 变换：
 
-$$x'_{ij} = \log(1 + x_{ij}) \tag{3-2}$$
+$$x'_{ij} = \log(1 + x_{ij}) \qquad (3-2)$$
 
 变换后数据近似对称分布，更接近正态性假设，且在原始值为 0 时返回 0，数值稳定。
 
@@ -246,7 +246,7 @@ $$x'_{ij} = \log(1 + x_{ij}) \tag{3-2}$$
 
 为消除不同代谢物量纲量级的差异，按列执行 Z-score 标准化：
 
-$$z_{ij} = \frac{x'_{ij} - \mu_j}{\max(\sigma_j,\ 1.0)} \tag{3-3}$$
+$$z_{ij} = \frac{x'_{ij} - \mu_j}{\max(\sigma_j,\ 1.0)} \qquad (3-3)$$
 
 其中 $\mu_j$、$\sigma_j$ 为特征 $j$ 的列均值与列标准差。当 $\sigma_j = 0$（恒等列）时分母取 1.0 以防除零，标准化后该列保持为 0 列，不引入虚假方差。
 
@@ -265,7 +265,7 @@ $$z_{ij} = \frac{x'_{ij} - \mu_j}{\max(\sigma_j,\ 1.0)} \tag{3-3}$$
 $$\begin{aligned}
 \text{输入层}(p) & \xrightarrow{\text{Linear}} \text{隐层}(256) \xrightarrow{\text{ReLU} + \text{BN} + \text{Dropout}(0.1)} \text{潜空间}(64) \xrightarrow{\text{ReLU}} \\
 & \xrightarrow{\text{Linear}} \text{隐层}(256) \xrightarrow{\text{ReLU} + \text{BN}} \text{输出层}(p)
-\end{aligned} \tag{3-4}$$
+\end{aligned} \qquad (3-4)$$
 
 其中 $p$ 为特征维度（本文 Benchmark 数据集 $p = 1180$），隐层维度 $h = 256$，潜空间维度 $l = 64$。Encoder 将高维代谢组学特征压缩到低维潜空间，迫使模型学习数据的紧凑非线性结构；Decoder 将潜空间表示重建回原始维度。批归一化（Batch Normalization）稳定训练梯度，Dropout（丢弃率 0.1）作为正则化抑制过拟合，潜空间维度按照"维度不超过样本数与特征数之较小值"的经验原则设置。Autoencoder 网络的整体结构如图 3-1 所示。
 
@@ -275,18 +275,13 @@ $$\begin{aligned}
 
 ### 3.2.3 Masked Reconstruction 训练策略
 
-代谢组学数据中真实缺失值无法直接参与重建损失计算。本文采用 Masked Reconstruction 训练策略：
+代谢组学数据中真实缺失值无法直接参与重建损失计算。为此，本文采用了 Masked Reconstruction（掩码重建）训练策略。在具体实现上，首先对输入矩阵 $\mathbf{X}$ 中的 NaN 位置以对应列的均值进行初步填充，得到完整的输入矩阵 $\tilde{\mathbf{X}}$，从而为网络前向传播提供合理的起始信号。同时，构造一个观测掩码矩阵 $\mathbf{M} \in \{0,1\}^{n \times p}$，其中 $m_{ij} = 1$ 表示该位置为已知观测值，$m_{ij} = 0$ 则表示原本的缺失位置。
 
-1. 初始化：对输入矩阵 $\mathbf{X}$ 中的 NaN 位置以对应列均值填充得 $\tilde{\mathbf{X}}$，为网络提供合理的起始信号；
-2. 构造观测掩码：$\mathbf{M} \in \{0,1\}^{n \times p}$，$m_{ij} = 1$ 表示已知观测值，$m_{ij} = 0$ 表示缺失位置；
-3. 前向传播 $\hat{\mathbf{X}} = f_\theta(\tilde{\mathbf{X}})$，仅在已知观测位置计算 MSE 损失：
+在模型的前向传播阶段，网络基于初填矩阵输出预测结果 $\hat{\mathbf{X}} = f_\theta(\tilde{\mathbf{X}})$。为了保证重建质量完全依赖于真实的生物学信号，损失函数仅在掩码指示的已知观测位置计算均方误差（MSE）：
 
-$$\mathcal{L}(\theta) = \frac{\sum_{(i,j):\ m_{ij}=1} (\hat{x}_{ij} - x_{ij})^2}{\sum_{i,j} m_{ij} + \epsilon} \tag{3-5}$$
+$$\mathcal{L}(\theta) = \frac{\sum_{(i,j):\ m_{ij}=1} (\hat{x}_{ij} - x_{ij})^2}{\sum_{i,j} m_{ij} + \epsilon} \qquad (3-5)$$
 
-4. 反向传播：Adam 优化器（学习率 $lr = 10^{-3}$，权重衰减 $\lambda = 10^{-5}$）+ CosineAnnealingLR 学习率调度（$T_{\max} = 80$，$\eta_{\min} = 0.1\,lr$），训练 80 个 epoch，batch size 为 64；
-5. 推断与回填：训练完成后以 $\tilde{\mathbf{X}}$ 为输入前向推断，仅将网络输出中对应缺失位置（$m_{ij}=0$）的预测值回填，已知观测值保持原始数值不变。
-
-该策略的关键性质是：训练监督信号完全来自已知观测，缺失位置的填充由网络从数据整体非线性结构泛化推断，避免了"自学习缺失值"的循环依赖。
+在反向传播与优化阶段，模型采用 Adam 优化器（设置初始学习率 $lr = 10^{-3}$ 和权重衰减 $\lambda = 10^{-5}$），并配合 CosineAnnealingLR 余弦退火学习率调度机制（周期 $T_{\max} = 80$，最小学习率 $\eta_{\min} = 0.1\,lr$）。经过 80 个 epoch 的迭代训练（批大小设定为 64）后，网络参数达到收敛。在最终的推断与回填步骤中，再次以 $\tilde{\mathbf{X}}$ 为输入进行前向推断，但仅提取网络输出矩阵中对应原缺失位置（$m_{ij}=0$）的预测值进行回填，原有的已知观测值则保持数值不变。该策略的关键优势在于训练监督信号完全源自已知观测数据，使得缺失位置的估算纯粹基于网络对数据整体非线性结构的泛化推断，有效避免了模型“自学习缺失值”导致的循环依赖与次优解。
 
 ### 3.2.4 Mask-then-Impute 评估框架
 
@@ -294,15 +289,15 @@ $$\mathcal{L}(\theta) = \frac{\sum_{(i,j):\ m_{ij}=1} (\hat{x}_{ij} - x_{ij})^2}
 
 均方根误差（RMSE）：
 
-$$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{M}|}\sum_{(i,j) \in \mathcal{M}} (\hat{x}_{ij} - x_{ij})^2} \tag{3-6}$$
+$$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{M}|}\sum_{(i,j) \in \mathcal{M}} (\hat{x}_{ij} - x_{ij})^2} \qquad (3-6)$$
 
 平均绝对误差（MAE）：
 
-$$\text{MAE} = \frac{1}{|\mathcal{M}|}\sum_{(i,j) \in \mathcal{M}} |\hat{x}_{ij} - x_{ij}| \tag{3-7}$$
+$$\text{MAE} = \frac{1}{|\mathcal{M}|}\sum_{(i,j) \in \mathcal{M}} |\hat{x}_{ij} - x_{ij}| \qquad (3-7)$$
 
 归一化均方根误差（NRMSE）：将每个特征的 RMSE 除以其标准差后取平均，消除量纲差异：
 
-$$\text{NRMSE} = \frac{1}{p}\sum_{j=1}^{p} \frac{\text{RMSE}_j}{\text{std}(x_{\cdot j})} \tag{3-8}$$
+$$\text{NRMSE} = \frac{1}{p}\sum_{j=1}^{p} \frac{\text{RMSE}_j}{\text{std}(x_{\cdot j})} \qquad (3-8)$$
 
 其中 $\mathcal{M}$ 为遮蔽位置集合。整个评估流程以三个随机种子（42、43、44）独立重复，取均值与标准差作为最终评估结果，详见本章 3.5 节表 3.1。
 
@@ -314,7 +309,7 @@ $$\text{NRMSE} = \frac{1}{p}\sum_{j=1}^{p} \frac{\text{RMSE}_j}{\text{std}(x_{\c
 
 Baseline 方法的设计思想是：假设批次效应主要表现为各批次在每个特征上的位置（均值）和尺度（标准差）的系统性偏移，通过将各批次分布对齐到全局分布消除偏差。对于特征 $j$，设全局均值 $\mu_j$、全局标准差 $\sigma_j$，批次 $b$ 内均值 $\mu_{bj}$、批次内标准差 $\sigma_{bj}$，则属于批次 $b$ 的样本 $i$ 的校正公式为：
 
-$$x'_{ij} = \frac{x_{ij} - \mu_{bj}}{\max(\sigma_{bj},\ \epsilon)} \cdot \sigma_j + \mu_j \quad (3\text{-}9)$$
+$$x'_{ij} = \frac{x_{ij} - \mu_{bj}}{\max(\sigma_{bj},\ \epsilon)} \cdot \sigma_j + \mu_j{} \qquad (3-9)$$
 
 其中 $\epsilon = 10^{-8}$ 为防除零的数值稳定下界。该公式先对批次内分布执行标准化（减去批次均值、除以批次标准差），再将其缩放还原为全局分布的均值与尺度，从而实现所有批次在该特征上的位置和尺度对齐。
 
@@ -322,13 +317,9 @@ $$x'_{ij} = \frac{x_{ij} - \mu_{bj}}{\max(\sigma_{bj},\ \epsilon)} \cdot \sigma_
 
 ### 3.3.2 ComBat 经验 Bayes 安全封装
 
-ComBat 方法的统计模型与公式见第二章 2.3.1 节。本系统基于 neuroCombat 库（Fortin 等，2018）封装实现 run_combat_safe() 函数，封装重点解决了三类工程问题：
+ComBat 方法的统计模型与公式如第二章 2.3.1 节所述。尽管现有的 neuroCombat 库（Fortin 等，2018）提供了核心算法实现，但在与 Web 平台工作流对接时面临格式兼容与异常阻断的问题。为此，本系统专门封装实现了 run_combat_safe() 函数。首先，在矩阵方向适配方面，由于 neuroCombat 强制要求输入矩阵呈现“特征 × 样本”的格式，而本平台上下游数据流统一遵循机器学习标准的“样本 × 特征”结构，因此封装层在库函数调用前后加入了自动转置逻辑，消除了格式错位。
 
-1. 矩阵方向适配：neuroCombat 要求输入矩阵格式为"特征 × 样本"，本系统数据流统一采用"样本 × 特征"，封装层在调用前后自动完成矩阵转置；
-2. 异常输入降级：检测到任一批次样本数 $< 2$、批次数 $< 2$ 或全特征恒定等异常输入时，记录警告并直接回退到 Baseline 方法或返回原矩阵，避免 neuroCombat 抛出未捕获异常导致 Web 接口崩溃；
-3. 协变量可选传入：通过可选参数 `biological_covariates` 支持生物学分组标签的显式传入，以经验 Bayes 收缩同时估计协变量效应，保护真实生物学差异不被过度校正。
-
-run_combat_safe() 安全封装的整体异常降级逻辑如图 3-2 所示。
+其次，针对异常输入导致的服务中断隐患，封装函数引入了完备的降级机制。当检测到输入数据存在任一批次样本数不足 2 个、有效批次数少于 2 个，或检测到全特征恒定等极端退化条件时，系统会主动记录警告日志，并平滑回退至前述的 Baseline 对齐方法或直接返回原始矩阵。这避免了底层数学库抛出未捕获异常进而导致整个 Web 接口崩溃的风险。最后，在参数扩展方面，该函数通过可选的 `biological_covariates` 参数，支持显式传入用户的生物学分组标签。这使得算法在执行经验 Bayes 收缩时能同步估计协变量效应，进而确保真实的生物学组间差异在校正过程中得到妥善保护而未被抹除。run_combat_safe() 安全封装的整体异常降级逻辑如图 3-2 所示。
 
 【图位】图 3-2　ComBat 安全封装异常降级流程图
 图源：thesis/figures/external/fig_3_2_combat_safe_flow.png（待外部绘制或使用 mermaid/draw.io 绘制）
@@ -342,14 +333,13 @@ PCA 降维基于 scikit-learn 的 PCA 类，取前两个主成分得低维嵌入
 
 Silhouette 系数定义如下，对单个样本 $i$：
 
-$$s(i) = \frac{b(i) - a(i)}{\max\{a(i),\ b(i)\}} \tag{3-10}$$
+$$s(i) = \frac{b(i) - a(i)}{\max\{a(i),\ b(i)\}} \qquad (3-10)$$
 
 其中 $a(i)$ 为样本 $i$ 与同类样本的平均距离，$b(i)$ 为与最近异类样本的平均距离，$s(i) \in [-1, 1]$。本文分别以批次标签和生物学分组标签计算 batch Silhouette 与 group Silhouette：前者越低表示批次混合越好，后者越高表示生物学结构保留越好。
 
 批次质心距离衡量各批次质心在 PCA 空间中的离散程度：
 
-$$D_{\text{centroid}} = \frac{1}{B(B-1)}\sum_{b=1}^{B}\sum_{b' 
-eq b} \|\bar{\mathbf{z}}_b - \bar{\mathbf{z}}_{b'}\|_2 \tag{3-11}$$
+$$D_{\text{centroid}} = \frac{1}{B(B-1)}\sum_{b=1}^{B}\sum_{b' \neq b} \|\bar{\mathbf{z}}_b - \bar{\mathbf{z}}_{b'}\|_2 \qquad (3-11)$$
 
 其中 $B$ 为批次数，$\bar{\mathbf{z}}_b$ 为批次 $b$ 内样本在 PCA 空间中的质心。该指标越接近 0 表示批次中心越重合，相比 Silhouette 系数解释更直接，不受 PCA 坐标系变化影响，本文将其作为主要判据。
 
@@ -361,13 +351,13 @@ eq b} \|\bar{\mathbf{z}}_b - \bar{\mathbf{z}}_{b'}\|_2 \tag{3-11}$$
 
 针对每个代谢物特征 $j$，对两组样本 $A$、$B$ 执行 Welch t 检验（不假设方差相等）：
 
-$$t_j = \frac{\bar{x}_{Aj} - \bar{x}_{Bj}}{\sqrt{\dfrac{s_{Aj}^2}{n_A} + \dfrac{s_{Bj}^2}{n_B}}} \tag{3-12}$$
+$$t_j = \frac{\bar{x}_{Aj} - \bar{x}_{Bj}}{\sqrt{\dfrac{s_{Aj}^2}{n_A} + \dfrac{s_{Bj}^2}{n_B}}} \qquad (3-12)$$
 
 由 scipy.stats.ttest_ind（`equal_var=False`）计算 $p$ 值。对全部特征的 $p$ 值采用 Benjamini-Hochberg FDR 校正得到 $q$ 值（statsmodels.stats.multitest.multipletests，备用手动实现）。
 
 倍数变化以 $\log_2$ 形式定义，分子分母加 $\epsilon = 10^{-9}$ 避免 $\log 0$：
 
-$$\text{log2FC}_j = \log_2 \frac{\bar{x}_{Aj} + \epsilon}{\bar{x}_{Bj} + \epsilon} \tag{3-13}$$
+$$\text{log2FC}_j = \log_2 \frac{\bar{x}_{Aj} + \epsilon}{\bar{x}_{Bj} + \epsilon} \qquad (3-13)$$
 
 差异显著阈值采用双重判据：$q_j < 0.05$ 且 $|\text{log2FC}_j| \geq 1$。结果以 JSON 格式返回，前端 VolcanoChart 组件渲染火山图。
 
@@ -375,7 +365,7 @@ $$\text{log2FC}_j = \log_2 \frac{\bar{x}_{Aj} + \epsilon}{\bar{x}_{Bj} + \epsilo
 
 对显著差异代谢物列表，按超几何分布对每条 KEGG 通路计算富集 $p$ 值。设全部代谢物数 $M$、通路 $K$ 中代谢物数 $K_{\text{path}}$、显著代谢物数 $n_{\text{sig}}$、显著代谢物中落在通路内的数目为 $k$：
 
-$$p_{\text{path}} = \sum_{x = k}^{\min(n_{\text{sig}},\ K_{\text{path}})}\frac{\binom{K_{\text{path}}}{x} \binom{M - K_{\text{path}}}{n_{\text{sig}} - x}}{\binom{M}{n_{\text{sig}}}} \tag{3-14}$$
+$$p_{\text{path}} = \sum_{x = k}^{\min(n_{\text{sig}},\ K_{\text{path}})}\frac{\binom{K_{\text{path}}}{x} \binom{M - K_{\text{path}}}{n_{\text{sig}} - x}}{\binom{M}{n_{\text{sig}}}} \qquad (3-14)$$
 
 由 scipy.stats.hypergeom.sf（生存函数）计算，对所有通路 $p$ 值再做 BH-FDR 校正得到 $q$ 值，返回 $q < 0.2$ 的显著通路（最多 20 条）。KEGG 数据采用本地 JSON 缓存以减少在线 API 依赖；对无 KEGG ID 注释的数据集返回 `{available: false}` 降级结构，前端可识别并隐藏富集分析卡片。
 
@@ -458,7 +448,7 @@ BioHeart 数据集（53 特征）的全流程测试正常运行，Autoencoder �
 【图位】图 3-9　BioHeart / MI / AMIDE 三数据集批次校正前后 PCA 对比
 图源：thesis/figures/system-generated/fig_4_7_three_datasets_pca.png（由三数据集 Pipeline 产物拼合而成）
 说明：以 3 行 × 2 列拼图展示三个数据集校正前后的 PCA 散点；每行对应一个数据集，左列为校正前、右列为校正后。
-\n
+
 # 第四章 系统设计与工程实现
 
 ## 4.1 系统需求分析
@@ -584,7 +574,7 @@ Benchmark 数据集采用"离线预计算 + 在线只读展示"模式：通过 C
 ## 4.10 系统测试
 
 手动功能测试覆盖 13 个核心功能点（文件上传、预处理、四种填充方法、Mask-then-Impute 评估、两种批次校正方法、批次效应评估、差异分析、通路富集、知识图谱、数据集切换、文件下载），均通过测试。边界情况测试覆盖 ComBat 降级（批次样本数为 1 时正常降级）、高缺失率特征过滤、无 KEGG 注释数据集降级（AMIDE）、Autoencoder 小数据集适应（BioHeart，53 特征）四个场景，均通过。在 Benchmark、BioHeart、MI、AMIDE 四个数据集上分别运行了完整的处理流程，验证了系统的通用性。
-\n
+
 # 第五章 结论与展望
 
 ## 5.1 研究总结
