@@ -3,6 +3,7 @@ generate_figures.py
 ====================
 生成论文 V5 第三章所需的系统图：
   - 图 3-3 缺失值填充方法 RMSE / MAE / NRMSE 对比柱状图
+  - 图 3-4 Benchmark 数据集批次效应校正前后 PCA 对比
   - 图 3-5 Benchmark 数据集批次质心距离校正前后对比柱状图
   - 图 3-6 P1_AA_0001 vs P1_AA_1024 差异代谢物火山图
   - 图 3-7 KEGG 通路富集气泡图
@@ -80,6 +81,42 @@ def fig_3_3_imputation_metrics_bar() -> None:
     out = OUT / "fig_3_3_imputation_metrics_bar.png"
     fig.tight_layout()
     fig.savefig(out, dpi=200)
+    plt.close(fig)
+    print(f"[saved] {out}")
+
+
+# -----------------------------------------------------------------------------
+# 图 3-4：Benchmark 数据集批次效应校正前后 PCA 对比
+# -----------------------------------------------------------------------------
+def fig_3_4_benchmark_pca_before_after() -> None:
+    """裁掉 Pipeline 原图顶部英文标题，替换为中文标题输出。"""
+    import matplotlib.image as mpimg
+
+    src = DATA / "benchmark_merged" / "_pipeline" / "pca_before_vs_after_batch_correction.png"
+    if not src.exists():
+        print(f"[skip] missing source: {src}")
+        return
+
+    img = mpimg.imread(src)
+    h = img.shape[0]
+    # 裁掉顶部约 11.5% 含英文标题的区域
+    crop_top_ratio = 0.115
+    cropped = img[int(h * crop_top_ratio):, :]
+
+    fig, ax = plt.subplots(figsize=(12, 9))
+    ax.imshow(cropped)
+    ax.set_title("Benchmark 数据集：批次效应校正前 vs 校正后（左：按批次着色；右：按分组着色）",
+                 fontsize=13, pad=10)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    fig.suptitle("图 3-4  Benchmark 数据集批次效应校正前后 PCA 对比",
+                 fontsize=15, y=1.01)
+
+    out = OUT / "fig_3_4_benchmark_pca_before_after.png"
+    fig.savefig(out, dpi=180, bbox_inches="tight")
     plt.close(fig)
     print(f"[saved] {out}")
 
@@ -336,6 +373,7 @@ def fig_3_9_three_datasets_pca() -> None:
 # -----------------------------------------------------------------------------
 def main() -> None:
     fig_3_3_imputation_metrics_bar()
+    fig_3_4_benchmark_pca_before_after()
     fig_3_5_centroid_distance_bar()
     fig_3_6_volcano()
     fig_3_7_kegg_bubble()

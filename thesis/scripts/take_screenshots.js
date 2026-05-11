@@ -192,11 +192,51 @@ async function waitForTextGone(page, text, timeout = 60000) {
   await shot(page, 'fig_4_12_metakg_force.png');
 
   // ==========================================================================
-  // 图 3-8  MetaKG Benchmark 子图（同一 MetaKG 区域，确保在 Benchmark 数据集下）
+  // 图 3-8  MetaKG Benchmark 子图（节点上限 500，截图定位到画布顶部）
   // ==========================================================================
-  console.log('\n[图 3-8] MetaKG Benchmark 子图...');
-  // 确认当前是 benchmark 数据集（页面初始默认就是）；再等几秒让布局稳定
-  await page.waitForTimeout(3000);
+  console.log('\n[图 3-8] MetaKG Benchmark 子图（节点上限→500）...');
+
+  // 尝试找到节点数输入框并修改为 500
+  try {
+    // 找 max-node / max node 相关输入框（Element Plus el-input-number 或 input[type=number]）
+    const nodeInputSel = 'input[type="number"][min], .el-input-number input';
+    await waitFor(page, nodeInputSel, 5000);
+    const inputs = await page.$$(nodeInputSel);
+    for (const inp of inputs) {
+      const val = await inp.inputValue();
+      // 只改范围在 50~1000 之间的数字输入（排除其他数值输入）
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 50 && num <= 1000) {
+        await inp.triple_click();
+        await inp.fill('500');
+        await inp.dispatchEvent('change');
+        await inp.dispatchEvent('input');
+        console.log(`    → 节点上限从 ${num} 改为 500`);
+        break;
+      }
+    }
+  } catch (e) {
+    console.log('    ⚠️ 未找到节点上限输入框，跳过');
+  }
+
+  // 等力导向重新收敛
+  await page.waitForTimeout(8000);
+
+  // 精确滚动到 MetaKG canvas 顶部，避免垂直偏移
+  const metakgBox = await page.$eval(
+    '[class*="metakg"] canvas, .metakg canvas',
+    el => {
+      const r = el.getBoundingClientRect();
+      return { top: r.top + window.scrollY, height: r.height };
+    }
+  ).catch(() => null);
+
+  if (metakgBox) {
+    // 滚到 canvas 顶部再上移 60px 留出标题
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), metakgBox.top - 60);
+    await page.waitForTimeout(500);
+  }
+
   await shot(page, 'fig_3_8_metakg_subgraph.png');
 
   await browser.close();

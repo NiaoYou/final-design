@@ -443,11 +443,16 @@ MetaKG 知识图谱溯源：以显著差异代谢物为起点提取一跳关联�
 
 ## 3.8 系统通用性验证
 
-BioHeart 数据集（53 特征）的全流程测试正常运行，Autoencoder 填充与通路富集分析（含 KEGG 注释）均返回预期结果。MI 数据集（14 特征）特征数极少，系统自动将 Autoencoder 潜空间维度压缩至不超过特征数的合理范围，避免维度冲突，全流程可正常运行。AMIDE 数据集（6461 特征）的预处理、填充、批次校正和差异分析均正常执行；由于该数据集缺乏 KEGG ID 注释，通路富集分析自动触发降级处理，前端以友好提示替代报错，整体流程不崩溃。三个数据集的验证结果表明，系统能够适应 14 至 6461 个特征的宽泛数据规模，在无注释场景下亦可平稳降级运行，通用性良好。三个异构数据集校正前后的 PCA 对比如图 3-9 所示。
+BioHeart 数据集（53 特征）的全流程测试正常运行，Autoencoder 填充与通路富集分析（含 KEGG 注释）均返回预期结果。MI 数据集（14 特征）特征数极少，系统自动将 Autoencoder 潜空间维度压缩至不超过特征数的合理范围，避免维度冲突，全流程可正常运行。AMIDE 数据集（6461 特征）的预处理、填充、批次校正和差异分析均正常执行；由于该数据集缺乏 KEGG ID 注释，通路富集分析自动触发降级处理，前端以友好提示替代报错，整体流程不崩溃。三个数据集的验证结果表明，系统能够适应 14 至 6461 个特征的宽泛数据规模，在无注释场景下亦可平稳降级运行，通用性良好。三个异构数据集校正前后的 PCA 对比分别如图 3-9a、图 3-9b、图 3-9c 所示。
 
-【图位】图 3-9　BioHeart / MI / AMIDE 三数据集批次校正前后 PCA 对比
-图源：thesis/figures/system-generated/fig_4_7_three_datasets_pca.png（由三数据集 Pipeline 产物拼合而成）
-说明：以 3 行 × 2 列拼图展示三个数据集校正前后的 PCA 散点；每行对应一个数据集，左列为校正前、右列为校正后。
+【图位】图 3-9a　BioHeart 数据集批次效应校正前后 PCA 对比
+图源：thesis/figures/system-generated/fig_3_9a_bioheart_pca_before_after.png
+
+【图位】图 3-9b　MI 数据集批次效应校正前后 PCA 对比
+图源：thesis/figures/system-generated/fig_3_9b_mi_pca_before_after.png
+
+【图位】图 3-9c　AMIDE 数据集批次效应校正前后 PCA 对比
+图源：thesis/figures/system-generated/fig_3_9c_amide_pca_before_after.png
 
 # 第四章 系统设计与工程实现
 
