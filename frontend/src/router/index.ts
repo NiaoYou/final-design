@@ -40,6 +40,25 @@ const router = createRouter({
         },
       ],
     },
+    // 独立截图专用页面（无 Layout，全屏）
+    {
+      path: '/screenshot/metakg',
+      name: 'screenshot-metakg',
+      component: () => import('@/views/MetaKGScreenshotView.vue'),
+      meta: { title: 'MetaKG 截图' },
+    },
+    {
+      path: '/screenshot/volcano',
+      name: 'screenshot-volcano',
+      component: () => import('@/views/VolcanoScreenshotView.vue'),
+      meta: { title: '火山图截图' },
+    },
+    {
+      path: '/screenshot/enrichment',
+      name: 'screenshot-enrichment',
+      component: () => import('@/views/EnrichmentScreenshotView.vue'),
+      meta: { title: 'KEGG 富集截图' },
+    },
   ],
 })
 
