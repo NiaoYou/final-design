@@ -200,23 +200,15 @@ kBET（k-nearest neighbor Batch Effect Test）基于局部 K 近邻分布的统�
 
 ## 2.5 现有平台对比与不足
 
-代谢组学数据分析领域已有若干主流分析平台，包括 MetaboAnalyst（Pang 等，2021）[7]、XCMS Online（Tautenhahn 等，2012）[9] 等。这些平台在数据预处理、统计分析、通路富集等功能上较为成熟，为研究人员提供了便捷的在线分析服务。然而，从批次效应处理与缺失值填充两个核心问题的支持上看，现有平台仍存在明显局限。针对现有工具的短板，本文设计并实现了一个集成深度学习方法的代谢组学批次效应处理 Web 平台，旨在弥补现有技术生态中的空白。具体而言，现有平台的不足主要体现在以下四个方面：
+MetaboAnalyst[7]、XCMS Online[9] 等主流代谢组学分析平台在数据预处理、统计分析、通路富集等常规功能上已较为成熟。然而，从批次效应处理与缺失值填充两个核心问题来看，这些平台存在较明显的局限，主要集中在以下四点。
 
-### 2.5.1 批次效应校正方法覆盖不全
+其一，批次效应校正方法覆盖有限。MetaboAnalyst 等平台主要支持 ComBat 等少数经典统计方法，缺乏逐特征位置尺度对齐、近邻图对齐等其他策略，也不支持多方法横向对比，研究人员难以根据数据的具体分布特点选择最合适的校正手段。
 
-MetaboAnalyst 等主流系统主要支持 ComBat 等少数几种经典统计学校正方法，未能涵盖其他组学中新涌现的优秀对齐策略（如逐特征位置尺度对齐、近邻图对齐等）。这种方法库的单一性导致平台缺乏多方法横向对比的能力，使得研究人员在面对具有复杂偏态分布或极端小批次的异常数据集时，难以根据具体的统计学分布特点灵活选择并验证最合适的校正手段。
+其二，深度学习方法的工程化集成几乎空白。Autoencoder、VAE 等神经网络模型在非线性特征建模和高缺失率处理上已有充分验证，但现有 Web 平台对此类算法的集成极为薄弱。用户若需使用这些方法，通常不得不自行配置本地 Python 环境并编写脚本，门槛较高。
 
-### 2.5.2 深度学习方法集成有限
+其三，全流程端到端的分析支持不足。从数据导入、质控、缺失值填充、批次校正到差异分析、通路富集、知识图谱溯源，完整的代谢组学分析链路高度连贯，而目前尚无一个 Web 平台能够将上述步骤无缝衔接。研究人员往往需要在多个工具之间反复导出和导入矩阵数据，流程割裂，容易引入格式转换错误。
 
-尽管近年来基于神经网络的模型（如 Autoencoder、变分自编码器 VAE 等）在捕获非线性特征相关性、处理高缺失率以及复杂批次校正任务上已被证明具有显著优势，但主流 Web 平台对该类前沿深度学习算法的工程化集成仍极其薄弱。用户若想使用这些高级算法，通常需要自行编写脚本文档并配置复杂的 Python 运行环境，这极大地提高了非计算背景生物学家群体的使用门槛。
-
-### 2.5.3 全流程一体化分析支持不足
-
-完整的代谢组学分析是一个高度连贯的链条，但目前缺乏将数据导入、严格质控、缺失值精确填充、批次效应消除与下游生物学挖掘（如差异分析、通路富集、知识图谱网络溯源）无缝衔接的端到端 Web 工作流。研究人员在实际操作中，往往需要在不同的单功能软件或多个第三方在线分析站点之间来回导出与导入矩阵数据，这不仅流程繁琐，且极其容易在格式转换中引入人为错误。
-
-### 2.5.4 评估体系单一
-
-对于批次效应校正结果的优劣评估，现有平台普遍过度依赖 PCA 散点图等降维可视化手段进行主观的定性观察。它们缺乏一套严谨、可量化的多维度综合评估指标体系（例如同时衡量批次混合程度与生物学信号保留程度的统计学客观指标），从而难以为校正算法的横向比对、模型调参以及最佳处理路径的筛选提供强有力的客观证据支持。
+其四，校正效果的评估过于依赖主观可视化。现有平台对批次效应校正结果的评价多停留在 PCA 散点图的定性观察层面，缺乏能够同时量化"批次混合程度"与"生物学信号保留程度"的客观指标体系，无法为方法比较和参数调优提供可靠的量化依据。
 
 # 第三章 核心算法设计与实验分析
 
@@ -345,33 +337,53 @@ $$D_{\text{centroid}} = \frac{1}{B(B-1)}\sum_{b=1}^{B}\sum_{b' \neq b} \|\bar{\m
 
 ## 3.4 下游分析算法
 
-下游分析模块在批次校正后的清洁矩阵基础上完成差异代谢物挖掘、KEGG 通路富集和 MetaKG 知识图谱溯源三个任务。
+下游分析模块在批次校正后的清洁矩阵基础上完成差异代谢物挖掘、KEGG 通路富集和 MetaKG 知识图谱溯源三个任务，形成从统计检验到生物学解释的完整推断链路。
 
 ### 3.4.1 差异代谢物分析
 
-针对每个代谢物特征 $j$，对两组样本 $A$、$B$ 执行 Welch t 检验（不假设方差相等）：
+差异代谢物分析的目标是在两组实验条件之间找出表达量有显著差异的代谢物。本文采用 Welch t 检验而非标准 Student t 检验，原因在于实际代谢组学数据中两组样本量和方差往往并不相等，Welch 检验通过 Satterthwaite 自由度近似（式 3-15）对方差不齐情况进行矫正，统计功效更为稳健。
+
+针对每个代谢物特征 $j$，对两组样本 $A$、$B$ 执行 Welch t 检验：
 
 $$t_j = \frac{\bar{x}_{Aj} - \bar{x}_{Bj}}{\sqrt{\dfrac{s_{Aj}^2}{n_A} + \dfrac{s_{Bj}^2}{n_B}}} \qquad (3-12)$$
 
-由 scipy.stats.ttest_ind（`equal_var=False`）计算 $p$ 值。对全部特征的 $p$ 值采用 Benjamini-Hochberg FDR 校正得到 $q$ 值（statsmodels.stats.multitest.multipletests，备用手动实现）。
+对应的 Satterthwaite 自由度近似为：
 
-倍数变化以 $\log_2$ 形式定义，分子分母加 $\epsilon = 10^{-9}$ 避免 $\log 0$：
+$$\nu_j = \frac{\left(\dfrac{s_{Aj}^2}{n_A} + \dfrac{s_{Bj}^2}{n_B}\right)^2}{\dfrac{s_{Aj}^4}{n_A^2(n_A-1)} + \dfrac{s_{Bj}^4}{n_B^2(n_B-1)}} \qquad (3-15)$$
 
-$$\text{log2FC}_j = \log_2 \frac{\bar{x}_{Aj} + \epsilon}{\bar{x}_{Bj} + \epsilon} \qquad (3-13)$$
+$p$ 值由 scipy.stats.ttest_ind（`equal_var=False`）计算。由于代谢组学数据维度 $p$ 可达数百至数千，直接使用原始 $p$ 值会导致大量假阳性，本文对全部 $p$ 值序列采用 Benjamini-Hochberg（BH）FDR 程序进行多重校正。设所有特征的 $p$ 值从小到大排序为 $p_{(1)} \leq p_{(2)} \leq \cdots \leq p_{(p)}$，第 $k$ 个特征对应的 $q$ 值（BH 调整后 $p$ 值）定义为：
 
-差异显著阈值采用双重判据：$q_j < 0.05$ 且 $|\text{log2FC}_j| \geq 1$。结果以 JSON 格式返回，前端 VolcanoChart 组件渲染火山图。
+$$q_{(k)} = \min_{l \geq k} \frac{p_{(l)} \cdot p}{l} \qquad (3-16)$$
+
+由 statsmodels.stats.multitest.multipletests 实现，在 BH 程序不可用时退回手动累计最小值计算。
+
+倍数变化以 $\log_2$ 形式度量，分子分母各加 $\epsilon = 10^{-9}$ 的数值稳定项，避免零值导致的 $\log 0$：
+
+$$\text{log2FC}_j = \log_2 \frac{\bar{x}_{Aj} + \epsilon}{\bar{x}_{Bj} + \epsilon} \qquad (3-17)$$
+
+显著差异的判断采用双重门控标准：$q_j < 0.05$（多重校正后假发现率 < 5%）且 $|\text{log2FC}_j| \geq 1$（即两倍以上的倍数差异），两个条件须同时满足。仅满足 $q$ 值而 log2FC 较小的特征属于统计显著但生物学意义可能有限的情形，双重筛选在灵敏度和特异性之间取得平衡。最终结果以 JSON 格式返回，前端 VolcanoPlotCard 组件将上调（log2FC > 1 且 $q$ < 0.05）、下调（log2FC < −1 且 $q$ < 0.05）和不显著三类代谢物分别以红色、蓝色、灰色渲染于火山图。
 
 ### 3.4.2 KEGG 通路富集分析
 
-对显著差异代谢物列表，按超几何分布对每条 KEGG 通路计算富集 $p$ 值。设全部代谢物数 $M$、通路 $K$ 中代谢物数 $K_{\text{path}}$、显著代谢物数 $n_{\text{sig}}$、显著代谢物中落在通路内的数目为 $k$：
+通路富集分析的目的是检验显著差异代谢物是否在某条生物学通路上发生了超出随机水平的聚集，从而将统计显著的代谢物列表提升为有生物学意义的通路层面解释。本文采用超几何检验（Fisher 精确检验的等价形式），其统计模型可描述如下：将代谢物集合视为一个含 $M$ 个球的瓮，其中 $K_{\text{path}}$ 个属于目标通路，从中无放回地取 $n_{\text{sig}}$ 个（即显著代谢物），问恰好命中 $k$ 个通路成员的概率。通路 $k$ 的富集 $p$ 值为观测到至少 $k$ 次命中的累积概率：
 
-$$p_{\text{path}} = \sum_{x = k}^{\min(n_{\text{sig}},\ K_{\text{path}})}\frac{\binom{K_{\text{path}}}{x} \binom{M - K_{\text{path}}}{n_{\text{sig}} - x}}{\binom{M}{n_{\text{sig}}}} \qquad (3-14)$$
+$$p_{\text{path}} = \sum_{x = k}^{\min(n_{\text{sig}},\ K_{\text{path}})}\frac{\binom{K_{\text{path}}}{x} \binom{M - K_{\text{path}}}{n_{\text{sig}} - x}}{\binom{M}{n_{\text{sig}}}} \qquad (3-18)$$
 
-由 scipy.stats.hypergeom.sf（生存函数）计算，对所有通路 $p$ 值再做 BH-FDR 校正得到 $q$ 值，返回 $q < 0.2$ 的显著通路（最多 20 条）。KEGG 数据采用本地 JSON 缓存以减少在线 API 依赖；对无 KEGG ID 注释的数据集返回 `{available: false}` 降级结构，前端可识别并隐藏富集分析卡片。
+由 scipy.stats.hypergeom.sf（生存函数，即 $P(X \geq k)$）计算，在数值精度上优于直接求和。富集程度以 Rich Factor 量化：
+
+$$\text{Rich Factor} = \frac{k / n_{\text{sig}}}{K_{\text{path}} / M} \qquad (3-19)$$
+
+Rich Factor > 1 表示该通路中差异代谢物的比例超过背景期望水平。对所有通路 $p$ 值再做 BH-FDR 校正得到 $q$ 值，最终返回 $q < 0.2$ 的显著通路（最多 20 条）。
+
+KEGG 代谢物-通路对应关系通过 KEGG REST API（`https://rest.kegg.jp`）在线获取，结果以本地 JSON 文件缓存，重复调用直接读取缓存，显著降低在线依赖。对无 KEGG ID 注释的数据集（如 AMIDE 数据集），接口返回 `{available: false}` 降级结构，前端 PathwayEnrichmentCard 组件据此隐藏富集模块并显示友好提示，避免错误阻断整体分析流程。
 
 ### 3.4.3 MetaKG 知识图谱溯源
 
-整合 KEGG、HMDB、SMPDB 三库的预构建 JSON 知识图谱，以显著差异代谢物为种子节点，提取一跳邻域（直接关联的酶、通路、疾病、其他代谢物）形成子图。前端 MetaKGCard 组件以 ECharts 力导向图渲染，支持节点拖拽、关键词搜索和按节点类型过滤等交互。该模块为差异代谢物提供了直观的生物学语境溯源能力，是本系统区别于一般批次校正工具的特色功能之一。
+MetaKG 溯源模块的目标是为统计层面的差异代谢物提供生物学语境支撑，回答"这些代谢物参与哪些通路、由哪些酶催化、与哪些疾病相关联"等问题。本文预构建了整合 KEGG[17]、HMDB[18]、SMPDB 三个数据库的异构知识图谱，节点类型包括代谢物（Compound）、通路（Pathway）、生化反应（Reaction）、酶（Enzyme）、基因（Gene）、疾病（Disease）等，边代表"参与通路""被酶催化""关联疾病"等语义关系，以 JSON 格式存储于后端（节点文件 + 边文件）。
+
+查询时，后端以差异代谢物的 KEGG ID 为种子集，在图结构中提取一跳邻域——即所有与种子代谢物存在直接边关系的实体节点——形成可视化子图。为控制前端渲染负担，子图节点数通过可配置上限（默认 300 个节点）进行截断，优先保留与更多种子节点相连的高连通度节点。
+
+前端 MetaKGCard 组件基于 ECharts 力导向图渲染子图，不同类型节点以不同颜色区分（代谢物蓝色、通路橙色、酶绿色、反应紫色等），种子代谢物以额外蓝色边框标记。力导向布局参数（斥力强度、边长约束、引力系数）根据节点规模自适应调整，避免大图时节点过度重叠。界面支持节点拖拽定位、鼠标滚轮缩放、节点 hover 弹出详情（名称、类型、KEGG ID、分子式、m/z 等）、关键词搜索高亮以及按节点类型勾选过滤等交互功能，使研究人员能够在可视化环境下灵活探索代谢物的多层次生物学关联。
 
 ## 3.5 缺失值填充对比实验
 
@@ -423,23 +435,25 @@ PCA 解释方差比：校正前 PC1 = 22.0%、PC2 = 4.9%；Baseline 校正后 PC
 
 ## 3.7 下游分析结果展示
 
-差异代谢物分析：以 P1_AA_0001（氨基酸低浓度组）vs P1_AA_1024（氨基酸高浓度组，$n_1 = n_2 = 18$）为例，Welch t 检验 + BH-FDR 校正（$q < 0.05$，$|\text{log2FC}| \geq 1$），共检出 538 个显著差异代谢物（占总数 45.6%），与实验设计预期（浓度相差 1024 倍）高度一致。代表性差异代谢物 Acetone（C3H6O，KEGG: C00207）的 log2FC = −5.05，q = $2.7 \times 10^{-7}$，统计显著性极高。差异代谢物的整体分布如图 3-6 火山图所示。
+以 Benchmark 数据集中 P1_AA_0001（氨基酸低浓度组）vs P1_AA_1024（氨基酸高浓度组）的对比为例，对下游分析链路的完整结果进行展示与验证。两组各包含 $n_1 = n_2 = 18$ 个样本，P1_AA_0001 与 P1_AA_1024 分别代表氨基酸工作液浓度相差 1024 倍的两个稀释梯度，属于实验设计层面具有明确生物学预期的对照组合，适合用于验证下游统计分析结果的合理性。
+
+差异代谢物分析方面，基于批次校正后矩阵对 1180 个代谢物特征执行 Welch t 检验并进行 BH-FDR 多重校正，以 $q < 0.05$ 且 $|\text{log2FC}| \geq 1$ 为双重显著性门限，共检出 424 个上调代谢物和 114 个下调代谢物，合计 538 个显著差异特征，占总特征数的 45.6%。这一比例与实验设计预期高度吻合——在氨基酸浓度相差 1024 倍的情况下，大量代谢物出现系统性的方向一致强信号差异是合理的。代表性差异代谢物 Acetone（C3H6O，KEGG: C00207）的 log2FC = −5.05，q = $2.7 \times 10^{-7}$，其负向 log2FC 说明该代谢物在高浓度组信号更强，与实验设计一致。差异代谢物的整体分布如图 3-6 火山图所示。
 
 【图位】图 3-6　P1_AA_0001 vs P1_AA_1024 差异代谢物火山图
-图源：thesis/figures/system-generated/fig_4_4_volcano_aa.png（由 thesis/scripts/generate_figures.py 生成）
-说明：横轴 log2 Fold Change，纵轴 −log10(q)；以 $|\text{log2FC}| \geq 1$ 与 $q < 0.05$ 为分界线，分别用红色（上调）、蓝色（下调）、灰色（不显著）三色着色，并对 top-N 显著代谢物添加文字标签。
+图源：thesis/figures/system-generated/fig_3_6_volcano_aa.png（由 thesis/scripts/generate_figures.py 生成）
+说明：横轴 log2 Fold Change，纵轴 −log10(q)；以 $|\text{log2FC}| \geq 1$ 与 $q < 0.05$ 为分界线，分别用红色（上调）、蓝色（下调）、灰色（不显著）三色着色，并对 top-12 显著代谢物添加文字标签。
 
-KEGG 通路富集分析：以 538 个显著差异特征为显著集，背景集大小 $M = 981$，对 254 条 KEGG 参考通路进行超几何富集分析。最显著通路为 D-Amino acid metabolism（map00470），Rich Factor = 0.9677，q = 0.000206，与氨基酸浓度梯度实验设计高度吻合。富集结果以气泡图呈现，如图 3-7 所示。
+KEGG 通路富集方面，以 538 个显著差异特征为显著集、981 个具备 KEGG ID 注释的代谢物为背景集，对 254 条 KEGG 参考通路进行超几何富集分析。最显著的通路为 D-Amino acid metabolism（map00470），命中差异代谢物 30 个（通路总成员 31 个），Rich Factor = 0.9677，经 BH-FDR 校正后 $q = 0.000206$。该通路的显著富集与氨基酸浓度梯度实验设计直接对应，验证了富集分析流程的准确性。整体富集结果如图 3-7 气泡图所示，通路按 $q$ 值升序排列，气泡大小编码命中数量，颜色编码 $-\log_{10}(q)$。
 
 【图位】图 3-7　KEGG 通路富集气泡图
-图源：thesis/figures/system-generated/fig_4_5_kegg_enrichment_bubble.png（由 thesis/scripts/generate_figures.py 生成）
+图源：thesis/figures/system-generated/fig_3_7_kegg_enrichment_bubble.png（由 thesis/scripts/generate_figures.py 生成）
 说明：纵轴为通路名称（按 q 值升序排列前 15 条），横轴为 Rich Factor，气泡大小映射差异代谢物命中数，气泡颜色映射 −log10(q)。
 
-MetaKG 知识图谱溯源：以显著差异代谢物为起点提取一跳关联子图，涵盖代谢物-通路-反应-酶-疾病多层关联，通过力导向图实现交互式可视化溯源，为生物学机制推断提供可视化支撑。子图的可视化效果如图 3-8 所示。
+MetaKG 溯源方面，以上述 538 个显著差异代谢物为种子集，从预构建的异构知识图谱中提取一跳邻域子图，涵盖代谢物、通路、生化反应、酶等多类型节点。以 D-Amino acid metabolism 相关代谢物为例，子图呈现出多个氨基酸代谢物汇聚于同一通路节点的辐射状拓扑，酶节点居中连接多个底物，直观反映了代谢网络的局部结构。界面支持按节点类型过滤，方便研究人员聚焦特定关联维度。子图的可视化效果如图 3-8 所示。
 
 【图位】图 3-8　MetaKG 知识图谱代谢物-通路-酶力导向子图
-图源：thesis/figures/screenshots/fig_4_6_metakg_force_graph.png（待用户在前端 MetaKG 视图截图）
-说明：截图建议覆盖 50 个左右节点，含代谢物（圆形）、通路（方形）、反应（三角形）、酶（菱形）四类节点形状，配合左侧节点类型过滤面板。
+图源：thesis/figures/screenshots/fig_3_8_metakg_subgraph.png（前端 MetaKG 独立截图页截图）
+说明：含代谢物（蓝色圆形）、通路（橙色，深橙边框）、反应（紫色）、酶（绿色）四类节点，力导向布局，Pathway 节点显示标签，节点数约 280 个。
 
 ## 3.8 系统通用性验证
 
@@ -520,11 +534,24 @@ BioHeart 数据集（53 特征）的全流程测试正常运行，Autoencoder �
 
 ## 4.4 系统模块划分
 
-本系统按照分析流程的逻辑顺序划分为数据管理、预处理、缺失值填充、批次效应校正、评估可视化和下游分析六个主要功能模块，各模块职责独立、接口清晰，通过统一接口交互，支持新算法的灵活接入。
+本系统按照分析流程的逻辑顺序划分为数据管理、预处理、缺失值填充、批次效应校正、评估可视化和下游分析六个主要功能模块，如表 4.1 所示。各模块职责独立，向上通过 Service 层统一调度，向下以标准化接口调用 Algorithm 层，新算法的接入只需在对应子目录中添加实现类，无需修改上层逻辑。
+
+表 4.1　系统功能模块划分
+
+| 模块 | 后端 Service | 核心职责 |
+|:---:|:---:|:---|
+| 数据管理 | DatasetService | 文件上传解析、列名映射、Long Format 转换、多数据集注册与切换 |
+| 数据预处理 | PreprocessService | 缺失率过滤、log1p 变换、Z-score 标准化，产物持久化为 CSV |
+| 缺失值填充 | ImputationService | 均值/中位数/KNN/Autoencoder 四种方法调度，Mask-then-Impute 评估 |
+| 批次效应校正 | BatchCorrectionService | Baseline/ComBat 两种校正方法，异常安全封装，校正结果持久化 |
+| 评估可视化 | EvaluationService | PCA 降维、Silhouette 计算、批次质心距离、PCA 图生成 |
+| 下游分析 | DownstreamService | Welch t 检验 + BH-FDR 差异分析、KEGG 超几何富集、MetaKG 子图查询 |
 
 ## 4.5 系统整体数据流
 
-系统的整体数据流遵循"原始数据 → 预处理 → 填充 → 批次校正 → 评估 → 下游分析"的线性管道（Pipeline）结构。每个处理步骤完成后，输出矩阵均以 CSV 文件形式持久化至 data/processed/{dataset_id}/_pipeline/ 目录，评估结果以 JSON 文件形式存储，支持断点续算。前端通过定时轮询 /api/tasks/{task_id} 接口获取任务状态（uploaded → preprocess_done → impute_done → correct_done → done，任意步骤出错则转为 error），并根据状态决定展示哪些功能模块的结果内容。系统数据流 Pipeline 与任务状态机分别如图 4-5、图 4-6 所示。
+系统的整体数据流遵循"原始数据 → 预处理 → 填充 → 批次校正 → 评估 → 下游分析"的线性管道（Pipeline）结构。每个处理步骤完成后，输出矩阵均以 CSV 文件形式持久化至 `data/processed/{dataset_id}/_pipeline/` 目录，评估结果以 JSON 文件形式存储，支持断点续算。具体文件命名规则如下：预处理矩阵保存为 `matrix_preprocessed.csv`，填充后矩阵保存为 `matrix_imputed.csv`，批次校正后矩阵保存为 `matrix_corrected.csv`，差异分析结果保存为 `diff_analysis.json`，Mask-then-Impute 评估报告保存为 `imputation_eval.json`，批次效应评估报告保存为 `batch_eval.json`。
+
+任务状态通过后端数据库中的 Task 表字段 `status` 进行跟踪，状态机包含以下状态节点：`uploaded`（文件上传完毕）→ `preprocess_done`（预处理完成）→ `impute_done`（填充完成）→ `correct_done`（批次校正完成）→ `done`（全流程完成）；任意步骤发生不可恢复错误时转为 `error` 状态，并将错误信息写入 `Task.error_message` 字段。前端通过每 2 秒一次的轮询请求 `/api/tasks/{task_id}` 接口实时获取任务状态，PipelineStepBar 组件依据当前状态高亮对应步骤，各功能卡片（填充评估、批次校正结果、差异分析等）仅在对应 `*_done` 状态满足时才激活展示，避免在数据未就绪时渲染空白图表。系统数据流 Pipeline 与任务状态机分别如图 4-5、图 4-6 所示。
 
 【图位】图 4-5　系统数据流 Pipeline 示意图
 图源：thesis/figures/external/fig_5_5_pipeline_dataflow.png（待外部绘制）
@@ -536,123 +563,118 @@ BioHeart 数据集（53 特征）的全流程测试正常运行，Autoencoder �
 
 ## 4.6 开发环境与技术栈
 
-后端核心依赖：Python 3.10+、FastAPI、Uvicorn、SQLAlchemy、Pydantic v2、pandas、NumPy、scikit-learn、scipy、PyTorch、neuroCombat、statsmodels、requests、openpyxl、matplotlib。前端核心依赖：Vue 3、TypeScript 5.x、Vite、Element Plus、ECharts 5.x、Pinia、Vue Router 4.x、Axios、SCSS。系统以本地单机方式部署，后端端口 8000，前端端口 5173，API 调试通过 FastAPI 内置 Swagger UI（/docs）。
+系统开发环境为 macOS，后端运行于 Python 3.10+，前端通过 Node.js 18+ 驱动构建工具链。表 4.2 列出了核心技术栈及其选型说明。
+
+表 4.2　系统核心技术栈
+
+| 层次 | 技术组件 | 版本 | 选型说明 |
+|:---:|:---:|:---:|:---|
+| 后端框架 | FastAPI | 0.110+ | 原生异步支持，自动生成 OpenAPI 3.0 文档，Pydantic v2 数据校验 |
+| 后端框架 | Uvicorn | 0.29+ | ASGI 服务器，支持 HTTP/1.1 与 WebSocket，生产级性能 |
+| 数据访问 | SQLAlchemy + SQLite | 2.0+ | ORM 封装 SQL，SQLite 零配置适合本地部署 |
+| 算法库 | PyTorch | 2.x | Autoencoder 实现，支持 CPU/GPU 透明切换 |
+| 算法库 | scikit-learn | 1.3+ | KNN 填充、PCA 降维、Silhouette 系数 |
+| 算法库 | scipy / statsmodels | — | Welch t 检验、超几何分布、BH-FDR 校正 |
+| 算法库 | neuroCombat | — | ComBat 经验 Bayes 核心实现 |
+| 前端框架 | Vue 3 + TypeScript | 3.4+ | Composition API，类型安全 |
+| UI 组件库 | Element Plus | 2.x | 开箱即用的表单、表格、对话框等组件 |
+| 可视化 | ECharts 5 | 5.x | 火山图、气泡图、力导向图、PCA 散点图 |
+| 状态管理 | Pinia | 2.x | Vue 3 官方推荐，响应式 store，支持 devtools |
+| 构建工具 | Vite | 5.x | 热模块替换，TS 原生支持，构建速度快 |
+
+系统以本地单机方式部署，后端 Uvicorn 监听端口 8000，前端 Vite Dev Server 监听端口 5173，两者均可通过一条命令启动。API 调试通过 FastAPI 内置 Swagger UI（访问 `http://localhost:8000/docs`）进行，支持在线测试全部接口。
 
 ## 4.7 后端关键实现
 
-API 接口按功能分为数据管理、处理流程、Benchmark 数据集专用和下游分析四组，统一返回 JSON 格式，HTTP 状态码规范（200/400/404/500），FastAPI 自动生成 OpenAPI 文档。
+后端 API 路由按功能划分为 `/api/datasets`、`/api/tasks`、`/api/benchmark`、`/api/downstream` 四组路由前缀，分别对应数据集管理、任务生命周期、Benchmark 只读数据和下游分析。所有接口统一返回 JSON，HTTP 状态码遵循 REST 规范，FastAPI 通过装饰器自动生成 OpenAPI 3.0 文档。请求参数由 Pydantic v2 模型校验，非法参数在进入 Service 层前即被拦截，返回结构化错误信息。
 
-Benchmark 数据集采用"离线预计算 + 在线只读展示"模式：通过 CLI 脚本预先运行完整 Pipeline 并持久化所有中间产物，Web 服务启动后直接暴露只读 API，前端通过 Pinia benchmark store 的 loadAll() 方法一次性并发拉取所有数据，响应速度极快（文件 I/O 毫秒级），避免了 API 超时问题。
+Benchmark 数据集面临一个具体的工程问题：完整 Pipeline 包含 Autoencoder 训练、PCA 计算、KEGG 富集等步骤，总耗时数分钟，放在 HTTP 请求响应周期内执行会超时。解决方案是将二者分离——通过 CLI 脚本 `scripts/run_benchmark_pipeline.py` 提前离线运行完整 Pipeline，产物持久化至 `data/processed/benchmark_merged/`；Web 服务启动后只暴露只读 API，服务端响应仅需文件 I/O，耗时毫秒级。前端 benchmark store 通过 `loadAll()` 并发拉取约 10 类数据，用户感知到的页面加载速度与直接读本地文件无异。
+
+Service 层调用 Algorithm 层时，对 ComBat、KEGG API 调用、Autoencoder 训练等可能失败的算法均以 try-except 包裹。ComBat 失败时退回 Baseline 或返回原始矩阵；KEGG API 不可达时优先读本地缓存，缓存也不存在则返回 `{available: false}`；Autoencoder 遇到维度冲突时自动收缩潜空间维度。任何降级行为均写入日志，不向上层抛出未捕获异常。
 
 ## 4.8 前端关键实现
 
-前端共五个页面视图（首页/数据导入/任务配置/结果展示/历史任务）和 15 个功能组件（导航布局 2 个、数据展示 5 个、可视化 6 个、交互控制 2 个）。benchmark store 并发发起 10 个 API 请求，全部失败时静默（catch(() => null)），保证页面不因单个接口失败而崩溃。task store 通过轮询实时更新任务状态，驱动 PipelineStepBar 进度显示。可视化图表基于 ECharts 实现（火山图、气泡图、力导向图、箱线图、PCA 散点图），均支持悬停 tooltip、缩放、拖拽等丰富交互。
+前端由五个页面视图和 15 个功能组件构成。视图层（HomeView、ImportView、TaskConfigView、ResultDashboardView、HistoryView）负责页面整体布局与路由，组件层按职责分为数据展示类（KpiCard、PcaImagePanel 等）、可视化类（VolcanoPlotCard、PathwayEnrichmentCard、MetaKGCard 等）和交互控制类（SidebarMenu、DatasetSelector 等）三类。可视化组件统一采用 ECharts 5 的 `init` + `setOption` 模式，在 `onMounted` 中初始化图表实例，在 `onBeforeUnmount` 中调用 `chart.dispose()` 释放内存。
+
+状态管理由两个 Pinia store 分工承担。`benchmarkStore` 管理 Benchmark 预计算数据，用 `Promise.allSettled` 并发发起全部请求，单个接口失败静默处理不影响其他模块展示。`taskStore` 管理自定义数据集的任务状态，以每 2 秒一次的轮询驱动 PipelineStepBar 进度更新，任务进入终态（`done` 或 `error`）后自动停止轮询。
+
+可视化方面有两处值得说明的实现细节。MetaKGCard 的力导向图布局参数随节点数量自适应调整——节点超过 200 个时斥力系数从 120 降至 60，防止大图中节点因斥力过强而飞散，同时以节点类型和是否为种子代谢物双重维度设定节点大小与颜色。VolcanoPlotCard 的火山图支持点击联动：单击散点图中的数据点，下方代谢物明细表格会自动滚动并高亮对应行，方便研究人员在图表与数据之间快速切换视角。
 
 ## 4.9 系统功能界面展示
 
 系统主要界面包括首页概览、数据导入页、任务配置与进度页、结果展示页（含 PCA 对比、填充评估、火山图、通路气泡图、MetaKG 力导向图）以及数据集切换器和历史任务页等。各核心界面的实际运行截图分别如图 4-7 至图 4-12 所示。
 
 【图位】图 4-7　首页 KPI 概览界面
-图源：thesis/figures/screenshots/fig_6_1_home_kpi.png（待用户在前端首页截图）
+图源：thesis/figures/screenshots/fig_4_7_dashboard.png
 说明：截图覆盖顶部导航栏与四张 KPI 卡片（Autoencoder RMSE、批次质心距离、显著差异代谢物数、最显著通路）。
 
 【图位】图 4-8　数据导入与列名映射配置界面
-图源：thesis/figures/screenshots/fig_6_2_data_import.png（待用户在前端"数据导入"页截图）
+图源：thesis/figures/screenshots/fig_4_8_import_mapping.png
 说明：截图覆盖文件上传区与 Long Format 列名映射下拉选择面板。
 
 【图位】图 4-9　PCA 校正前后对比可视化界面
-图源：thesis/figures/screenshots/fig_6_3_pca_comparison.png（待用户在前端"批次效应校正结果"页截图）
+图源：thesis/figures/screenshots/fig_4_9_pca_compare.png
 说明：截图覆盖左右两幅 PCA 散点（按批次着色）与下方批次质心距离 / Silhouette 指标卡片。
 
 【图位】图 4-10　差异代谢物火山图与表格界面
-图源：thesis/figures/screenshots/fig_6_4_volcano_table.png（待用户在前端"下游分析-差异分析"页截图）
+图源：thesis/figures/screenshots/fig_4_10_volcano_table.png
 说明：截图覆盖火山图与下方差异代谢物表格（含 log2FC、q 值、KEGG ID 列）。
 
 【图位】图 4-11　KEGG 通路富集气泡图界面
-图源：thesis/figures/screenshots/fig_6_5_kegg_bubble.png（待用户在前端"下游分析-通路富集"页截图）
-说明：截图覆盖通路富集气泡图与右侧通路详情卡片。
+图源：thesis/figures/screenshots/fig_4_11_kegg_bubble.png
+说明：截图覆盖通路富集气泡图与右侧通路明细表格。
 
 【图位】图 4-12　MetaKG 力导向知识图谱与节点过滤面板
-图源：thesis/figures/screenshots/fig_6_6_metakg_view.png（待用户在前端"MetaKG"卡片截图）
-说明：截图覆盖力导向图主区域、左侧节点类型过滤面板、顶部关键词搜索框。
+图源：thesis/figures/screenshots/fig_4_12_metakg_force.png
+说明：截图覆盖力导向图主区域、左侧节点类型过滤面板、顶部关键词搜索框及统计条。
 
 ## 4.10 系统测试
 
-手动功能测试覆盖 13 个核心功能点（文件上传、预处理、四种填充方法、Mask-then-Impute 评估、两种批次校正方法、批次效应评估、差异分析、通路富集、知识图谱、数据集切换、文件下载），均通过测试。边界情况测试覆盖 ComBat 降级（批次样本数为 1 时正常降级）、高缺失率特征过滤、无 KEGG 注释数据集降级（AMIDE）、Autoencoder 小数据集适应（BioHeart，53 特征）四个场景，均通过。在 Benchmark、BioHeart、MI、AMIDE 四个数据集上分别运行了完整的处理流程，验证了系统的通用性。
+系统测试采用手动功能测试与边界场景测试相结合的方式，对核心功能点和异常路径分别进行验证。
+
+功能测试覆盖 13 个核心功能点，包括文件上传与格式解析（CSV/XLSX）、列名映射配置、数据预处理三步骤（缺失率过滤、log1p 变换、Z-score 标准化）、四种缺失值填充方法（均值、中位数、KNN、Autoencoder）的独立运行、Mask-then-Impute 评估框架结果输出、两种批次效应校正方法（Baseline、ComBat）的运行与结果展示、批次效应三项评估指标（批次质心距离、批次 Silhouette、分组 Silhouette）的正确计算、差异代谢物分析（火山图渲染与结果表格）、KEGG 通路富集（气泡图渲染与通路列表）、MetaKG 力导向图（节点拖拽、过滤、搜索）、多数据集切换（Benchmark/BioHeart/MI/AMIDE）以及核心矩阵文件的 CSV 下载，全部通过。
+
+边界场景测试覆盖四个典型异常输入：ComBat 降级测试中，将某批次样本数设置为 1（不满足经验 Bayes 估计的最小样本需求），系统正常触发降级逻辑，回退至 Baseline 方法并在界面显示友好提示，未发生崩溃；高缺失率特征过滤测试中，向数据集注入缺失率超过 50% 阈值的特征列，系统在预处理阶段正确剔除，后续分析特征数相应减少；无 KEGG 注释数据集降级测试中，以 AMIDE 数据集（无 KEGG ID）运行通路富集分析，接口返回 `{available: false}`，前端隐藏富集卡片并显示"该数据集暂无 KEGG 注释"提示，不阻断整体分析流程；Autoencoder 小数据集适应测试中，以 BioHeart 数据集（53 特征）运行 Autoencoder，系统自动将潜空间维度压缩至不超过特征数的合理范围，模型正常收敛，填充结果合理。
+
+综合功能测试与边界测试结果，系统在正常输入与异常输入场景下均能稳定运行，降级策略生效，未出现未捕获异常或页面崩溃，验证了系统的可靠性与鲁棒性。
 
 # 第五章 结论与展望
 
 ## 5.1 研究总结
 
-本文围绕代谢组学数据分析中的批次效应校正与缺失值填充两大核心问题，设计并实现了一个基于深度学习的代谢组学批次效应处理 Web 平台，实现了从数据导入、预处理、缺失值填充与校正，到差异代谢物分析、KEGG 通路富集与 MetaKG 知识图谱溯源的全流程一体化处理。本文的主要研究成果可概括为以下四个方面。
+本文围绕代谢组学数据分析中的批次效应校正与缺失值填充两大核心问题，设计并实现了一个基于深度学习的代谢组学批次效应处理 Web 平台，覆盖了从数据导入、预处理、缺失值填充与批次校正，到差异代谢物分析、KEGG 通路富集与 MetaKG 知识图谱溯源的完整分析链路。
 
-### 5.1.1 Web 平台设计与实现
+系统采用前后端分离架构，后端基于 FastAPI + SQLite + SQLAlchemy，前端基于 Vue3 + TypeScript + ECharts + Element Plus，算法层以独立模块形式组织，具备良好的可扩展性。系统支持 CSV/XLSX 格式的多数据集导入与切换，以 Web 交互界面贯通从数据预处理到结果可视化的全流程，填补了现有平台在深度学习方法集成和一体化分析方面的不足。
 
-本文设计并实现了一个代谢组学数据处理 Web 平台。平台采用前后端分离架构，后端基于 FastAPI + SQLite + SQLAlchemy，前端基于 Vue3 + TypeScript + ECharts + Element Plus，算法层以独立模块形式组织，具备良好的可扩展性与工程规范性。系统支持 CSV/XLSX 格式的多数据集导入与切换，以 Web 交互界面覆盖从数据预处理到结果可视化的完整分析链路，填补了现有平台在深度学习方法集成和全流程一体化分析方面的不足。
+缺失值填充是本文的核心工作之一。本文基于 PyTorch 实现了采用 Masked Reconstruction 训练策略的 Encoder-Decoder 网络（1180→256→64→256→1180），并设计了 Mask-then-Impute 可量化评估框架。在 Benchmark 数据集（1715 × 1180）上，Autoencoder 方法以 RMSE = 0.2249 位居第一，分别优于 KNN（RMSE = 0.2980，降低 24.5%）和均值填充（RMSE = 1.0011，降低 77.5%），证明了深度学习方法在该任务上的有效性。
 
-### 5.1.2 基于 Autoencoder 的缺失值填充与评估框架
+批次效应校正方面，本文集成了逐特征位置尺度对齐（Baseline）和基于 neuroCombat 的 ComBat 经验 Bayes 两种方法，并设计了"批次效应消除程度"与"生物学信号保留程度"相互制衡的双维度评估框架，涵盖批次质心距离、批次 Silhouette 系数和分组 Silhouette 系数三项指标。实验表明，Baseline 校正后批次质心距离由 5.38 降至约 0，批次混合效果显著。
 
-本文实现了基于 Autoencoder 的深度学习缺失值填充，并设计了 Mask-then-Impute 可量化评估框架。基于 PyTorch 实现了采用 Masked Reconstruction 训练策略的 Encoder-Decoder 网络（1180→256→64→256→1180），参考了 MIDA（Gondara & Wang, 2018）的方法论。在 Benchmark 数据集（1715 × 1180）上的实验表明，Autoencoder 方法以 RMSE = 0.2249 位居第一，分别优于 KNN（RMSE = 0.2980，降低 24.5%）和均值填充（RMSE = 1.0011，降低 77.5%），证明了深度学习方法在代谢组学缺失值填充任务上的有效性。
-
-### 5.1.3 批次效应校正方法与双维度评估体系
-
-本文集成了两种批次效应校正方法，并设计了双维度量化评估体系。系统实现了逐特征位置尺度对齐（Baseline）和基于 neuroCombat 的 ComBat 经验 Bayes 两种批次效应校正方法，均有安全封装与异常降级处理机制。评估体系包含批次质心距离、批次 Silhouette 系数和分组 Silhouette 系数三项指标，形成"批次效应消除程度"与"生物学信号保留程度"相互制衡的双维度评估框架。在 Benchmark 数据集（7 批次）上，Baseline 方法校正后批次质心距离由 5.38 降至约 0，显示了对位置尺度型批次效应的高效校正能力。
-
-### 5.1.4 下游分析链路一体化
-
-本文实现了差异代谢物分析、KEGG 通路富集分析和 MetaKG 知识图谱溯源的一体化集成。系统基于批次校正后矩阵，依次实现了 Welch t 检验 + BH-FDR 差异代谢物分析（火山图展示）、KEGG 超几何富集分析（气泡图展示，含本地缓存和降级处理）以及 MetaKG 多库整合知识图谱的力导向图溯源展示（支持拖拽、搜索、类型过滤）。在 P1_AA_0001 vs P1_AA_1024 差异分析中，检出 538 个显著差异代谢物，富集到 D-Amino acid metabolism 通路（q = 0.000206），生物学结果合理，验证了下游分析链路的可靠性。
+下游分析方面，系统依次实现了 Welch t 检验 + BH-FDR 差异代谢物筛选（火山图展示）、KEGG 超几何富集分析（气泡图展示，含本地缓存）以及 MetaKG 多库整合知识图谱的力导向图溯源展示。以 P1_AA_0001 vs P1_AA_1024 为例，检出 538 个显著差异代谢物，富集到 D-Amino acid metabolism 通路（q = 0.000206），验证了下游链路的生物学合理性。
 
 ## 5.2 系统局限性
 
-尽管本文工作取得了预期目标，系统在以下方面仍存在一定的局限性，主要体现在算法集成完整度、校正方法多样性、评估维度、部署模式与数据预处理工具链五个方面。
+本文工作虽取得了预期目标，但仍存在若干值得指出的局限。
 
-### 5.2.1 Autoencoder 尚未完全集成至 Web 在线任务流
+Autoencoder 目前以离线预计算方式运行，用户无法通过 Web 界面为自定义数据集在线触发模型训练。根本原因在于训练耗时往往超过 HTTP 同步请求的超时限制，当前实现暂时牺牲了这部分交互易用性。
 
-当前 Autoencoder 填充以离线预计算方式运行，用户无法通过 Web 界面为自定义上传数据集在线触发 Autoencoder 填充，主要原因是模型训练耗时较长，可能超出 HTTP 同步请求的超时限制，故暂时牺牲了交互层面的易用性。
+批次校正方法的覆盖范围也有待扩展。系统仅集成了 Baseline 和 ComBat 两种方法，Harmony、BBKNN 等在单细胞组学领域表现优秀的近邻对齐方法以及基于深度学习的批次校正方案均尚未引入，用户的方法选择空间较为有限。
 
-### 5.2.2 批次效应校正方法数量有限
+评估体系存在维度上的限制。当前所有批次效应评估指标均在 PCA 降至 2 维后的坐标空间中计算，不可避免地丢失了高维空间中的部分结构信息，评估结论的普适性有待进一步验证。
 
-系统目前仅实现了 Baseline 和 ComBat 两种校正方法，尚未集成近年来在单细胞组学领域表现优秀的 Harmony、BBKNN 等方法，也未集成基于深度学习的批次校正方法，限制了用户的方法选择空间。
-
-### 5.2.3 评估框架仅针对二维 PCA 空间
-
-当前批次效应评估指标均在 PCA 降至 2 维后的坐标空间中计算，损失了高维空间中的部分信息，高维空间下的评估结果可能与 2D 评估存在差异。
-
-### 5.2.4 不支持多用户与数据隔离
-
-系统当前为单机本地部署模式，不支持用户注册与认证，所有用户共享同一数据库和文件系统，缺乏数据隔离机制，无法支持多用户并发使用场景。
-
-### 5.2.5 部分数据集依赖手动脚本预处理
-
-Benchmark 数据集的完整 Pipeline 产物需通过 CLI 脚本手动运行生成，对非技术背景用户不够友好，增加了系统部署和数据更新的复杂度。
+此外，系统目前为单机本地部署，缺少用户认证与数据隔离机制，无法支持多用户并发场景。Benchmark 数据集的完整流水线产物也依赖 CLI 脚本手动运行生成，对非技术背景用户存在一定门槛。
 
 ## 5.3 未来工作展望
 
-针对上述局限性，未来工作将从异步任务调度、算法库扩展、自动化推荐、评估体系升级、协作支持以及报告自动化六个方向开展改进和扩展。
+针对上述不足，后续工作拟从以下几个方向推进。
 
-### 5.3.1 引入异步任务队列以支持 Autoencoder 在线训练
+最直接的改进是引入异步任务队列。将 Autoencoder 训练等耗时计算迁移至 Celery + Redis 任务队列，前端通过 WebSocket 或长轮询实时获取进度，可从根本上解决在线训练的超时问题，实现真正的全流程 Web 化操作。
 
-引入 Celery + Redis 异步任务队列，将 Autoencoder 训练等耗时计算从同步 HTTP 请求中剥离，前端通过 WebSocket 或长轮询实时获取训练进度，实现全流程在线触发与结果展示。
+在方法库建设上，计划引入 Harmony（PCA 空间迭代软聚类对齐）、BBKNN（批次感知 KNN 图）等主流批次校正方法，并探索基于变分自动编码器（VAE）的深度学习批次校正方案，构建覆盖统计、近邻对齐、深度学习三类范式的多方法横向对比平台。
 
-### 5.3.2 扩展批次效应校正方法库
+评估体系方面，拟将现有指标从 2D PCA 空间扩展至更高维度，或引入 kBET（k-nearest neighbor Batch Effect Test）等专为高维数据设计的批次效应评估统计量，使评估结果更具全面性。同时，可基于数据集的统计特征（批次数、缺失率、特征数等）和历史运行记录，设计自动化方法推荐模块，降低用户的算法选择门槛。
 
-引入 Harmony（基于 PCA 空间迭代软聚类对齐）、BBKNN（基于批次感知 KNN 图）等主流批次校正方法，以及基于变分自动编码器（VAE）的深度学习批次校正方法，构建覆盖统计、近邻对齐、深度学习三类范式的多方法对比平台。
-
-### 5.3.3 引入自动化方法推荐机制
-
-基于数据集的统计特征（批次数、批次间样本量均衡性、缺失率、特征数等）和历史运行结果，设计自动化方法推荐模型，为用户提供"最优方法推荐"功能，降低算法选择的专业门槛。
-
-### 5.3.4 评估体系的高维扩展
-
-将批次效应评估指标从 2D PCA 空间扩展到更高维度，或引入 kBET（k-nearest neighbor Batch Effect Test）等专门面向高维数据的批次效应评估统计量，提升评估结果的全面性和可靠性。
-
-### 5.3.5 支持多组学联合分析与多用户隔离
-
-扩展系统的多组学联合分析能力，迁移至 PostgreSQL 数据库，引入用户注册与认证机制、数据集权限隔离，支持科研团队的协作分析场景。
-
-### 5.3.6 增加分析报告自动生成功能
-
-集成 PDF/HTML 报告自动生成模块，允许用户一键导出包含数据集信息、预处理参数、填充评估结果、批次校正效果图表和下游分析结果的完整分析报告，进一步提升系统的实用价值。
+系统架构上，计划迁移至 PostgreSQL 数据库，引入用户注册与权限隔离机制，以支持科研团队的协作分析场景；并集成 PDF/HTML 报告自动生成功能，允许用户一键导出包含预处理参数、填充评估、校正效果与下游分析结果的完整分析报告。
 
 ## 参考文献
 
