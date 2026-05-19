@@ -1,0 +1,10 @@
+{
+  "combat": {
+    "batch_centroid_separation_pc12_after": 0.019444312123074136,
+    "silhouette_batch_id_pc12_after": -0.04365428758020506
+  },
+  "baseline_for_reference": {
+    "batch_centroid_separation_pc12_after": 1.9001843353856166e-14,
+    "silhouette_batch_id_pc12_after": -0.03433502607579657
+  }
+}
