@@ -1,7 +1,13 @@
 {
   "combat": {
-    "batch_centroid_separation_pc12_after": 0.019444312123074136,
-    "silhouette_batch_id_pc12_after": -0.04365428758020506
+    "batch_centroid_separation_pc12_after": 0.019444341804696254,
+    "silhouette_batch_id_pc12_after": -0.04365404095311185,
+    "silhouette_group_label_pc12_after": -0.4469400876190319,
+    "pca_explained_variance_ratio": [
+      0.5256695999664591,
+      0.053616415499596115
+    ],
+    "note": "neuroCombat 参数模式，输入为 KNN 填补后的 imputed_sample_by_feature.csv；三项指标均在 ComBat 校正后的 PC1-PC2 子空间上计算。"
   },
   "baseline_for_reference": {
     "batch_centroid_separation_pc12_after": 1.9001843353856166e-14,
