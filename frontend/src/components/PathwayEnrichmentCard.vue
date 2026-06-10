@@ -84,6 +84,14 @@ async function runEnrichment() {
   running.value = true
   statusMsg.value = '正在运行差异分析并获取 KEGG 通路数据（首次运行需下载 KEGG 数据，约 15~30 秒）…'
 
+  // 销毁旧图表实例：因为下方 result.value=null 会触发 v-else-if 卸载 DOM，
+  // 旧的 ECharts 实例会绑定到已被销毁的 DOM 节点上，必须 dispose 后置 null，
+  // 让下一次 render 时根据新挂载的 DOM 重新 init，否则切换样本后图表不显示。
+  bubbleChart?.dispose()
+  bubbleChart = null
+  networkChart?.dispose()
+  networkChart = null
+
   try {
     const r = isBenchmark.value
       ? await fetchPathwayEnrichment(

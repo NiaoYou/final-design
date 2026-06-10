@@ -211,6 +211,13 @@ async function runAnalysis() {
   errorMsg.value = ''
   running.value = true
   result.value = null
+
+  // 销毁旧图表实例：result=null 会触发 v-else-if 卸载 DOM，
+  // 旧 ECharts 实例绑定在已销毁的 DOM 上，必须 dispose 后置 null，
+  // 否则切换样本后 setOption 会写入旧节点，新 DOM 上看不到图。
+  chart?.dispose()
+  chart = null
+
   try {
     result.value = isBenchmark.value
       ? await fetchDiffAnalysis(
