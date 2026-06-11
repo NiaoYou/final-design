@@ -11,6 +11,12 @@ let chart: echarts.ECharts | null = null
 
 function render() {
   if (!host.value) return
+  // 关键修复：v-if 切换会销毁旧 DOM，但 chart 实例仍引用旧节点
+  // 必须检测 chart 绑定的 DOM 是否还是当前 host，否则 setOption 会画到已销毁的节点上
+  if (chart && chart.getDom() !== host.value) {
+    chart.dispose()
+    chart = null
+  }
   if (!chart) chart = echarts.init(host.value)
   const r = props.ratios?.length ? props.ratios.slice(0, 12) : []
   chart.setOption({
@@ -85,7 +91,13 @@ function resize() {
 
 watch(
   () => props.ratios,
-  async () => {
+  async (val) => {
+    // ratios 从有值 → undefined 时，v-if 会销毁旧 div，先把陈旧的 chart 释放掉
+    if (!val?.length) {
+      chart?.dispose()
+      chart = null
+      return
+    }
     await nextTick()
     render()
   },
